@@ -16,12 +16,12 @@
 
 (function () {
   const firebaseConfig = {
-    apiKey:            "AIzaSyYOUR_API_KEY",          // TODO: replace with real value from Firebase Console
+    apiKey:            "AIzaSyCXRii8xCXzQeDfB7IwDr7Tg78EwdwQkrE",          // TODO: replace with real value from Firebase Console
     authDomain:        "abode-96833.firebaseapp.com",
     projectId:         "abode-96833",
     storageBucket:     "abode-96833.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",    // TODO: replace
-    appId:             "YOUR_APP_ID",                 // TODO: replace
+    messagingSenderId: "450289258398",    // TODO: replace
+    appId:             "1:450289258398:web:779f00f91a8c8330cd508f",                 // TODO: replace
   };
 
   // Initialize only once (guard against double-load)
