@@ -37,7 +37,7 @@ function abodeNavHTML(activePage, loggedIn, userName, userRole) {
          <span style="width:22px; height:22px; border-radius:50%; background:var(--ink); color:white; display:inline-flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:600;">${initial}</span>
          <span>${userName || "Account"}</span>
        </a>
-       <a href="index.html" class="btn btn-ghost btn-sm">Sign out</a>`
+       <a href="#" data-action="signout" class="btn btn-ghost btn-sm">Sign out</a>`
     : `<a href="login.html" class="btn btn-primary btn-sm">Log in</a>`;
 
   return `
@@ -106,14 +106,20 @@ function abodeFooterHTML() {
 document.addEventListener("DOMContentLoaded", function() {
   const navTarget = document.querySelector('[data-include="nav"]');
   if (navTarget) {
-    const active = navTarget.dataset.active || "";
-    const loggedIn = navTarget.dataset.loggedin === "true";
-    const userName = navTarget.dataset.user || "";
-    const userRole = navTarget.dataset.role || "";
+    const active   = navTarget.dataset.active    || "";
+    const loggedIn = navTarget.dataset.loggedin  === "true";
+    const userName = navTarget.dataset.user      || "";
+    const userRole = navTarget.dataset.role      || "";
     navTarget.outerHTML = abodeNavHTML(active, loggedIn, userName, userRole);
   }
   const footerTarget = document.querySelector('[data-include="footer"]');
   if (footerTarget) {
     footerTarget.outerHTML = abodeFooterHTML();
+  }
+
+  // If Firebase auth is available, re-render the nav once auth state resolves
+  // so the sign-in/sign-out controls reflect the actual session.
+  if (typeof AbodeAuth !== "undefined") {
+    AbodeAuth.wireNav();
   }
 });

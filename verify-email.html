@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify your email — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div data-include="nav"></div>
+
+  <section style="padding:4rem 0; min-height:70vh; display:flex; align-items:center;">
+    <div class="container" style="max-width:480px; text-align:center;">
+
+      <div style="font-size:3.5rem; margin-bottom:1rem;">✉️</div>
+
+      <h1 style="font-size:2rem; margin-bottom:0.75rem;">Check your inbox</h1>
+
+      <p style="color:var(--muted); max-width:360px; margin:0 auto 2rem; line-height:1.6;">
+        We sent a verification link to <strong id="emailDisplay">your email address</strong>.
+        Click the link to activate your account, then come back here to continue.
+      </p>
+
+      <div id="successMsg" style="display:none; background:#f0fdf4; border:1px solid #bbf7d0; color:#166534;
+           border-radius:8px; padding:0.75rem 1rem; margin-bottom:1.25rem; font-size:0.9rem;">
+        Verification email sent! Check your inbox (and spam folder).
+      </div>
+      <div id="errorMsg" style="display:none; background:#fef2f2; border:1px solid #fecaca; color:#b91c1c;
+           border-radius:8px; padding:0.75rem 1rem; margin-bottom:1.25rem; font-size:0.9rem;"></div>
+
+      <div style="display:flex; flex-direction:column; gap:0.75rem; max-width:320px; margin:0 auto;">
+        <button id="checkBtn" class="btn btn-primary" style="padding:0.85rem; font-size:1rem;">
+          I've verified — continue to dashboard
+        </button>
+        <button id="resendBtn" class="btn btn-outline" style="padding:0.85rem; font-size:1rem;">
+          Resend verification email
+        </button>
+        <button id="signOutBtn" class="btn btn-ghost btn-sm" style="color:var(--muted);">
+          Use a different email — sign out
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Redirect to signup if there is no signed-in user
+    AbodeAuth.onAuthChanged(async (user) => {
+      if (!user) {
+        window.location.href = "signup.html";
+        return;
+      }
+
+      // Show the email address this was sent to
+      document.getElementById("emailDisplay").textContent = user.email;
+
+      // If they're already verified (e.g. opened this page after clicking the link),
+      // route them straight to the dashboard
+      await user.reload();
+      if (user.emailVerified) {
+        window.location.href = "dashboard.html";
+      }
+    });
+
+    document.getElementById("checkBtn").addEventListener("click", async () => {
+      const user = AbodeAuth.currentUser();
+      if (!user) return;
+      await user.reload();
+      if (user.emailVerified) {
+        window.location.href = "dashboard.html";
+      } else {
+        const err = document.getElementById("errorMsg");
+        err.textContent    = "Your email isn't verified yet. Click the link in your inbox, then try again.";
+        err.style.display  = "block";
+        document.getElementById("successMsg").style.display = "none";
+      }
+    });
+
+    document.getElementById("resendBtn").addEventListener("click", async () => {
+      const success = document.getElementById("successMsg");
+      const err     = document.getElementById("errorMsg");
+      try {
+        await AbodeAuth.resendVerification();
+        success.style.display = "block";
+        err.style.display     = "none";
+        document.getElementById("resendBtn").disabled    = true;
+        document.getElementById("resendBtn").textContent = "Sent!";
+      } catch (e) {
+        err.textContent   = "Could not send — " + (e.message || "please try again.");
+        err.style.display = "block";
+        success.style.display = "none";
+      }
+    });
+
+    document.getElementById("signOutBtn").addEventListener("click", async () => {
+      await AbodeAuth.signOut();
+    });
+  </script>
+</body>
+</html>
