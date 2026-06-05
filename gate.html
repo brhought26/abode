@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abode — Preview Access</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    html, body { height: 100%; }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f7f5f0;
+      margin: 0;
+      padding: 1.5rem;
+    }
+    .gate-card {
+      max-width: 420px;
+      width: 100%;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.04);
+    }
+    .gate-logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      color: var(--ink);
+    }
+    .gate-card h1 {
+      font-size: 1.4rem;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.01em;
+    }
+    .gate-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0 0 1.75rem;
+      line-height: 1.55;
+    }
+    .gate-card input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 1.5px solid #c8c2b0;
+      background: #fafaf6;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      box-sizing: border-box;
+      margin-bottom: 0.75rem;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .gate-card input:focus { border-color: var(--ink); }
+    .gate-card button {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .gate-error {
+      color: #c14545;
+      font-size: 0.88rem;
+      margin-top: 0.85rem;
+      min-height: 1.1rem;
+    }
+    .gate-foot {
+      margin-top: 1.75rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="gate-card">
+    <div class="gate-logo">Abode</div>
+    <h1>Preview access</h1>
+    <p>This is a private preview. Enter the access code you were given to continue.</p>
+    <form id="gateForm" autocomplete="off">
+      <input type="password" id="gatePassword" placeholder="Access code" autofocus aria-label="Access code">
+      <button type="submit" class="btn btn-primary">Enter</button>
+      <div class="gate-error" id="gateError" aria-live="polite"></div>
+    </form>
+    <div class="gate-foot">Abode is a real estate platform in development.</div>
+  </div>
+
+  <script>
+    // SHA-256 hash of the access code. To change the password, replace this with
+    // the SHA-256 hex digest of the new password (lowercase, no spaces).
+    const EXPECTED_HASH = "e67c0b040c29879998b131937a6406d9a2b1f0157ad4d0206b5d902d326775b3";
+
+    async function sha256(text) {
+      const enc = new TextEncoder().encode(text);
+      const buf = await crypto.subtle.digest("SHA-256", enc);
+      return Array.from(new Uint8Array(buf))
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
+    }
+
+    const form  = document.getElementById("gateForm");
+    const input = document.getElementById("gatePassword");
+    const err   = document.getElementById("gateError");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.textContent = "";
+      const candidate = (input.value || "").trim();
+      if (!candidate) return;
+      const hash = await sha256(candidate);
+      if (hash === EXPECTED_HASH) {
+        localStorage.setItem("abodeAccess", "granted");
+        const returnTo = sessionStorage.getItem("abodeReturn");
+        sessionStorage.removeItem("abodeReturn");
+        location.replace(returnTo && returnTo !== "/gate.html" ? returnTo : "index.html");
+      } else {
+        err.textContent = "Incorrect code. Try again.";
+        input.value = "";
+        input.focus();
+      }
+    });
+
+    // If already authenticated, skip gate
+    if (localStorage.getItem("abodeAccess") === "granted") {
+      const returnTo = sessionStorage.getItem("abodeReturn");
+      sessionStorage.removeItem("abodeReturn");
+      location.replace(returnTo && returnTo !== "/gate.html" ? returnTo : "index.html");
+    }
+  </script>
+</body>
+</html>

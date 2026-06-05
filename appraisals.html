@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appraisals — Abode Education Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .article h2 {
+      font-size: 1.6rem;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .article h2:first-of-type { margin-top: 0; }
+    .article p {
+      font-size: 1.02rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      margin-bottom: 1.1rem;
+    }
+    .article ul, .article ol {
+      margin: 0 0 1.5rem 0;
+      padding-left: 1.5rem;
+    }
+    .article ul li, .article ol li {
+      font-size: 1.02rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      margin-bottom: 0.85rem;
+    }
+    .article li strong { color: var(--ink); }
+    .article ol { counter-reset: item; padding-left: 0; }
+    .article ol > li {
+      list-style: none;
+      counter-increment: item;
+      padding-left: 2.5rem;
+      position: relative;
+    }
+    .article ol > li::before {
+      content: counter(item);
+      position: absolute;
+      left: 0;
+      top: 0.1em;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--brand-light);
+      color: var(--brand);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="education"></div>
+
+  <article>
+    <!-- ============== Hero ============== -->
+    <section style="padding: 3rem 0 1rem;">
+      <div class="container-narrow" style="text-align:center;">
+        <div style="font-size:0.85rem; color:var(--muted); margin-bottom:1rem;">
+          <a href="education.html">Education Center</a>
+          <span style="margin: 0 0.4rem;">›</span>
+          Appraisals
+        </div>
+        <h1 style="font-size: clamp(2.5rem, 5vw, 3.75rem); margin-bottom: 2rem;">Appraisals</h1>
+        <div style="aspect-ratio: 16/9; background-image:url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1400&q=80'); background-size:cover; background-position:center; border-radius: 16px; margin-bottom: 2rem;"></div>
+      </div>
+    </section>
+
+    <!-- ============== Body ============== -->
+    <section style="padding-bottom: 3rem;">
+      <div class="container-narrow article">
+
+        <h2>Background</h2>
+        <p>A real estate appraisal is an unbiased professional assessment of a property's market value, conducted by a licensed appraiser. Appraisals are essential in real estate transactions because they help determine whether a home's contract price is fair based on its condition, features, and the current market. Lenders, buyers, and sellers rely on appraisals to ensure the home's value aligns with the agreed-upon purchase price.</p>
+
+        <h2>Who Can Order an Appraisal?</h2>
+        <ul>
+          <li><strong>Lenders</strong> – In most home purchases that involve financing, the lender orders the appraisal to protect their investment and ensure the home is worth the loan amount.</li>
+          <li><strong>Home Sellers</strong> – A seller may order an appraisal before listing their home to set a competitive asking price.</li>
+          <li><strong>During a Home Purchase</strong> – Most commonly, after a buyer and seller sign a purchase agreement, the buyer's lender typically orders an appraisal to ensure the property value justifies the loan amount.</li>
+          <li><strong>Before Listing a Home for Sale</strong> – A seller may choose to get an appraisal before listing their home to avoid overpricing or underpricing the property.</li>
+        </ul>
+
+        <h2>Lender Requirements for Appraisals</h2>
+        <p>Mortgage lenders require an appraisal for most home loans to ensure they are not lending more than the home is worth. The appraiser must be licensed or certified and adhere to the Uniform Standards of Professional Appraisal Practice (USPAP). For government-backed loans like FHA, VA, and USDA loans, additional requirements apply:</p>
+        <ul>
+          <li><strong>FHA appraisals</strong> must meet stricter safety and livability standards.</li>
+          <li><strong>VA appraisals</strong> require appraisers to be VA-approved and ensure the home meets the VA's Minimum Property Requirements (MPRs).</li>
+          <li><strong>USDA appraisals</strong> must confirm that the home is in an eligible rural area and meets specific quality standards.</li>
+        </ul>
+
+        <h2>Cost of an Appraisal</h2>
+        <p>The cost of a real estate appraisal varies by location and property type, but on average, it ranges from <strong>$300 to $600</strong> for a standard single-family home. More complex properties, such as luxury homes or large rural properties, can cost upwards of $1,000 or more. The cost may also be higher if you are buying a rental home.</p>
+
+        <h2>Appraisal Methodology</h2>
+        <p>Appraisers use several methods to determine a home's market value:</p>
+        <ul>
+          <li><strong>Sales Comparison Approach (Most Common for Residential Properties)</strong> – Compares the subject home to recently sold homes (comparable properties or "comps") in the same area with similar features. Adjustments are made for differences in size, condition, upgrades, and amenities.</li>
+          <li><strong>Cost Approach</strong> – Estimates what it would cost to rebuild the home from scratch, considering land value and depreciation. Used more often for new construction.</li>
+          <li><strong>Income Approach</strong> – Used for rental or investment properties, based on the income the property generates.</li>
+        </ul>
+
+        <h2>Other Considerations</h2>
+        <p>If an appraisal comes in lower than the purchase price, buyers may renegotiate, pay the difference, or dispute the appraisal.</p>
+
+        <h2>Appraisal Validity</h2>
+        <p>Most appraisals are valid for <strong>90 to 120 days</strong>, depending on lender requirements.</p>
+
+        <h2>Conclusion</h2>
+        <p>A real estate appraisal is a critical step in the home-buying and selling process, ensuring that a property is fairly valued. Lenders require appraisals to protect against over-lending, and buyers and sellers can benefit from appraisals to make informed decisions. Understanding the appraisal process helps both buyers and sellers navigate transactions confidently, preventing overpayment or complications in securing financing.</p>
+      </div>
+    </section>
+
+    <!-- ============== Closing CTA ============== -->
+    <section style="padding: 1rem 0 4rem; text-align:center; border-top: 1px solid var(--line);">
+      <div class="container-narrow" style="padding-top: 3rem;">
+        <h2 style="margin-bottom: 1.25rem;">Ready to put this knowledge to work?</h2>
+        <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+          <a href="search.html" class="btn btn-primary">Browse Homes</a>
+          <a href="education.html" class="btn btn-outline">Back to Education Center</a>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

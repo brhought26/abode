@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compare Offers — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Anti-discrimination banner */
+    .ad-banner { background:#f4f0e8; border:1px solid #d8d0bd; border-radius:14px; padding:1.25rem 1.5rem; margin-bottom:2rem; display:flex; gap:1rem; align-items:flex-start; }
+    .ad-banner .icon { font-size:1.5rem; flex-shrink:0; }
+    .ad-banner h3 { margin:0 0 0.35rem; font-size:1rem; font-weight:600; }
+    .ad-banner p { margin:0; font-size:0.88rem; color:var(--ink-soft, #4a4a4a); line-height:1.5; }
+
+    /* Offer comparison grid */
+    .offers-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:1.25rem; }
+
+    .offer-card { background:white; border:1px solid var(--line); border-radius:18px; padding:1.5rem; display:flex; flex-direction:column; position:relative; }
+    .offer-card.recommended { border-color:#2e7d4f; border-width:2px; box-shadow:0 8px 28px rgba(46,125,79,0.12); }
+
+    .reco-badge { position:absolute; top:-12px; left:1.25rem; background:#2e7d4f; color:white; font-size:0.68rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.35rem 0.7rem; border-radius:999px; }
+
+    .offer-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--line); }
+    .offer-label { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); font-weight:700; }
+    .offer-buyer-anon { font-size:1.05rem; font-weight:700; letter-spacing:-0.01em; margin-top:0.15rem; }
+    .strength-badge { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.05rem; color:white; flex-shrink:0; }
+    .strength-badge.grade-a { background:#2e7d4f; }
+    .strength-badge.grade-b { background:#4a7c9c; }
+    .strength-badge.grade-c { background:#b86e00; }
+    .strength-score { font-size:0.68rem; color:var(--muted); margin-top:0.2rem; text-align:right; }
+
+    .offer-price { font-size:2.2rem; font-weight:800; letter-spacing:-0.025em; color:var(--ink); line-height:1; }
+    .offer-price-delta { font-size:0.82rem; color:var(--muted); margin-top:0.4rem; }
+    .offer-price-delta.over { color:#2e7d4f; font-weight:600; }
+    .offer-price-delta.under { color:#b86e00; font-weight:600; }
+
+    .terms-section { margin-top:1.25rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .terms-label { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:600; margin-bottom:0.6rem; }
+    .terms-row { display:flex; justify-content:space-between; padding:0.4rem 0; font-size:0.88rem; border-bottom:1px dashed #ede9df; }
+    .terms-row:last-child { border-bottom:none; }
+    .terms-row .label { color:var(--muted); }
+    .terms-row .val { font-weight:600; color:var(--ink); }
+
+    .contingency-list { font-size:0.85rem; margin-top:0.5rem; }
+    .contingency-list .item { display:flex; gap:0.4rem; padding:0.2rem 0; }
+    .contingency-list .item .check { color:#2e7d4f; font-weight:700; }
+    .contingency-list .item .waived { color:#2e7d4f; font-weight:700; }
+    .contingency-list .item .x { color:#b03a2e; font-weight:700; }
+
+    .timestamp { font-size:0.78rem; color:var(--muted); margin-top:1rem; font-style:italic; }
+
+    .offer-actions { display:flex; flex-direction:column; gap:0.5rem; margin-top:1.25rem; }
+    .offer-actions .btn { width:100%; justify-content:center; }
+
+    /* Reveal toggle */
+    .reveal-section { margin-top:2rem; padding:1.5rem; background:white; border:1px dashed var(--line); border-radius:14px; text-align:center; }
+    .reveal-section h4 { margin:0 0 0.5rem; font-size:1rem; font-weight:600; }
+    .reveal-section p { margin:0 0 1rem; font-size:0.88rem; color:var(--muted); max-width:520px; margin-left:auto; margin-right:auto; line-height:1.55; }
+
+    @media (max-width: 1000px) {
+      .offers-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="dashboard" data-loggedin="true" data-user="Bryon" data-role="seller"></div>
+
+  <!-- ============== Header ============== -->
+  <section style="padding: 2.5rem 0 1rem;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:1.5rem; flex-wrap:wrap;">
+        <div>
+          <div class="eyebrow" style="margin-bottom:0.4rem;">Your offers · 412 Magnolia Lane</div>
+          <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.25rem); margin:0;">3 offers received</h1>
+          <p style="color:var(--muted); margin:0.4rem 0 0;">Compare them on terms. When you accept, the buyer's identity is revealed and a binding contract is generated.</p>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <a href="seller-dashboard.html" class="btn btn-outline btn-sm">← Back to dashboard</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Anti-discrimination banner ============== -->
+  <section style="padding: 1.5rem 0 0;">
+    <div class="container">
+      <div class="ad-banner">
+        <span class="icon">🛡️</span>
+        <div>
+          <h3>Names &amp; photos are hidden until you accept</h3>
+          <p>Compare offers strictly on price, terms, and contingencies. The Fair Housing Act prohibits using a buyer's name, photo, family makeup, or any personal characteristic to choose between offers. If terms are equivalent, Abode recommends accepting whichever was received first — see the timestamps on each card.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Offers grid ============== -->
+  <section style="padding: 0.5rem 0 2rem;">
+    <div class="container">
+      <div class="offers-grid">
+
+        <!-- ========== Offer A (RECOMMENDED) ========== -->
+        <div class="offer-card recommended">
+          <div class="reco-badge">Strongest terms</div>
+          <div class="offer-header">
+            <div>
+              <div class="offer-label">Offer A</div>
+              <div class="offer-buyer-anon">Anonymous Buyer</div>
+            </div>
+            <div>
+              <div class="strength-badge grade-a">A+</div>
+              <div class="strength-score">98 / 100</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="offer-price">$625,000</div>
+            <div class="offer-price-delta over">↑ $10,000 over asking</div>
+          </div>
+
+          <div class="terms-section">
+            <div class="terms-label">Financial terms</div>
+            <div class="terms-row"><span class="label">Earnest money</span><span class="val">$12,500 (2.0%)</span></div>
+            <div class="terms-row"><span class="label">Down payment</span><span class="val">30% — $187,500</span></div>
+            <div class="terms-row"><span class="label">Financing</span><span class="val">Conventional 30-yr</span></div>
+            <div class="terms-row"><span class="label">Pre-approval</span><span class="val">Verified ✓</span></div>
+            <div class="terms-row"><span class="label">Closing date</span><span class="val">30 days</span></div>
+          </div>
+
+          <div class="terms-section">
+            <div class="terms-label">Contingencies</div>
+            <div class="contingency-list">
+              <div class="item"><span class="check">✓</span> Inspection (10 days)</div>
+              <div class="item"><span class="check">✓</span> Financing</div>
+              <div class="item"><span class="waived">✗</span> Appraisal — <strong>waived</strong></div>
+            </div>
+          </div>
+
+          <div class="timestamp">Received May 21, 2026 · 4:32 PM</div>
+
+          <div class="offer-actions">
+            <button class="btn btn-primary">Accept this offer</button>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-outline" style="flex:1;">Counter</button>
+              <button class="btn btn-ghost" style="flex:1;">Decline</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== Offer B ========== -->
+        <div class="offer-card">
+          <div class="offer-header">
+            <div>
+              <div class="offer-label">Offer B</div>
+              <div class="offer-buyer-anon">Anonymous Buyer</div>
+            </div>
+            <div>
+              <div class="strength-badge grade-b">B+</div>
+              <div class="strength-score">84 / 100</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="offer-price">$615,000</div>
+            <div class="offer-price-delta">At asking price</div>
+          </div>
+
+          <div class="terms-section">
+            <div class="terms-label">Financial terms</div>
+            <div class="terms-row"><span class="label">Earnest money</span><span class="val">$6,150 (1.0%)</span></div>
+            <div class="terms-row"><span class="label">Down payment</span><span class="val">20% — $123,000</span></div>
+            <div class="terms-row"><span class="label">Financing</span><span class="val">VA Loan 30-yr</span></div>
+            <div class="terms-row"><span class="label">Pre-approval</span><span class="val">Verified ✓</span></div>
+            <div class="terms-row"><span class="label">Closing date</span><span class="val">60 days</span></div>
+          </div>
+
+          <div class="terms-section">
+            <div class="terms-label">Contingencies</div>
+            <div class="contingency-list">
+              <div class="item"><span class="check">✓</span> Inspection (10 days)</div>
+              <div class="item"><span class="check">✓</span> Appraisal</div>
+              <div class="item"><span class="check">✓</span> VA loan approval</div>
+              <div class="item"><span class="check">✓</span> Home sale (existing)</div>
+            </div>
+          </div>
+
+          <div class="timestamp">Received May 22, 2026 · 10:15 AM</div>
+
+          <div class="offer-actions">
+            <button class="btn btn-primary">Accept this offer</button>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-outline" style="flex:1;">Counter</button>
+              <button class="btn btn-ghost" style="flex:1;">Decline</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== Offer C (in active negotiation) ========== -->
+        <div class="offer-card">
+          <div class="offer-header">
+            <div>
+              <div class="offer-label">Offer C</div>
+              <div class="offer-buyer-anon">Anonymous Buyer</div>
+              <div style="margin-top:0.45rem;"><span style="display:inline-block; font-size:0.62rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:0.25rem 0.55rem; border-radius:999px; background:#fdf0e0; color:#b86e00;">In negotiation</span></div>
+            </div>
+            <div>
+              <div class="strength-badge grade-b">B</div>
+              <div class="strength-score">79 / 100</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="offer-price">$598,000</div>
+            <div class="offer-price-delta under">↓ $17,000 below asking</div>
+            <div style="font-size:0.82rem; color:var(--muted); margin-top:0.5rem;">You countered at <strong style="color:var(--ink);">$612,000</strong> on May 20. Awaiting buyer response.</div>
+          </div>
+
+          <div class="terms-section">
+            <div class="terms-label">Original terms</div>
+            <div class="terms-row"><span class="label">Earnest money</span><span class="val">$5,980 (1.0%)</span></div>
+            <div class="terms-row"><span class="label">Down payment</span><span class="val">20% — $119,600</span></div>
+            <div class="terms-row"><span class="label">Financing</span><span class="val">Conventional 30-yr</span></div>
+            <div class="terms-row"><span class="label">Pre-approval</span><span class="val">Verified ✓</span></div>
+            <div class="terms-row"><span class="label">Closing date</span><span class="val">30 days</span></div>
+          </div>
+
+          <div class="terms-section">
+            <div class="terms-label">Contingencies</div>
+            <div class="contingency-list">
+              <div class="item"><span class="check">✓</span> Inspection (10 days)</div>
+              <div class="item"><span class="check">✓</span> Appraisal</div>
+              <div class="item"><span class="check">✓</span> Financing</div>
+            </div>
+          </div>
+
+          <div class="timestamp">Received May 16, 2026 · 2:17 PM</div>
+
+          <div class="offer-actions">
+            <a href="negotiation.html" class="btn btn-primary" style="text-align:center;">Open negotiation room →</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Reveal-names friction step (mock) -->
+      <div class="reveal-section">
+        <h4>🔒 Want to see buyer names before you decide?</h4>
+        <p>You can reveal a buyer's identity at any time — but doing so creates an audit trail and Abode logs the decision. Most sellers compare on terms only until they're ready to accept.</p>
+        <button class="btn btn-outline btn-sm" onclick="alert('Demo only — name reveal would require a confirmation step and gets logged for audit.');">Reveal buyer names</button>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Center — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* === Progress strip === */
+    .progress-bar { width:100%; height:8px; background:#f0eee9; border-radius:999px; overflow:hidden; margin-top:1rem; }
+    .progress-fill { height:100%; background:linear-gradient(90deg, #4a7c59, #2c6e9e, #7a5230); border-radius:999px; transition:width 0.4s ease; }
+
+    /* === Filter tabs === */
+    .filter-tabs { display:flex; gap:0.5rem; flex-wrap:wrap; }
+    .filter-tab { padding:0.5rem 1rem; border-radius:999px; border:1px solid var(--line); background:white; color:var(--muted); font-size:0.85rem; font-weight:500; cursor:pointer; }
+    .filter-tab:hover { background:#faf8f4; }
+    .filter-tab.active { background:var(--ink); color:white; border-color:var(--ink); }
+
+    /* === Phase sections === */
+    .phase-section { background:white; border:1px solid var(--line); border-radius:20px; padding:1.5rem; margin-bottom:1.5rem; }
+    .phase-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; gap:0.75rem; }
+    .phase-badge { font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.45rem 0.85rem; border-radius:999px; color:white; }
+    .phase-progress { font-size:0.85rem; color:var(--muted); font-weight:500; }
+    .phase-progress strong { color:var(--ink); font-weight:600; }
+
+    /* Phase colors — match the Real Estate Road Map */
+    .phase-section.pre .phase-badge { background:#4a7c59; }
+    .phase-section.pre { border-left:4px solid #4a7c59; }
+    .phase-section.offer .phase-badge { background:#2c6e9e; }
+    .phase-section.offer { border-left:4px solid #2c6e9e; }
+    .phase-section.contract .phase-badge { background:#7a5230; }
+    .phase-section.contract { border-left:4px solid #7a5230; }
+    .phase-section.closing .phase-badge { background:#b03a2e; }
+    .phase-section.closing { border-left:4px solid #b03a2e; }
+    .phase-section.post .phase-badge { background:#6b4c9a; }
+    .phase-section.post { border-left:4px solid #6b4c9a; }
+
+    /* === Document rows === */
+    .doc-list { display:flex; flex-direction:column; }
+    .doc-row { display:flex; gap:1rem; align-items:center; padding:1rem 0.75rem; border-radius:10px; transition:background 0.15s ease; }
+    .doc-row:hover { background:#faf8f4; }
+    .doc-row + .doc-row { border-top:1px solid #f0eee9; }
+
+    .doc-icon { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1rem; font-weight:700; }
+    .doc-icon.complete { background:#e7f3ec; color:#2e7d4f; }
+    .doc-icon.action { background:#fdf0e0; color:#b86e00; }
+    .doc-icon.in-progress { background:#fff4e0; color:#b86e00; }
+    .doc-icon.pending { background:#f4f2ed; color:#999; }
+
+    .doc-info { flex:1; min-width:0; }
+    .doc-name { font-weight:600; font-size:0.98rem; color:var(--ink); margin-bottom:0.2rem; }
+    .doc-meta { font-size:0.8rem; color:var(--muted); }
+    .doc-meta .source { font-weight:500; color:var(--ink-soft, #4a4a4a); }
+
+    .doc-actions { display:flex; gap:0.4rem; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end; }
+    .doc-actions .btn { padding:0.35rem 0.75rem; font-size:0.78rem; }
+
+    .doc-status-pill { font-size:0.66rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:0.25rem 0.55rem; border-radius:999px; margin-left:0.5rem; vertical-align:middle; }
+    .doc-status-pill.action { background:#fdf0e0; color:#b86e00; }
+
+    @media (max-width: 720px) {
+      .doc-row { flex-wrap:wrap; }
+      .doc-actions { width:100%; justify-content:flex-start; padding-left:52px; margin-top:0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav gets data-role and data-user set from URL params before main.js loads -->
+  <div data-include="nav" data-active="documents" data-loggedin="true"></div>
+  <script>
+    // Read role/user from the URL so the account pill matches whichever dashboard you came from.
+    (function() {
+      const navDiv = document.querySelector('[data-include="nav"]');
+      const params = new URLSearchParams(window.location.search);
+      const role = params.get("role") || "buyer";
+      const user = params.get("user") || (role === "seller" ? "Bryon" : "Jennifer");
+      navDiv.dataset.role = role;
+      navDiv.dataset.user = user;
+      // Stash for later use on the page (welcome label etc.)
+      window.ABODE_VIEWER = { role, user };
+    })();
+  </script>
+
+  <!-- ============== Header ============== -->
+  <section style="padding: 2.5rem 0 1rem;">
+    <div class="container">
+      <div class="eyebrow" style="margin-bottom:0.4rem;">Your transaction · 412 Magnolia Lane</div>
+      <h1 style="font-size: clamp(2rem, 3.5vw, 2.5rem); margin:0;">Document Center</h1>
+      <p style="color:var(--muted); margin:0.5rem 0 0; max-width:640px;">All documents related to your purchase, organized by closing roadmap milestone. Upload, sign, and download here as you move through each phase.</p>
+
+      <!-- Progress -->
+      <div style="margin-top:1.75rem; max-width:680px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem;">
+          <span style="color:var(--muted);"><strong style="color:var(--ink);">6 of 22</strong> documents complete</span>
+          <span style="color:var(--muted);">Estimated close: <strong style="color:var(--ink);">July 2, 2026</strong></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:27%;"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Filter tabs ============== -->
+  <section style="padding: 1.5rem 0 0.5rem;">
+    <div class="container">
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-phase="all">All phases (22)</button>
+        <button class="filter-tab" data-phase="pre">Pre-Transaction (4)</button>
+        <button class="filter-tab" data-phase="offer">Offer (4)</button>
+        <button class="filter-tab" data-phase="contract">Under Contract (7)</button>
+        <button class="filter-tab" data-phase="closing">Closing (4)</button>
+        <button class="filter-tab" data-phase="post">Post-Closing (3)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Phase sections ============== -->
+  <section style="padding: 1.5rem 0 3rem;">
+    <div class="container">
+
+      <!-- ============== Phase 1: Pre-Transaction ============== -->
+      <div class="phase-section pre" data-phase="pre">
+        <div class="phase-header">
+          <div class="phase-badge">Pre-Transaction</div>
+          <div class="phase-progress"><strong>4 of 4</strong> complete</div>
+        </div>
+        <div class="doc-list">
+          <div class="doc-row">
+            <div class="doc-icon complete">✓</div>
+            <div class="doc-info">
+              <div class="doc-name">Pre-approval letter</div>
+              <div class="doc-meta">Signed Apr 14, 2026 · <span class="source">First National Bank</span> · $625,000 max</div>
+            </div>
+            <div class="doc-actions">
+              <a href="contracts/pre-approval-letter.pdf" target="_blank" rel="noopener" class="btn btn-outline">View</a>
+              <a href="contracts/pre-approval-letter.pdf" download="pre-approval-letter.pdf" class="btn btn-ghost">Download</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon complete">✓</div>
+            <div class="doc-info">
+              <div class="doc-name">Photo ID &amp; income verification</div>
+              <div class="doc-meta">Verified Apr 12, 2026 · <span class="source">Driver's license, last 2 pay stubs</span></div>
+            </div>
+            <div class="doc-actions">
+              <a href="contracts/id-income-verification.pdf" target="_blank" rel="noopener" class="btn btn-outline">View</a>
+              <a href="contracts/id-income-verification.pdf" download="id-income-verification.pdf" class="btn btn-ghost">Download</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon complete">✓</div>
+            <div class="doc-info">
+              <div class="doc-name">Property disclosure statement</div>
+              <div class="doc-meta">Received Apr 18, 2026 · <span class="source">Provided by seller</span></div>
+            </div>
+            <div class="doc-actions">
+              <a href="contracts/property-disclosure.pdf" target="_blank" rel="noopener" class="btn btn-outline">View</a>
+              <a href="contracts/property-disclosure.pdf" download="property-disclosure.pdf" class="btn btn-ghost">Download</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon complete">✓</div>
+            <div class="doc-info">
+              <div class="doc-name">Buyer's representation acknowledgment</div>
+              <div class="doc-meta">Signed Apr 14, 2026 · <span class="source">Self-represented under Abode</span></div>
+            </div>
+            <div class="doc-actions">
+              <a href="contracts/buyer-rep-acknowledgment.pdf" target="_blank" rel="noopener" class="btn btn-outline">View</a>
+              <a href="contracts/buyer-rep-acknowledgment.pdf" download="buyer-rep-acknowledgment.pdf" class="btn btn-ghost">Download</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== Phase 2: Offer ============== -->
+      <div class="phase-section offer" data-phase="offer">
+        <div class="phase-header">
+          <div class="phase-badge">Offer</div>
+          <div class="phase-progress"><strong>2 of 4</strong> complete · 1 action required</div>
+        </div>
+        <div class="doc-list">
+          <div class="doc-row">
+            <div class="doc-icon complete">✓</div>
+            <div class="doc-info">
+              <div class="doc-name">Offer to purchase</div>
+              <div class="doc-meta">Submitted May 16, 2026 · <span class="source">$598,000 · 20% down · 30-day close</span></div>
+            </div>
+            <div class="doc-actions">
+              <a href="contracts/offer-to-purchase.pdf" target="_blank" rel="noopener" class="btn btn-outline">View</a>
+              <a href="contracts/offer-to-purchase.pdf" download="offer-to-purchase.pdf" class="btn btn-ghost">Download</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon complete">✓</div>
+            <div class="doc-info">
+              <div class="doc-name">Proof of funds</div>
+              <div class="doc-meta">Submitted May 16, 2026 · <span class="source">Bank statement, last 60 days</span></div>
+            </div>
+            <div class="doc-actions">
+              <a href="contracts/proof-of-funds.pdf" target="_blank" rel="noopener" class="btn btn-outline">View</a>
+              <a href="contracts/proof-of-funds.pdf" download="proof-of-funds.pdf" class="btn btn-ghost">Download</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon action">!</div>
+            <div class="doc-info">
+              <div class="doc-name">Counter-offer from seller<span class="doc-status-pill action">Action required</span></div>
+              <div class="doc-meta">Received May 20, 2026 · <span class="source">$612,000 · 45-day close</span> · Review and respond by May 23</div>
+            </div>
+            <div class="doc-actions">
+              <a href="negotiation.html" class="btn btn-primary">Review counter</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Earnest money receipt</div>
+              <div class="doc-meta">Pending · Will be issued after offer is accepted ($5,980 · 1% of purchase price)</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== Phase 3: Under Contract ============== -->
+      <div class="phase-section contract" data-phase="contract">
+        <div class="phase-header">
+          <div class="phase-badge">Under Contract</div>
+          <div class="phase-progress"><strong>0 of 7</strong> complete</div>
+        </div>
+        <div class="doc-list">
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Purchase agreement (fully signed)</div>
+              <div class="doc-meta">Pending counter-offer acceptance · Auto-generated from offer terms</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Home inspection report</div>
+              <div class="doc-meta">Pending · Inspection not yet scheduled · 10-day contingency window</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline">Schedule</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Inspection contingency addendum</div>
+              <div class="doc-meta">Pending · Generated after inspection if repairs are requested</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Appraisal report</div>
+              <div class="doc-meta">Pending · Lender orders within 5 business days of contract</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Loan estimate (LE)</div>
+              <div class="doc-meta">Pending · Required from lender within 3 business days of application</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Title commitment</div>
+              <div class="doc-meta">Pending · Issued by title company after contract is executed</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Homeowner's insurance binder</div>
+              <div class="doc-meta">Pending · Required before clear-to-close</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline">Get quotes</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== Phase 4: Closing ============== -->
+      <div class="phase-section closing" data-phase="closing">
+        <div class="phase-header">
+          <div class="phase-badge">Closing</div>
+          <div class="phase-progress"><strong>0 of 4</strong> complete</div>
+        </div>
+        <div class="doc-list">
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Closing disclosure (CD)</div>
+              <div class="doc-meta">Pending · Provided by lender 3 business days before closing</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Final walk-through checklist</div>
+              <div class="doc-meta">Pending · Completed 24 hours before closing</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Settlement statement (ALTA)</div>
+              <div class="doc-meta">Pending · Final accounting of all closing costs and credits</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Deed &amp; closing documents package</div>
+              <div class="doc-meta">Pending · Signed at closing · Includes deed, note, mortgage, and ~40 other documents</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== Phase 5: Post-Closing ============== -->
+      <div class="phase-section post" data-phase="post">
+        <div class="phase-header">
+          <div class="phase-badge">Post-Closing</div>
+          <div class="phase-progress"><strong>0 of 3</strong> complete</div>
+        </div>
+        <div class="doc-list">
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Recorded deed</div>
+              <div class="doc-meta">Pending · Returned by county recorder within 2–6 weeks after closing</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">Welcome packet</div>
+              <div class="doc-meta">Pending · Provided by seller at closing · Manuals, warranties, alarm codes, utility contacts</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+          <div class="doc-row">
+            <div class="doc-icon pending">○</div>
+            <div class="doc-info">
+              <div class="doc-name">First mortgage payment receipt</div>
+              <div class="doc-meta">Pending · Due approximately 30 days after closing · Confirms loan servicer</div>
+            </div>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline" style="opacity:0.5; pointer-events:none;">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ---------- Phase filter ----------
+    // Clicking a tab hides phase sections that don't match.
+    const tabs = document.querySelectorAll(".filter-tab");
+    const sections = document.querySelectorAll(".phase-section");
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        const filter = tab.dataset.phase;
+        sections.forEach(s => {
+          s.style.display = (filter === "all" || s.dataset.phase === filter) ? "" : "none";
+        });
+      });
+    });
+  </script>
+</body>
+</html>

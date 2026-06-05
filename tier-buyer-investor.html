@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investor Tier — Abode Pricing</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .tier-hero { background: var(--ink); color: white; border-radius: 20px; padding: 2.5rem 2rem; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; }
+    .tier-hero .eyebrow { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: #a8a8a8; margin-bottom: 0.6rem; font-weight: 700; }
+    .tier-hero h1 { font-size: clamp(2rem, 4vw, 2.75rem); color: white; margin: 0 0 0.6rem; letter-spacing: -0.02em; }
+    .tier-hero .tagline { color: #cfcfcf; font-size: 1.05rem; margin: 0; max-width: 460px; }
+    .tier-hero .price-block { text-align: right; }
+    .tier-hero .price { font-size: clamp(2.8rem, 6vw, 4rem); font-weight: 800; letter-spacing: -0.03em; color: white; line-height: 1; }
+    .tier-hero .unit { font-size: 0.85rem; color: #a8a8a8; margin-top: 0.5rem; }
+
+    .feature-list { list-style: none; padding: 0; margin: 1.5rem 0; }
+    .feature-list li { display: flex; gap: 0.85rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line); font-size: 1rem; line-height: 1.55; align-items: flex-start; }
+    .feature-list li:last-child { border-bottom: none; }
+    .feature-list .check { color: var(--brand); font-weight: 800; flex-shrink: 0; font-size: 1.1rem; line-height: 1.4; }
+
+    @media (max-width: 720px) {
+      .tier-hero { grid-template-columns: 1fr; }
+      .tier-hero .price-block { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="pricing"></div>
+
+  <section style="padding: 2.5rem 0 0.75rem;">
+    <div class="container-narrow">
+      <div style="font-size:0.85rem; color:var(--muted);">
+        <a href="pricing.html">Pricing</a>
+        <span style="margin: 0 0.4rem;">›</span>
+        <a href="pricing.html?role=buyer">For Buyers</a>
+        <span style="margin: 0 0.4rem;">›</span>
+        Investor
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 0.5rem 0;">
+    <div class="container-narrow">
+      <div class="tier-hero">
+        <div>
+          <div class="eyebrow">For Professional Buyers</div>
+          <h1>Investor</h1>
+          <p class="tagline">For professional cash buyers and investors purchasing multiple properties simultaneously or within the same year. Unlimited concurrent offers, with verified-investor status.</p>
+        </div>
+        <div class="price-block">
+          <div class="price">$150</div>
+          <div class="unit">per year, unlimited offers</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 2.5rem 0 1rem;">
+    <div class="container-narrow">
+      <h2 style="margin-bottom: 0.75rem;">What's included</h2>
+      <p style="color: var(--muted); margin-bottom: 1rem;">Everything in the Make Offers tier, with no cap on concurrent offers — designed for buyers who close multiple transactions per year.</p>
+      <ul class="feature-list">
+        <li><span class="check">✓</span> <strong>Everything in Make Offers</strong></li>
+        <li><span class="check">✓</span> <strong>Unlimited</strong> purchase offers</li>
+        <li><span class="check">✓</span> Multi-property tracker on your dashboard</li>
+        <li><span class="check">✓</span> Verified-investor badge on every offer</li>
+        <li><span class="check">✓</span> <em>Requires</em> proof of funds submitted to Abode</li>
+        <li><span class="check">✓</span> <em>Requires</em> standard identity verification</li>
+        <li><span class="check">✓</span> Create property profiles for purchases not listed on Abode</li>
+      </ul>
+    </div>
+  </section>
+
+  <section style="padding: 1.5rem 0 2rem;">
+    <div class="container-narrow">
+      <h2>A complete set of tools for the professional investor, making your acquisition tracking seamless.</h2>
+    </div>
+  </section>
+
+  <section style="padding: 2rem 0 4rem; text-align:center; border-top: 1px solid var(--line);">
+    <div class="container-narrow" style="padding-top: 3rem;">
+      <h2 style="margin-bottom: 1.25rem;">Ready to apply?</h2>
+      <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+        <a href="get-started.html" class="btn btn-primary">Apply for Investor Status</a>
+        <a href="pricing.html?role=buyer" class="btn btn-outline">Back to pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

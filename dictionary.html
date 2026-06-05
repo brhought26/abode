@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Estate Terminology Dictionary — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* A-Z jump nav */
+    .az-nav {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 1rem 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: var(--cream);
+      position: sticky;
+      top: 56px; /* below nav */
+      z-index: 30;
+      backdrop-filter: blur(8px);
+    }
+    .az-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ink);
+      transition: background 0.12s;
+    }
+    .az-link:hover {
+      background: var(--ink);
+      color: white;
+      text-decoration: none;
+    }
+    .az-link.disabled {
+      color: var(--line);
+      pointer-events: none;
+    }
+
+    /* Letter section */
+    .letter-section {
+      padding: 2.5rem 0 1.5rem;
+      border-top: 1px solid var(--line);
+    }
+    .letter-section:first-of-type { border-top: none; }
+    .letter-heading {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--brand);
+      margin-bottom: 1.25rem;
+    }
+
+    /* Term definition */
+    .term-row {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .term-row:last-child { border-bottom: none; }
+    .term-name {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
+    }
+    .term-def {
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    /* Search */
+    .search-row {
+      max-width: 480px;
+      margin: 0 auto 1rem;
+      position: relative;
+    }
+    .search-row input {
+      padding-left: 2.5rem;
+    }
+    .search-row::before {
+      content: "⌕";
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 1.1rem;
+      z-index: 1;
+    }
+
+    .no-results {
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="education"></div>
+
+  <!-- ============== Hero ============== -->
+  <section class="section" style="padding-bottom: 1rem;">
+    <div class="container-narrow" style="text-align:center;">
+      <h1 style="font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 2rem;">Real Estate Terminology Dictionary</h1>
+      <div style="max-width: 480px; margin: 0 auto 2rem;">
+        <div style="aspect-ratio: 16/10; background-image:url('https://images.unsplash.com/photo-1655720357872-ce227e4164ba?w=1200&q=80'); background-size:cover; background-position:center; border-radius: 16px;"></div>
+      </div>
+      <p style="color: var(--muted); font-size: 1.05rem; max-width: 540px; margin: 0 auto;">
+        A compilation of pertinent terms you'll want to know to be a successful home buyer or seller.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============== Search ============== -->
+  <section style="padding: 1.5rem 0 1rem;">
+    <div class="container">
+      <div class="search-row">
+        <input type="text" id="searchBox" class="input" placeholder="Search terms — e.g. 'escrow', 'PMI'">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== A-Z Jump Nav ============== -->
+  <nav class="az-nav" id="azNav">
+    <!-- Filled by JS -->
+  </nav>
+
+  <!-- ============== Glossary ============== -->
+  <section style="padding: 1rem 0 4rem;">
+    <div class="container-narrow" id="glossaryRoot">
+      <!-- Filled by JS -->
+    </div>
+    <div id="noResults" class="no-results container-narrow" style="display:none;">
+      No terms match your search. Try a different word.
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ---------- Glossary data ----------
+    const GLOSSARY = {
+      A: [
+        { term: "Adjustable-Rate Mortgage (ARM)", def: "A home loan with an interest rate that changes periodically based on market conditions, typically after an initial fixed-rate period." },
+        { term: "Amortization", def: "The process of paying off a loan through regular payments that cover both principal and interest over time." },
+        { term: "Annual Percentage Rate (APR)", def: "The total cost of borrowing, including interest and lender fees, expressed as a percentage." },
+        { term: "Appraisal", def: "A professional evaluation of a property's market value, conducted by a licensed appraiser, typically required by lenders before approving a mortgage." },
+        { term: "Appreciation", def: "The increase in a property's value over time due to market conditions or improvements." },
+        { term: "As-Is Condition", def: "A property being sold in its current state, with no repairs or upgrades made by the seller." }
+      ],
+      B: [
+        { term: "Balloon Mortgage", def: "A mortgage that requires a large lump-sum payment at the end of the loan term after smaller periodic payments." },
+        { term: "Buyer's Agent", def: "A real estate professional representing the interests of a home buyer in a transaction." },
+        { term: "Bridge Loan", def: "A short-term loan used to finance a new home purchase while waiting for the sale of an existing home." }
+      ],
+      C: [
+        { term: "Closing", def: "The final step in a real estate transaction where ownership is legally transferred from seller to buyer." },
+        { term: "Closing Costs", def: "Fees paid at closing, including lender fees, title insurance, attorney fees, and escrow payments, typically ranging from 2% to 5% of the home's purchase price." },
+        { term: "Commission", def: "A fee paid to real estate agents, usually a percentage of the home's sale price." },
+        { term: "Comparative Market Analysis (CMA)", def: "A report that evaluates similar recently sold homes to determine a property's fair market value." },
+        { term: "Contingency", def: "A condition in a real estate contract that must be met before the transaction can proceed (e.g., home inspection or financing approval)." }
+      ],
+      D: [
+        { term: "Deed", def: "A legal document that transfers ownership of a property from seller to buyer." },
+        { term: "Down Payment", def: "The upfront payment made by a buyer toward the purchase price, typically ranging from 3% to 20% of the home's value." },
+        { term: "Due Diligence", def: "The process of thoroughly investigating a property before finalizing a purchase, including inspections, surveys, and title checks." }
+      ],
+      E: [
+        { term: "Earnest Money Deposit (EMD)", def: "A buyer's deposit to show commitment to purchasing a property, typically held in escrow until closing." },
+        { term: "Easement", def: "A legal right allowing someone else to use part of a property for a specific purpose (e.g., utility access)." },
+        { term: "Equity", def: "The difference between a home's market value and the remaining mortgage balance." },
+        { term: "Escrow", def: "A third-party account where funds (such as deposits and property taxes) are held until conditions of a transaction are met." },
+        { term: "Escrow Agent", def: "A neutral party who manages the escrow process and ensures contract terms are met before closing." }
+      ],
+      F: [
+        { term: "Fair Market Value", def: "The price a property would likely sell for in an open and competitive market." },
+        { term: "Fixed-Rate Mortgage", def: "A home loan with an interest rate that remains constant throughout the life of the loan." },
+        { term: "Foreclosure", def: "The legal process where a lender takes ownership of a property due to the homeowner's failure to make mortgage payments." }
+      ],
+      G: [
+        { term: "Good Faith Estimate (GFE)", def: "A document outlining expected loan costs and fees provided to borrowers when applying for a mortgage." },
+        { term: "Government-Backed Loan", def: "A mortgage insured or guaranteed by a government agency, such as FHA, VA, or USDA loans." }
+      ],
+      H: [
+        { term: "Home Inspection", def: "A professional evaluation of a property's condition, including its structure, systems, and appliances." },
+        { term: "Homeowner's Association (HOA)", def: "A governing body that enforces rules and maintains shared areas in certain residential communities." },
+        { term: "Homeowner's Insurance", def: "A policy protecting against damage or loss due to fire, theft, weather, and liability claims." }
+      ],
+      I: [
+        { term: "Interest Rate", def: "The percentage charged by a lender on the amount borrowed for a mortgage." },
+        { term: "Investment Property", def: "Real estate purchased for income generation rather than personal residence." }
+      ],
+      J: [
+        { term: "Joint Tenancy", def: "A form of property ownership where two or more individuals share equal ownership rights." }
+      ],
+      L: [
+        { term: "Lien", def: "A legal claim against a property for unpaid debts, such as mortgages or taxes." },
+        { term: "Loan-to-Value Ratio (LTV)", def: "A measure used by lenders comparing the loan amount to the property's value; a lower LTV indicates lower risk." }
+      ],
+      M: [
+        { term: "Mortgage", def: "A loan used to purchase a home, where the property serves as collateral." },
+        { term: "Mortgage Pre-Approval", def: "A lender's preliminary approval stating how much a buyer is qualified to borrow based on their financial status." }
+      ],
+      N: [
+        { term: "Notary Public", def: "An official authorized to verify signatures and documents in real estate transactions." }
+      ],
+      O: [
+        { term: "Offer", def: "A formal proposal from a buyer to purchase a property under specified terms." }
+      ],
+      P: [
+        { term: "Pre-Qualification", def: "An initial assessment of a borrower's finances to estimate how much they may be able to borrow." },
+        { term: "Principal", def: "The amount borrowed in a mortgage, excluding interest." },
+        { term: "Private Mortgage Insurance (PMI)", def: "Insurance required for conventional loans when a buyer puts down less than 20%, protecting the lender in case of default." }
+      ],
+      R: [
+        { term: "Real Estate Agent", def: "A licensed professional who helps buyers and sellers navigate property transactions." },
+        { term: "Real Estate Appraiser", def: "A professional who determines the value of a property for mortgage or tax purposes." },
+        { term: "Refinancing", def: "Replacing an existing mortgage with a new loan, often to secure a lower interest rate or better terms." }
+      ],
+      S: [
+        { term: "Survey", def: "A detailed map outlining property boundaries, structures, and easements, often required by lenders or title companies." },
+        { term: "Short Sale", def: "A home sale where the seller owes more on the mortgage than the home is worth, requiring lender approval." }
+      ],
+      T: [
+        { term: "Title", def: "The legal document proving property ownership." },
+        { term: "Title Insurance", def: "A policy protecting buyers and lenders from legal claims against the property's ownership." }
+      ],
+      U: [
+        { term: "Underwriting", def: "The process where a lender evaluates a borrower's financial history and the property's value before approving a mortgage." }
+      ],
+      V: [
+        { term: "VA Loan", def: "A government-backed mortgage for eligible U.S. military veterans and service members, typically requiring no down payment." }
+      ],
+      W: [
+        { term: "Walk-Through", def: "A final inspection before closing to ensure the property is in the agreed-upon condition." },
+        { term: "Warranty Deed", def: "A document that guarantees the seller holds clear title to the property and has the right to sell it." }
+      ]
+    };
+
+    const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+    // ---------- Build A-Z nav ----------
+    const azNav = document.getElementById("azNav");
+    azNav.innerHTML = ALPHABET.map(L => {
+      const hasTerms = !!GLOSSARY[L];
+      return `<a href="#letter-${L}" class="az-link ${hasTerms ? "" : "disabled"}">${L}</a>`;
+    }).join("");
+
+    // ---------- Render glossary ----------
+    function renderGlossary(filter) {
+      const root = document.getElementById("glossaryRoot");
+      const noResults = document.getElementById("noResults");
+      const q = (filter || "").trim().toLowerCase();
+
+      let html = "";
+      let visibleCount = 0;
+
+      Object.keys(GLOSSARY).forEach(L => {
+        const matches = GLOSSARY[L].filter(item =>
+          !q || item.term.toLowerCase().includes(q) || item.def.toLowerCase().includes(q)
+        );
+        if (matches.length === 0) return;
+        visibleCount += matches.length;
+        html += `
+          <div class="letter-section" id="letter-${L}">
+            <div class="letter-heading">${L}</div>
+            ${matches.map(item => `
+              <div class="term-row">
+                <div class="term-name">${item.term}</div>
+                <div class="term-def">${item.def}</div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      });
+
+      root.innerHTML = html;
+      noResults.style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    // ---------- Wire up search ----------
+    const searchBox = document.getElementById("searchBox");
+    searchBox.addEventListener("input", e => renderGlossary(e.target.value));
+
+    // Initial render
+    renderGlossary();
+  </script>
+</body>
+</html>

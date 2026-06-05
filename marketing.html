@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketing — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* === Tier banner === */
+    .tier-banner { background: linear-gradient(135deg, #2e7d4f 0%, #1f5d3a 100%); color:white; border-radius:16px; padding:1.5rem 1.75rem; display:flex; justify-content:space-between; align-items:center; gap:1.5rem; flex-wrap:wrap; }
+    .tier-banner h3 { margin:0; font-size:1.1rem; font-weight:600; color:white; }
+    .tier-banner .sub { font-size:0.9rem; opacity:0.92; margin-top:0.25rem; }
+    .tier-banner .tier-name { display:inline-block; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.14em; font-weight:700; background:rgba(255,255,255,0.18); padding:0.3rem 0.7rem; border-radius:999px; margin-bottom:0.5rem; }
+
+    /* === Yard sign customizer === */
+    .customizer-grid { display:grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap:3rem; align-items:flex-start; }
+
+    /* The sign mockup */
+    .yard-sign-stage { background:linear-gradient(180deg, #f0eee9 0%, #e6e2d8 60%, #d8d2c4 100%); border-radius:20px; padding:2.5rem 1rem 1.5rem; display:flex; flex-direction:column; align-items:center; min-height:480px; position:relative; overflow:hidden; }
+    .yard-sign-stage::before { content:""; position:absolute; left:0; right:0; bottom:0; height:30%; background:linear-gradient(180deg, transparent, rgba(120,100,60,0.18)); }
+
+    .yard-sign { width:280px; background:white; border-radius:8px; box-shadow:0 12px 32px rgba(0,0,0,0.22); position:relative; z-index:2; overflow:hidden; }
+    .yard-sign.color-green .sign-header { background:#2e7d4f; }
+    .yard-sign.color-green .sign-border { border-color:#2e7d4f; }
+    .yard-sign.color-black .sign-header { background:#1a1a1a; }
+    .yard-sign.color-black .sign-border { border-color:#1a1a1a; }
+    .yard-sign.color-navy .sign-header { background:#1f3a5c; }
+    .yard-sign.color-navy .sign-border { border-color:#1f3a5c; }
+    .yard-sign.color-red .sign-header { background:#b03a2e; }
+    .yard-sign.color-red .sign-border { border-color:#b03a2e; }
+
+    .sign-border { border:4px solid #2e7d4f; border-radius:6px; }
+    .sign-header { background:#2e7d4f; color:white; text-align:center; padding:0.85rem 0.5rem; font-weight:800; letter-spacing:0.08em; }
+    .sign-header .top-line { font-size:0.72rem; opacity:0.85; margin-bottom:0.2rem; letter-spacing:0.18em; }
+    .sign-header .main { font-size:1.5rem; letter-spacing:0.04em; }
+    .sign-body { padding:1rem 0.85rem; text-align:center; }
+    .sign-body .addr { font-weight:700; color:#1a1a1a; font-size:0.95rem; letter-spacing:-0.01em; margin-bottom:0.25rem; }
+    .sign-body .meta { font-size:0.72rem; color:#6a6a6a; margin-bottom:0.85rem; }
+    .sign-body .phone-row { display:flex; align-items:center; justify-content:center; gap:0.75rem; padding:0.6rem 0; border-top:1px solid #e6e4df; border-bottom:1px solid #e6e4df; margin:0.6rem 0; }
+    .sign-body .phone { font-weight:700; font-size:1.05rem; color:#1a1a1a; letter-spacing:-0.01em; }
+    .sign-body .qr-row { display:flex; align-items:center; justify-content:center; gap:0.6rem; margin-top:0.65rem; }
+    .sign-body .qr { width:48px; height:48px; background:#1a1a1a; border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background-image:radial-gradient(white 1px, transparent 1px); background-size:5px 5px; background-position:center; }
+    .sign-body .scan-label { font-size:0.62rem; line-height:1.2; color:#666; text-align:left; }
+    .sign-body .footer { font-size:0.62rem; color:#999; padding-top:0.4rem; letter-spacing:0.08em; text-transform:uppercase; font-weight:600; }
+
+    /* Sign stake */
+    .sign-stake { width:8px; height:60px; background:#5a5045; margin-top:-2px; position:relative; z-index:1; border-radius:0 0 2px 2px; }
+    .grass-shadow { width:120px; height:14px; background:radial-gradient(ellipse, rgba(0,0,0,0.18), transparent 70%); margin-top:-6px; z-index:0; }
+
+    /* Customization panel */
+    .custom-panel h3 { margin:0 0 0.85rem; font-size:1.1rem; font-weight:600; }
+    .custom-panel .field { margin-bottom:1.25rem; }
+    .custom-panel label.label { display:block; font-size:0.78rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.4rem; }
+    .custom-panel input[type=text], .custom-panel input[type=tel] { width:100%; padding:0.65rem 0.85rem; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:0.95rem; }
+    .swatch-row { display:flex; gap:0.5rem; }
+    .swatch { width:36px; height:36px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:all 0.15s ease; }
+    .swatch.selected { border-color:var(--ink); transform:scale(1.1); }
+    .toggle-row { display:flex; gap:0.5rem; }
+    .toggle-row label { flex:1; padding:0.65rem; text-align:center; border:1px solid var(--line); border-radius:10px; font-size:0.85rem; cursor:pointer; background:white; }
+    .toggle-row input { display:none; }
+    .toggle-row input:checked + span { background:var(--ink); color:white; border-radius:10px; padding:0.55rem 0.6rem; margin:-0.55rem -0.6rem; display:block; }
+
+    /* === Add-ons grid === */
+    .addon-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:1.25rem; }
+    .addon-card { background:white; border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .addon-card:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.06); }
+    .addon-card .preview { height:160px; background:var(--cream, #faf8f4); display:flex; align-items:center; justify-content:center; border-bottom:1px solid var(--line); position:relative; overflow:hidden; }
+    .addon-card .preview .icon { font-size:3rem; opacity:0.8; }
+    .addon-card .body { padding:1.25rem; flex:1; display:flex; flex-direction:column; }
+    .addon-card h4 { margin:0 0 0.35rem; font-size:1.02rem; font-weight:600; }
+    .addon-card .desc { font-size:0.85rem; color:var(--muted); margin-bottom:1rem; flex:1; line-height:1.5; }
+    .addon-card .price-row { display:flex; justify-content:space-between; align-items:center; }
+    .addon-card .price { font-weight:700; font-size:1.05rem; letter-spacing:-0.02em; }
+    .addon-card .price.free { color:#2e7d4f; }
+    .addon-card .add-btn { padding:0.4rem 0.85rem; font-size:0.78rem; }
+
+    .addon-tag { position:absolute; top:0.75rem; right:0.75rem; background:#2e7d4f; color:white; font-size:0.65rem; font-weight:700; padding:0.25rem 0.55rem; border-radius:999px; letter-spacing:0.06em; text-transform:uppercase; }
+
+    /* Preview mockups inside addon cards */
+    .flyer-mock { width:100px; height:130px; background:white; border:1px solid #e0e0e0; border-radius:3px; box-shadow:0 4px 14px rgba(0,0,0,0.08); display:flex; flex-direction:column; padding:0.5rem; gap:0.25rem; transform:rotate(-3deg); }
+    .flyer-mock .photo-bar { height:35px; background:#d4d2cd; border-radius:2px; }
+    .flyer-mock .bar { height:4px; background:#e6e4df; border-radius:1px; }
+    .flyer-mock .bar.short { width:60%; }
+    .flyer-mock .price-mock { height:8px; width:50%; background:#2e7d4f; border-radius:1px; margin-top:auto; }
+
+    .postcard-mock { display:flex; gap:0.4rem; transform:rotate(-5deg); }
+    .postcard-mock .card { width:80px; height:55px; background:white; border:1px solid #e0e0e0; border-radius:3px; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+    .postcard-mock .card.front { background:linear-gradient(135deg, #d4d2cd 50%, white 50%); }
+
+    .social-mock { display:grid; grid-template-columns:repeat(3, 36px); gap:4px; }
+    .social-mock .tile { width:36px; height:36px; border-radius:6px; background:#2e7d4f; }
+    .social-mock .tile:nth-child(2) { background:#1a1a1a; }
+    .social-mock .tile:nth-child(3) { background:#d4d2cd; }
+    .social-mock .tile:nth-child(4) { background:#1f3a5c; }
+    .social-mock .tile:nth-child(5) { background:#b03a2e; }
+    .social-mock .tile:nth-child(6) { background:#6b4c9a; }
+
+    .rider-mock { display:flex; flex-direction:column; gap:4px; align-items:center; transform:rotate(-2deg); }
+    .rider-mock .strip { width:120px; height:18px; background:#b03a2e; color:white; font-size:0.55rem; display:flex; align-items:center; justify-content:center; font-weight:700; letter-spacing:0.08em; border-radius:2px; }
+    .rider-mock .strip.alt { background:#2e7d4f; }
+
+    .arrow-mock { display:flex; gap:4px; transform:rotate(-3deg); }
+    .arrow-mock .arrow { width:42px; height:28px; background:#2e7d4f; clip-path:polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%); }
+
+    @media (max-width: 880px) {
+      .customizer-grid { grid-template-columns: 1fr; gap:2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="dashboard" data-loggedin="true" data-user="Bryon" data-role="seller"></div>
+
+  <!-- ============== Header ============== -->
+  <section style="padding: 2.5rem 0 1rem;">
+    <div class="container">
+      <div class="eyebrow" style="margin-bottom:0.4rem;">Seller tools · 412 Magnolia Lane</div>
+      <h1 style="font-size: clamp(2rem, 3.5vw, 2.5rem); margin:0;">Marketing materials</h1>
+      <p style="color:var(--muted); margin:0.5rem 0 0; max-width:640px;">Get the word out about your listing. Customize your free yard sign, print open house flyers, send neighborhood postcards, and more — all delivered straight to your door.</p>
+    </div>
+  </section>
+
+  <!-- ============== Tier banner ============== -->
+  <section style="padding: 1rem 0;">
+    <div class="container">
+      <div class="tier-banner">
+        <div>
+          <span class="tier-name">Savvy Seller</span>
+          <h3>Your yard sign is on us.</h3>
+          <div class="sub">Customize it below — Abode covers the design, printing, and shipping at no extra cost.</div>
+        </div>
+        <a href="pricing.html" style="color:white; font-size:0.85rem; opacity:0.9; text-decoration:underline; white-space:nowrap;">View plan benefits →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Yard sign customizer ============== -->
+  <section style="padding: 2.5rem 0 1.5rem;">
+    <div class="container">
+      <div style="margin-bottom:1.75rem;">
+        <h2 style="margin:0; font-size:1.5rem;">Customize your yard sign</h2>
+        <p style="color:var(--muted); margin:0.4rem 0 0; font-size:0.95rem;">18" × 24" durable corrugated plastic · weatherproof · ships in 5–7 business days · includes metal stake.</p>
+      </div>
+
+      <div class="customizer-grid">
+
+        <!-- Yard sign stage (preview) -->
+        <div class="yard-sign-stage">
+          <div class="yard-sign color-green" id="yardSign">
+            <div class="sign-border">
+              <div class="sign-header">
+                <div class="top-line">FOR SALE</div>
+                <div class="main" id="signTitle">BY OWNER</div>
+              </div>
+              <div class="sign-body">
+                <div class="addr" id="signAddr">412 Magnolia Lane</div>
+                <div class="meta" id="signMeta">4 BED · 3 BATH · 2,840 SQ FT</div>
+                <div class="phone-row">
+                  <span style="font-size:0.9rem;">📞</span>
+                  <span class="phone" id="signPhone">(828) 555-0142</span>
+                </div>
+                <div class="qr-row">
+                  <div class="qr"></div>
+                  <div class="scan-label">Scan for photos<br>&amp; tour booking</div>
+                </div>
+                <div class="footer" style="margin-top:0.6rem;">Powered by Abode</div>
+              </div>
+            </div>
+          </div>
+          <div class="sign-stake"></div>
+          <div class="grass-shadow"></div>
+        </div>
+
+        <!-- Customization panel -->
+        <div class="custom-panel">
+
+          <div class="field">
+            <label class="label">Headline</label>
+            <div class="toggle-row" id="headlineToggle">
+              <label><input type="radio" name="headline" value="BY OWNER" checked><span>For Sale by Owner</span></label>
+              <label><input type="radio" name="headline" value="ABODE"><span>For Sale on Abode</span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Color scheme</label>
+            <div class="swatch-row" id="swatchRow">
+              <div class="swatch selected" data-color="green" style="background:#2e7d4f;" title="Brand green"></div>
+              <div class="swatch" data-color="black" style="background:#1a1a1a;" title="Classic black"></div>
+              <div class="swatch" data-color="navy" style="background:#1f3a5c;" title="Navy"></div>
+              <div class="swatch" data-color="red" style="background:#b03a2e;" title="Red"></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Property address</label>
+            <input type="text" id="inputAddr" value="412 Magnolia Lane" placeholder="412 Magnolia Lane">
+          </div>
+
+          <div class="field">
+            <label class="label">Property details (shown below address)</label>
+            <input type="text" id="inputMeta" value="4 BED · 3 BATH · 2,840 SQ FT" placeholder="4 BED · 3 BATH · 2,840 SQ FT">
+          </div>
+
+          <div class="field">
+            <label class="label">Phone number</label>
+            <input type="tel" id="inputPhone" value="(828) 555-0142" placeholder="(828) 555-0142">
+          </div>
+
+          <div class="field" style="display:flex; justify-content:space-between; align-items:center; padding:0.85rem 1rem; background:#e7f3ec; border-radius:10px; border:1px solid #2e7d4f33;">
+            <div>
+              <div style="font-size:0.78rem; color:#2e7d4f; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Total</div>
+              <div style="font-size:1.3rem; font-weight:700; color:#2e7d4f; letter-spacing:-0.02em;">FREE</div>
+              <div style="font-size:0.78rem; color:var(--muted);">Included with Savvy Seller</div>
+            </div>
+            <button class="btn btn-primary">Order my sign →</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Additional materials ============== -->
+  <section style="padding: 2.5rem 0 4rem;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:1.75rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <h2 style="margin:0; font-size:1.5rem;">Additional marketing materials</h2>
+          <p style="color:var(--muted); margin:0.4rem 0 0; font-size:0.95rem;">Designed by Abode's in-house team. Printed and shipped within 5–7 business days.</p>
+        </div>
+        <div style="font-size:0.85rem; color:var(--muted);">All prices include design, printing, and shipping.</div>
+      </div>
+
+      <div class="addon-grid">
+
+        <!-- Open House Flyer -->
+        <div class="addon-card">
+          <div class="preview">
+            <div class="flyer-mock">
+              <div class="photo-bar"></div>
+              <div class="bar"></div>
+              <div class="bar short"></div>
+              <div class="bar"></div>
+              <div class="bar short"></div>
+              <div class="price-mock"></div>
+            </div>
+          </div>
+          <div class="body">
+            <h4>Open House Flyers</h4>
+            <p class="desc">Single-page handout with photos, key features, and your contact info. 25 full-color flyers on premium 100lb stock.</p>
+            <div class="price-row">
+              <div class="price">$45</div>
+              <button class="btn btn-outline add-btn">Add to order</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tri-fold Brochure -->
+        <div class="addon-card">
+          <div class="preview">
+            <div style="display:flex; gap:6px; transform:rotate(-3deg);">
+              <div style="width:60px; height:120px; background:white; border:1px solid #e0e0e0; border-radius:3px; box-shadow:0 4px 12px rgba(0,0,0,0.08); padding:0.4rem; display:flex; flex-direction:column; gap:0.25rem;">
+                <div style="height:30px; background:#d4d2cd; border-radius:2px;"></div>
+                <div style="height:3px; background:#e6e4df; border-radius:1px;"></div>
+                <div style="height:3px; background:#e6e4df; border-radius:1px; width:60%;"></div>
+              </div>
+              <div style="width:60px; height:120px; background:white; border:1px solid #e0e0e0; border-radius:3px; box-shadow:0 4px 12px rgba(0,0,0,0.08);"></div>
+              <div style="width:60px; height:120px; background:white; border:1px solid #e0e0e0; border-radius:3px; box-shadow:0 4px 12px rgba(0,0,0,0.08);"></div>
+            </div>
+          </div>
+          <div class="body">
+            <h4>Premium Tri-Fold Brochure</h4>
+            <p class="desc">Beautifully designed multi-page brochure with floor plan, neighborhood details, and full photo gallery. 50 copies.</p>
+            <div class="price-row">
+              <div class="price">$85</div>
+              <button class="btn btn-outline add-btn">Add to order</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Direct Mail Postcards -->
+        <div class="addon-card">
+          <div class="preview">
+            <div class="postcard-mock">
+              <div class="card"></div>
+              <div class="card front"></div>
+            </div>
+          </div>
+          <div class="body">
+            <h4>Neighborhood Postcard Campaign</h4>
+            <p class="desc">"Just Listed" postcards mailed to 100 homes in your zip code. Great for finding move-up or move-down buyers nearby.</p>
+            <div class="price-row">
+              <div class="price">$150</div>
+              <button class="btn btn-outline add-btn">Add to order</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Media Kit (FREE) -->
+        <div class="addon-card">
+          <div class="preview">
+            <div class="addon-tag">Free</div>
+            <div class="social-mock">
+              <div class="tile"></div><div class="tile"></div><div class="tile"></div>
+              <div class="tile"></div><div class="tile"></div><div class="tile"></div>
+            </div>
+          </div>
+          <div class="body">
+            <h4>Social Media Graphics Kit</h4>
+            <p class="desc">10 pre-designed posts sized for Instagram, Facebook, and Nextdoor. Ready to download and share — no design skills needed.</p>
+            <div class="price-row">
+              <div class="price free">Free</div>
+              <button class="btn btn-primary add-btn">Download</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Yard Sign Riders -->
+        <div class="addon-card">
+          <div class="preview">
+            <div class="rider-mock">
+              <div class="strip">NEW PRICE</div>
+              <div class="strip alt">OPEN SUNDAY</div>
+              <div class="strip">REDUCED</div>
+            </div>
+          </div>
+          <div class="body">
+            <h4>Yard Sign Rider Add-ons</h4>
+            <p class="desc">6" × 24" attention-grabbers that clip onto your main sign. Choose from "New Price", "Open Sunday", "Reduced", "Under Contract", and more.</p>
+            <div class="price-row">
+              <div class="price">$20 ea.</div>
+              <button class="btn btn-outline add-btn">Customize</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Directional Signs -->
+        <div class="addon-card">
+          <div class="preview">
+            <div class="arrow-mock">
+              <div class="arrow"></div>
+              <div class="arrow"></div>
+              <div class="arrow"></div>
+            </div>
+          </div>
+          <div class="body">
+            <h4>Open House Directional Signs</h4>
+            <p class="desc">Set of 6 arrow-shaped signs with wire stakes. Guide visitors from the main road to your open house.</p>
+            <div class="price-row">
+              <div class="price">$55</div>
+              <button class="btn btn-outline add-btn">Add to order</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drone Photos -->
+        <div class="addon-card">
+          <div class="preview" style="background:linear-gradient(180deg, #87b3d4 0%, #c8d8e4 70%, #8fa890 100%);">
+            <span class="icon" style="font-size:3.5rem; opacity:0.65;">🛰️</span>
+          </div>
+          <div class="body">
+            <h4>Professional Drone Photos</h4>
+            <p class="desc">15 aerial shots of your home and lot, captured by a licensed drone pilot. Includes overhead, perimeter, and contextual neighborhood views.</p>
+            <div class="price-row">
+              <div class="price">$199</div>
+              <button class="btn btn-outline add-btn">Schedule</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Matterport Tour -->
+        <div class="addon-card">
+          <div class="preview">
+            <div style="width:120px; height:80px; background:#1a1a1a; border-radius:8px; position:relative; display:flex; align-items:center; justify-content:center;">
+              <div style="width:50px; height:50px; border:3px solid #2e7d4f; border-radius:50%; position:relative;">
+                <div style="position:absolute; inset:0; border-top:3px solid white; border-radius:50%; transform:rotate(45deg);"></div>
+              </div>
+              <div style="position:absolute; bottom:-8px; right:-8px; background:#2e7d4f; color:white; font-size:0.55rem; font-weight:700; padding:0.2rem 0.45rem; border-radius:4px; letter-spacing:0.06em;">3D</div>
+            </div>
+          </div>
+          <div class="body">
+            <h4>Matterport Virtual Tour</h4>
+            <p class="desc">Immersive 3D walkthrough that buyers can explore from anywhere. Includes dollhouse view, floor plan, and measurement tools. Listings with 3D tours sell 31% faster.</p>
+            <div class="price-row">
+              <div class="price">$249</div>
+              <button class="btn btn-outline add-btn">Schedule</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    // ---------- Yard sign live preview ----------
+    const sign = document.getElementById("yardSign");
+    const signTitle = document.getElementById("signTitle");
+    const signAddr = document.getElementById("signAddr");
+    const signMeta = document.getElementById("signMeta");
+    const signPhone = document.getElementById("signPhone");
+
+    // Headline toggle
+    document.querySelectorAll('input[name="headline"]').forEach(r => {
+      r.addEventListener("change", e => {
+        signTitle.textContent = e.target.value;
+      });
+    });
+
+    // Color swatches
+    document.querySelectorAll(".swatch").forEach(s => {
+      s.addEventListener("click", () => {
+        document.querySelectorAll(".swatch").forEach(x => x.classList.remove("selected"));
+        s.classList.add("selected");
+        sign.className = "yard-sign color-" + s.dataset.color;
+      });
+    });
+
+    // Text inputs
+    document.getElementById("inputAddr").addEventListener("input", e => signAddr.textContent = e.target.value || "Your address");
+    document.getElementById("inputMeta").addEventListener("input", e => signMeta.textContent = e.target.value || "Property details");
+    document.getElementById("inputPhone").addEventListener("input", e => signPhone.textContent = e.target.value || "Your phone");
+  </script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Estate Road Map — Abode Education Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ===== Phase color tokens ===== */
+    .phase-pre      { --pc: #2d5a3d; --pc-soft: #e6efe9; }
+    .phase-offer    { --pc: #1f6b7c; --pc-soft: #e1eff2; }
+    .phase-contract { --pc: #8a5a2c; --pc-soft: #f3e9da; }
+    .phase-closing  { --pc: #a23e2e; --pc-soft: #f6e2dd; }
+    .phase-post     { --pc: #5a4c8a; --pc-soft: #ebe7f3; }
+
+    /* ===== Canvas (relative parent for the road + tiles) ===== */
+    .roadmap-canvas {
+      position: relative;
+      padding: 2rem 0 4rem;
+    }
+    .container.canvas-container {
+      max-width: 1080px;
+      position: relative;
+    }
+
+    /* ===== Background road (blurred SVG, behind everything) ===== */
+    .road-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .road-bg svg {
+      width: 100%;
+      height: 100%;
+      filter: blur(7px);
+      opacity: 0.55;
+    }
+    .road-asphalt {
+      fill: none;
+      stroke: #7a736a;
+      stroke-width: 7;
+      stroke-linecap: round;
+    }
+    .road-stripe {
+      fill: none;
+      stroke: #fbf9f4;
+      stroke-width: 1.2;
+      stroke-dasharray: 4 4;
+    }
+
+    /* ===== Tile layer ===== */
+    .tiles-layer {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== Phase pill (full-width banner above each phase's tiles) ===== */
+    .phase-marker-wrap {
+      text-align: center;
+      margin: 2.5rem 0 1.75rem;
+      position: relative;
+      z-index: 2;
+    }
+    .phase-marker-wrap:first-child { margin-top: 0; }
+    .phase-marker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.7rem 1.5rem;
+      background: var(--pc);
+      color: white;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+    .phase-marker-num {
+      background: rgba(255,255,255,0.25);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.74rem;
+    }
+
+    /* ===== Step tile ===== */
+    .step-tile {
+      display: block;
+      width: 47%;
+      background: white;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--pc);
+      border-radius: 16px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 4px 22px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .step-tile:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 36px rgba(0,0,0,0.1);
+    }
+    .step-tile.side-left  { margin-left: 0;    margin-right: auto; }
+    .step-tile.side-right { margin-left: auto; margin-right: 0;    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--pc);
+      color: white;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 0.85rem;
+      letter-spacing: -0.02em;
+    }
+    .step-tile h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 0 0.35rem;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+    .step-tile .step-who {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: italic;
+      margin: 0 0 0.7rem;
+      letter-spacing: 0.01em;
+    }
+    .step-tile .step-blurb {
+      font-size: 0.92rem;
+      color: var(--ink-soft, #4a4a4a);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ===== Final destination ===== */
+    .destination {
+      margin-top: 2rem;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+      color: white;
+      padding: 2.5rem 2rem;
+      border-radius: 16px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .destination h2 { color: white; margin-bottom: 0.5rem; }
+    .destination p { opacity: 0.9; margin-bottom: 1.5rem; }
+
+    /* ===== Mobile: full-width stack, hide blurred road behind ===== */
+    @media (max-width: 760px) {
+      .step-tile {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
+      .road-bg { display: none; }
+      .step-tile h3 { font-size: 1.1rem; }
+      .step-num { width: 38px; height: 38px; font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="education"></div>
+
+  <!-- ============== Hero ============== -->
+  <section style="padding: 3rem 0 1.5rem;">
+    <div class="container-narrow" style="text-align:center;">
+      <div style="font-size:0.85rem; color:var(--muted); margin-bottom:1rem;">
+        <a href="education.html">Education Center</a>
+        <span style="margin: 0 0.4rem;">›</span>
+        Real Estate Road Map
+      </div>
+      <h1 style="font-size: clamp(2.5rem, 5vw, 3.75rem); margin-bottom: 1.25rem;">Real Estate Road Map</h1>
+      <p style="color: var(--muted); font-size: 1.05rem; max-width: 560px; margin: 0 auto;">
+        Twenty-two stops. Five phases. The full journey from &quot;let's start looking&quot; to &quot;here are your keys&quot; &mdash; laid out so you always know where you are and what comes next.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============== Roadmap canvas ============== -->
+  <section class="roadmap-canvas">
+    <div class="container canvas-container">
+
+      <!-- Blurred snaking road in the background -->
+      <div class="road-bg">
+        <svg viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true">
+          <!-- Outer asphalt stroke (thick warm gray) -->
+          <path class="road-asphalt"
+                d="M 50 0
+                   C 78 60, 22 130, 50 200
+                   C 78 270, 22 340, 50 410
+                   C 78 480, 22 550, 50 620
+                   C 78 690, 22 760, 50 830
+                   C 78 900, 50 970, 50 1000" />
+          <!-- Dashed lane stripe down the middle -->
+          <path class="road-stripe"
+                d="M 50 0
+                   C 78 60, 22 130, 50 200
+                   C 78 270, 22 340, 50 410
+                   C 78 480, 22 550, 50 620
+                   C 78 690, 22 760, 50 830
+                   C 78 900, 50 970, 50 1000" />
+        </svg>
+      </div>
+
+      <!-- Tiles ride above the road -->
+      <div class="tiles-layer">
+
+        <!-- ============== Phase 1: Pre-Transaction ============== -->
+        <div class="phase-marker-wrap phase-pre">
+          <span class="phase-marker"><span class="phase-marker-num">1</span> Pre-Transaction</span>
+        </div>
+
+        <a href="mortgages.html" class="step-tile side-left phase-pre">
+          <div class="step-num">1</div>
+          <h3>Get Pre-Approved</h3>
+          <p class="step-who">Buyer · Lender</p>
+          <p class="step-blurb">Prove to sellers you can afford the home before you ever tour it. The strength of your pre-approval shapes which offers get serious attention.</p>
+        </a>
+
+        <a href="create-listing.html" class="step-tile side-right phase-pre">
+          <div class="step-num">2</div>
+          <h3>List the Property</h3>
+          <p class="step-who">Seller</p>
+          <p class="step-blurb">Publish your home on Abode. The listing carries the photos, the description, and the schedule of available showings.</p>
+        </a>
+
+        <a href="search.html" class="step-tile side-left phase-pre">
+          <div class="step-num">3</div>
+          <h3>Home Search</h3>
+          <p class="step-who">Buyer</p>
+          <p class="step-blurb">Filter, save, and tour. The right home is the one that fits your timeline, your budget, and your needs &mdash; in roughly that order.</p>
+        </a>
+
+        <!-- ============== Phase 2: Offer ============== -->
+        <div class="phase-marker-wrap phase-offer">
+          <span class="phase-marker"><span class="phase-marker-num">2</span> Offer</span>
+        </div>
+
+        <a href="make-offer.html" class="step-tile side-right phase-offer">
+          <div class="step-num">4</div>
+          <h3>Submit an Offer</h3>
+          <p class="step-who">Buyer</p>
+          <p class="step-blurb">Send the price, terms, and contingencies in writing. The clock starts the moment the seller receives it.</p>
+        </a>
+
+        <a href="negotiation.html" class="step-tile side-left phase-offer">
+          <div class="step-num">5</div>
+          <h3>Offer Negotiation</h3>
+          <p class="step-who">Buyer &amp; Seller</p>
+          <p class="step-blurb">Back-and-forth on price, timing, and what's included. The Negotiation Room records every change for both parties.</p>
+        </a>
+
+        <a href="negotiation.html" class="step-tile side-right phase-offer">
+          <div class="step-num">6</div>
+          <h3>Offer Accepted</h3>
+          <p class="step-who">Buyer &amp; Seller</p>
+          <p class="step-blurb">Both parties sign the final terms. The deal moves from &quot;we're discussing&quot; to &quot;we're under contract.&quot;</p>
+        </a>
+
+        <a href="contracts.html" class="step-tile side-left phase-offer">
+          <div class="step-num">7</div>
+          <h3>Earnest Money Deposited</h3>
+          <p class="step-who">Buyer · Title/Escrow</p>
+          <p class="step-blurb">Buyer's good-faith deposit (typically 1&ndash;3% of price) goes into escrow. It signals you mean business.</p>
+        </a>
+
+        <!-- ============== Phase 3: Under Contract ============== -->
+        <div class="phase-marker-wrap phase-contract">
+          <span class="phase-marker"><span class="phase-marker-num">3</span> Under Contract</span>
+        </div>
+
+        <a href="closing-attorneys.html" class="step-tile side-right phase-contract">
+          <div class="step-num">8</div>
+          <h3>Open Title / Escrow</h3>
+          <p class="step-who">Title Company</p>
+          <p class="step-blurb">The title company opens the file, sets up the escrow account, and begins the title search on the property.</p>
+        </a>
+
+        <a href="home-inspections.html" class="step-tile side-left phase-contract">
+          <div class="step-num">9</div>
+          <h3>Home Inspection</h3>
+          <p class="step-who">Buyer · Inspector</p>
+          <p class="step-blurb">An independent inspector walks the property. Buyer typically has 10 days to request repairs, renegotiate, or walk.</p>
+        </a>
+
+        <a href="home-inspections.html" class="step-tile side-right phase-contract">
+          <div class="step-num">10</div>
+          <h3>Inspection Negotiations</h3>
+          <p class="step-who">Buyer &amp; Seller</p>
+          <p class="step-blurb">Buyer asks for repairs, price reductions, or credits. Seller can accept, counter, or refuse the requests.</p>
+        </a>
+
+        <a href="appraisals.html" class="step-tile side-left phase-contract">
+          <div class="step-num">11</div>
+          <h3>Appraisal Ordered</h3>
+          <p class="step-who">Lender · Appraiser</p>
+          <p class="step-blurb">The lender hires an independent appraiser to confirm the property is worth what you're paying for it.</p>
+        </a>
+
+        <a href="mortgages.html" class="step-tile side-right phase-contract">
+          <div class="step-num">12</div>
+          <h3>Loan Processing &amp; Underwriting</h3>
+          <p class="step-who">Buyer · Lender</p>
+          <p class="step-blurb">Final review of your finances. The underwriter approves the loan, conditions it on more documents, or denies it.</p>
+        </a>
+
+        <a href="title-insurance.html" class="step-tile side-left phase-contract">
+          <div class="step-num">13</div>
+          <h3>Title Search &amp; Insurance</h3>
+          <p class="step-who">Title Company</p>
+          <p class="step-blurb">Title company verifies a clear ownership history and issues title insurance to the lender (and optionally to you).</p>
+        </a>
+
+        <a href="homeowners-insurance.html" class="step-tile side-right phase-contract">
+          <div class="step-num">14</div>
+          <h3>Homeowner's Insurance</h3>
+          <p class="step-who">Buyer</p>
+          <p class="step-blurb">Buyer secures a policy and provides proof to the lender. No insurance, no closing &mdash; this is non-negotiable.</p>
+        </a>
+
+        <a href="mortgages.html" class="step-tile side-left phase-contract">
+          <div class="step-num">15</div>
+          <h3>Clear to Close</h3>
+          <p class="step-who">Lender</p>
+          <p class="step-blurb">The lender's final approval. The closing date is locked in and both parties prepare for the closing table.</p>
+        </a>
+
+        <!-- ============== Phase 4: Closing ============== -->
+        <div class="phase-marker-wrap phase-closing">
+          <span class="phase-marker"><span class="phase-marker-num">4</span> Closing</span>
+        </div>
+
+        <a href="closing-roadmap.html" class="step-tile side-right phase-closing">
+          <div class="step-num">16</div>
+          <h3>Final Walk-Through</h3>
+          <p class="step-who">Buyer</p>
+          <p class="step-blurb">Buyer confirms the property is in the agreed-upon condition. Usually 24&ndash;48 hours before closing.</p>
+        </a>
+
+        <a href="closing-roadmap.html" class="step-tile side-left phase-closing">
+          <div class="step-num">17</div>
+          <h3>Closing Disclosure Review</h3>
+          <p class="step-who">Buyer · Lender</p>
+          <p class="step-blurb">Lender provides the final, itemized cost breakdown. Required to be in your hands at least 3 business days before signing.</p>
+        </a>
+
+        <a href="closing-attorneys.html" class="step-tile side-right phase-closing">
+          <div class="step-num">18</div>
+          <h3>Sign Closing Documents</h3>
+          <p class="step-who">Buyer &amp; Seller</p>
+          <p class="step-blurb">Both parties sit at the closing table and sign the deed, the note, and roughly forty other documents.</p>
+        </a>
+
+        <a href="closing-attorneys.html" class="step-tile side-left phase-closing">
+          <div class="step-num">19</div>
+          <h3>Fund &amp; Record</h3>
+          <p class="step-who">Title Co. · Lender</p>
+          <p class="step-blurb">Lender wires the loan funds, the title company records the deed with the county, and ownership officially transfers.</p>
+        </a>
+
+        <a href="closing-roadmap.html" class="step-tile side-right phase-closing">
+          <div class="step-num">20</div>
+          <h3>Keys Handed Over</h3>
+          <p class="step-who">Seller → Buyer</p>
+          <p class="step-blurb">Possession transfers from seller to buyer. Welcome home.</p>
+        </a>
+
+        <!-- ============== Phase 5: Post-Closing ============== -->
+        <div class="phase-marker-wrap phase-post">
+          <span class="phase-marker"><span class="phase-marker-num">5</span> Post-Closing</span>
+        </div>
+
+        <a href="#" class="step-tile side-left phase-post">
+          <div class="step-num">21</div>
+          <h3>Update Address &amp; Utilities</h3>
+          <p class="step-who">Buyer</p>
+          <p class="step-blurb">Forward your mail with USPS, transfer or activate utilities, and update your driver's license and voter registration.</p>
+        </a>
+
+        <a href="mortgages.html" class="step-tile side-right phase-post">
+          <div class="step-num">22</div>
+          <h3>First Mortgage Payment</h3>
+          <p class="step-who">Buyer · Lender</p>
+          <p class="step-blurb">Due roughly 30 days after closing. Confirms your loan servicer and starts the equity-building clock.</p>
+        </a>
+
+      </div>
+
+      <!-- ============== Destination ============== -->
+      <div class="destination">
+        <h2 style="font-size: clamp(1.5rem, 3vw, 2rem);">🎉 You're home.</h2>
+        <p style="font-size: 1.05rem;">That's the whole journey. Every stop above links to a deeper dive in our Education Center.</p>
+        <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+          <a href="get-started.html" class="btn btn-white">Start your journey</a>
+          <a href="education.html" class="btn btn-outline" style="border-color:white; color:white;">Browse Education Topics</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

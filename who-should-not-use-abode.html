@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Who should not use Abode? — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .case-list { display: grid; gap: 1rem; margin: 2rem 0; }
+    .case-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1.5rem 1.75rem;
+      display: flex;
+      gap: 1.1rem;
+      align-items: flex-start;
+    }
+    .case-card .icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #fdf0e0;
+      color: #b86e00;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .case-card h3 {
+      margin: 0 0 0.4rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+    .case-card p {
+      margin: 0;
+      font-size: 0.93rem;
+      color: var(--ink-soft, #4a4a4a);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="abode-way"></div>
+
+  <!-- ============== Hero ============== -->
+  <section style="padding: 3rem 0 1rem;">
+    <div class="container-narrow" style="text-align:center;">
+      <div style="font-size:0.85rem; color:var(--muted); margin-bottom:1rem;">
+        <a href="get-started.html">The Abode Way</a>
+        <span style="margin: 0 0.4rem;">›</span>
+        Who should not use Abode?
+      </div>
+      <div class="eyebrow" style="margin-bottom: 0.6rem;">Honest disclosure</div>
+      <h1 style="font-size: clamp(2.25rem, 4.5vw, 3.25rem); margin: 0 0 1.25rem; line-height: 1.1;">Who should not use Abode?</h1>
+      <p style="color: var(--muted); margin: 0 auto; max-width: 580px; font-size: 1.05rem; line-height: 1.6;">
+        Abode is built for self-directed buyers and sellers who want to take charge of the home buying or selling process. That said, it isn't the right fit for every situation. If any of the cases below applies to you, we'd recommend working with a licensed real estate agent or attorney instead.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============== Cases ============== -->
+  <section style="padding: 1.5rem 0 1rem;">
+    <div class="container-narrow">
+      <div class="case-list">
+
+        <div class="case-card">
+          <div class="icon">!</div>
+          <div>
+            <h3>First-time home buyers without experienced advisors</h3>
+            <p>The buying process has many moving parts that experienced buyers learn through repetition &mdash; offer strategy, inspection negotiation, contingency timelines, lender coordination. If this is your first transaction and you don't have a trusted friend or family member who has bought a home before, the hands-on guidance of a buyer's agent can be worth the cost.</p>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div class="icon">!</div>
+          <div>
+            <h3>Sellers who simply want an agent to do all the work</h3>
+            <p>If commission cost isn't a meaningful factor for you and you'd prefer to outsource the entire process from listing to closing, a traditional full-service agent will deliver that experience. Abode is built for sellers who actively want to participate in their sale.</p>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div class="icon">!</div>
+          <div>
+            <h3>Sellers who'll be out of town for the sales timeline</h3>
+            <p>In-person showings, quick decision-making, and same-day responsiveness are central to a smooth direct sale. If you'll be traveling, deployed, or otherwise unreachable for any extended portion of the listing period and won't be available to host buyer showings, a listing agent is essential.</p>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div class="icon">!</div>
+          <div>
+            <h3>Buyers moving somewhere unfamiliar</h3>
+            <p>If you're relocating to a new city or region where you've never lived, a local buyer's agent can provide context that no amount of internet research replaces. They'll know which neighborhoods feel right for your family, which streets are improving and which are declining, where the school catchment lines actually run, and where local quirks like flood zones, HOA practices, or noise issues might shape your enjoyment of the home. For buyers staying close to home, much of this knowledge is already yours. For buyers moving across the country, it usually isn't &mdash; and a few hours with a local pro can save you years of regret.</p>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div class="icon">!</div>
+          <div>
+            <h3>Properties with any legal grey area on title</h3>
+            <p>Boundary disputes, missing documentation, easements that haven't been recorded, contested ownership &mdash; these all need a real estate attorney to clear up before any sale is attempted. Abode's contract templates aren't designed for these edge cases, and trying to transact around them will create much bigger problems at closing.</p>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div class="icon">!</div>
+          <div>
+            <h3>Anyone in active litigation involving the property</h3>
+            <p>If your property is part of an active lawsuit, divorce proceedings, an estate dispute, or any court-ordered process, those proceedings take precedence over standard listing tools. Your attorney needs to coordinate the sale directly &mdash; Abode is not designed for court-supervised transactions.</p>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div class="icon">!</div>
+          <div>
+            <h3>Properties with tax liens</h3>
+            <p>Federal, state, or local tax liens have to be resolved before clear title can transfer to a buyer. Work with a tax attorney or CPA to clear the lien before listing. Once the lien is released, Abode is a fine path; while it's open, it isn't.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Closing CTA ============== -->
+  <section style="padding: 1.5rem 0 4rem; text-align:center; border-top: 1px solid var(--line);">
+    <div class="container-narrow" style="padding-top: 3rem;">
+      <p style="color: var(--muted); margin: 0 auto 1.5rem; max-width: 480px; line-height: 1.6;">If none of the above applies, you're a great fit. Otherwise, Abode will be here when you're ready.</p>
+      <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+        <a href="get-started.html" class="btn btn-primary">Back to The Abode Way</a>
+        <a href="professionals.html" class="btn btn-outline">Find a professional</a>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

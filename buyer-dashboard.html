@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buyer Dashboard — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* === Stat cards === */
+    .stat-card { background:white; border:1px solid var(--line); border-radius:16px; padding:1.25rem; }
+    .stat-label { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:600; margin-bottom:0.5rem; }
+    .stat-value { font-size:1.75rem; font-weight:700; letter-spacing:-0.02em; color:var(--ink); line-height:1; }
+    .stat-delta { font-size:0.78rem; color:var(--muted); margin-top:0.4rem; }
+    .stat-delta.up { color:#2e7d4f; }
+
+    /* === Calendar === */
+    .calendar { background:white; border:1px solid var(--line); border-radius:20px; padding:1.5rem; }
+    .cal-toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; gap:1rem; }
+    .cal-toolbar h3 { margin:0; font-size:1.1rem; font-weight:600; }
+    .cal-toolbar .week-label { font-size:0.85rem; color:var(--muted); margin-top:0.15rem; }
+    .cal-nav { display:flex; gap:0.4rem; align-items:center; }
+    .cal-nav button { width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:white; cursor:pointer; font-size:1rem; color:var(--ink); }
+    .cal-nav button:hover { background:#faf8f4; }
+    .cal-nav .today-btn { width:auto; padding:0 1rem; border-radius:999px; font-size:0.85rem; font-weight:500; }
+
+    .cal-day-headers { display:grid; grid-template-columns:60px repeat(7, 1fr); border-bottom:1px solid var(--line); padding-bottom:0.6rem; }
+    .cal-day-header { text-align:center; padding:0.3rem 0; }
+    .cal-day-header .dow { font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; font-weight:600; }
+    .cal-day-header .num { font-size:1.1rem; color:var(--ink); font-weight:700; margin-top:0.25rem; letter-spacing:-0.02em; }
+    .cal-day-header.today .num { width:30px; height:30px; background:var(--ink); color:white; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.95rem; }
+
+    .cal-body { display:grid; grid-template-columns:60px repeat(7, 1fr); grid-template-rows:repeat(10, 52px); position:relative; padding-top:0.4rem; }
+    .cal-time-label { grid-column:1; font-size:0.7rem; color:var(--muted); text-align:right; padding-right:0.6rem; transform:translateY(-7px); font-weight:500; }
+    .cal-day-col { grid-row:1 / -1; background-image:linear-gradient(to bottom, #f0eee9 1px, transparent 1px); background-size:100% 52px; border-right:1px solid #f0eee9; }
+    .cal-day-col.first { border-left:1px solid #f0eee9; }
+
+    .cal-event { margin:2px; padding:5px 7px; border-radius:7px; font-size:0.72rem; line-height:1.25; font-weight:500; overflow:hidden; cursor:pointer; position:relative; z-index:2; }
+    .cal-event-title { font-weight:600; font-size:0.72rem; }
+    .cal-event-sub { font-size:0.66rem; opacity:0.85; margin-top:0.15rem; }
+    .cal-event.available { background:rgba(46,125,79,0.07); border:1px dashed #5a9c6f; color:#2e7d4f; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+    .cal-event.available .cal-event-title { color:#2e7d4f; font-size:0.7rem; font-weight:500; }
+    .cal-event.booked { background:#2e7d4f; color:white; }
+    .cal-event.open-house { background:var(--ink, #1a1a1a); color:white; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+    .cal-event.pending { background:rgba(184,110,0,0.1); border:1px solid #d99b3a; color:#b86e00; }
+
+    .cal-legend { display:flex; gap:1.25rem; flex-wrap:wrap; margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid var(--line); font-size:0.82rem; color:var(--muted); align-items:center; }
+    .cal-legend .dot { display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:0.45rem; vertical-align:middle; }
+
+    /* === Sidebar cards === */
+    .side-card { background:white; border:1px solid var(--line); border-radius:16px; padding:1.25rem; margin-bottom:1rem; }
+    .side-card h3 { margin:0 0 0.85rem; font-size:1rem; font-weight:600; }
+
+    .offer-card { background:linear-gradient(135deg, #2e7d4f 0%, #1f5d3a 100%); color:white; border-radius:16px; padding:1.25rem; margin-bottom:1rem; }
+    .offer-card h3 { margin:0 0 0.5rem; font-size:1rem; font-weight:600; color:white; }
+    .offer-card .offer-addr { font-size:0.85rem; opacity:0.9; margin-bottom:0.5rem; }
+    .offer-card .offer-amount { font-size:1.5rem; font-weight:700; letter-spacing:-0.02em; margin-bottom:0.25rem; }
+    .offer-card .offer-status { font-size:0.78rem; opacity:0.85; }
+    .offer-card a { color:white; }
+
+    .saved-home { display:flex; gap:0.85rem; align-items:center; padding:0.65rem 0; border-bottom:1px solid var(--line); text-decoration:none; color:inherit; }
+    .saved-home:last-of-type { border-bottom:none; }
+    .saved-home .thumb { width:56px; height:42px; border-radius:6px; background-size:cover; background-position:center; flex-shrink:0; }
+    .saved-home .info .addr { font-weight:600; font-size:0.85rem; }
+    .saved-home .info .price { font-size:0.78rem; color:var(--muted); margin-top:0.1rem; }
+
+    /* === Upcoming list === */
+    .upcoming-item { display:flex; gap:1rem; padding:1rem; border:1px solid var(--line); border-radius:12px; margin-bottom:0.75rem; background:white; align-items:center; }
+    .upcoming-date { width:64px; flex-shrink:0; text-align:center; }
+    .upcoming-date .mon { font-size:0.7rem; text-transform:uppercase; color:var(--muted); font-weight:600; letter-spacing:0.05em; }
+    .upcoming-date .day { font-size:1.6rem; font-weight:700; color:var(--ink); line-height:1; margin-top:0.15rem; }
+    .upcoming-date .dow { font-size:0.7rem; color:var(--muted); margin-top:0.2rem; }
+    .upcoming-meta { flex:1; }
+    .upcoming-meta .title { font-weight:600; margin-bottom:0.15rem; }
+    .upcoming-meta .time { font-size:0.85rem; color:var(--muted); }
+    .upcoming-status { font-size:0.7rem; padding:0.3rem 0.7rem; border-radius:999px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; }
+    .upcoming-status.confirmed { background:#e7f3ec; color:#2e7d4f; }
+    .upcoming-status.pending { background:#fdf0e0; color:#b86e00; }
+    .upcoming-status.open-house { background:#1a1a1a; color:white; }
+
+    @media (max-width: 1000px) {
+      #mainGrid { grid-template-columns: 1fr !important; }
+    }
+    @media (max-width: 780px) {
+      .cal-body { grid-template-columns: 38px repeat(7, 1fr); }
+      .cal-day-headers { grid-template-columns: 38px repeat(7, 1fr); }
+      .cal-time-label { font-size:0.6rem; padding-right:0.3rem; }
+      .cal-event { padding:3px 4px; font-size:0.62rem; }
+      .cal-event-title { font-size:0.62rem; }
+      .cal-event-sub { display:none; }
+      .cal-day-header .dow { font-size:0.6rem; }
+      .cal-day-header .num { font-size:0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="dashboard" data-loggedin="true" data-user="Jennifer" data-role="buyer"></div>
+
+  <!-- ============== Welcome strip ============== -->
+  <section style="padding: 2rem 0 0.5rem;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:1.5rem; flex-wrap:wrap;">
+        <div>
+          <div class="eyebrow" style="margin-bottom:0.4rem;">Buyer dashboard</div>
+          <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.25rem); margin:0;">Welcome back, Jennifer</h1>
+          <p style="color:var(--muted); margin:0.4rem 0 0;">5 tours this week and 3 new listings matching your saved search.</p>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <a href="negotiation.html" class="btn btn-outline btn-sm">Negotiation Room</a>
+          <a href="my-roadmap.html?role=buyer" class="btn btn-outline btn-sm">My roadmap</a>
+          <a href="search.html" class="btn btn-primary btn-sm">Browse homes</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Stats ============== -->
+  <section style="padding: 1.5rem 0 0.5rem;">
+    <div class="container">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
+        <div class="stat-card">
+          <div class="stat-label">Saved homes</div>
+          <div class="stat-value">12</div>
+          <div class="stat-delta up">↑ 3 new this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Tours this week</div>
+          <div class="stat-value">5</div>
+          <div class="stat-delta">4 confirmed · 1 pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Open houses</div>
+          <div class="stat-value">1</div>
+          <div class="stat-delta">RSVP'd for Sat 5/30</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active offers</div>
+          <div class="stat-value">1</div>
+          <div class="stat-delta">Awaiting response</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Calendar + Sidebar ============== -->
+  <section style="padding: 1.5rem 0;">
+    <div class="container" id="mainGrid" style="display:grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap:1.5rem;">
+
+      <!-- Calendar -->
+      <div class="calendar">
+        <div class="cal-toolbar">
+          <div>
+            <h3>Your tours &amp; open houses</h3>
+            <div class="week-label">Week of May 25 – 31, 2026</div>
+          </div>
+          <div class="cal-nav">
+            <button title="Previous week">‹</button>
+            <button class="today-btn">Today</button>
+            <button title="Next week">›</button>
+          </div>
+        </div>
+
+        <!-- Day headers -->
+        <div class="cal-day-headers">
+          <div></div>
+          <div class="cal-day-header"><div class="dow">Mon</div><div class="num">25</div></div>
+          <div class="cal-day-header"><div class="dow">Tue</div><div class="num">26</div></div>
+          <div class="cal-day-header"><div class="dow">Wed</div><div class="num">27</div></div>
+          <div class="cal-day-header"><div class="dow">Thu</div><div class="num">28</div></div>
+          <div class="cal-day-header"><div class="dow">Fri</div><div class="num">29</div></div>
+          <div class="cal-day-header"><div class="dow">Sat</div><div class="num">30</div></div>
+          <div class="cal-day-header"><div class="dow">Sun</div><div class="num">31</div></div>
+        </div>
+
+        <!-- Body -->
+        <div class="cal-body">
+          <!-- Time labels (col 1) -->
+          <div class="cal-time-label" style="grid-row:1;">9 AM</div>
+          <div class="cal-time-label" style="grid-row:2;">10 AM</div>
+          <div class="cal-time-label" style="grid-row:3;">11 AM</div>
+          <div class="cal-time-label" style="grid-row:4;">12 PM</div>
+          <div class="cal-time-label" style="grid-row:5;">1 PM</div>
+          <div class="cal-time-label" style="grid-row:6;">2 PM</div>
+          <div class="cal-time-label" style="grid-row:7;">3 PM</div>
+          <div class="cal-time-label" style="grid-row:8;">4 PM</div>
+          <div class="cal-time-label" style="grid-row:9;">5 PM</div>
+          <div class="cal-time-label" style="grid-row:10;">6 PM</div>
+
+          <!-- Day column backgrounds (with horizontal gridlines) -->
+          <div class="cal-day-col first" style="grid-column:2;"></div>
+          <div class="cal-day-col" style="grid-column:3;"></div>
+          <div class="cal-day-col" style="grid-column:4;"></div>
+          <div class="cal-day-col" style="grid-column:5;"></div>
+          <div class="cal-day-col" style="grid-column:6;"></div>
+          <div class="cal-day-col" style="grid-column:7;"></div>
+          <div class="cal-day-col" style="grid-column:8;"></div>
+
+          <!-- ===== Events ===== -->
+          <!-- Mon May 25 -->
+          <div class="cal-event booked" style="grid-column:2; grid-row:9;">
+            <div class="cal-event-title">412 Magnolia Ln</div>
+            <div class="cal-event-sub">5:00 PM · Asheville</div>
+          </div>
+
+          <!-- Tue May 26 -->
+          <div class="cal-event booked" style="grid-column:3; grid-row:10;">
+            <div class="cal-event-title">78 Cedar Hollow</div>
+            <div class="cal-event-sub">6:00 PM · Boone</div>
+          </div>
+
+          <!-- Wed May 27 -->
+          <div class="cal-event pending" style="grid-column:4; grid-row:9;">
+            <div class="cal-event-title">22 Brookline Way</div>
+            <div class="cal-event-sub">5:00 PM · Pending</div>
+          </div>
+
+          <!-- Thu May 28 -->
+          <div class="cal-event booked" style="grid-column:5; grid-row:10;">
+            <div class="cal-event-title">215 Sunset Ridge</div>
+            <div class="cal-event-sub">6:00 PM · Greenville</div>
+          </div>
+
+          <!-- Sat May 30 - Open House -->
+          <div class="cal-event open-house" style="grid-column:7; grid-row:3 / 5;">
+            <div class="cal-event-title">OPEN HOUSE</div>
+            <div class="cal-event-sub">412 Magnolia Ln</div>
+            <div class="cal-event-sub" style="opacity:0.75;">11 AM – 1 PM</div>
+          </div>
+
+          <!-- Sun May 31 -->
+          <div class="cal-event booked" style="grid-column:8; grid-row:7;">
+            <div class="cal-event-title">9 Bramble Court</div>
+            <div class="cal-event-sub">3:00 PM · Charlotte</div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="cal-legend">
+          <span><span class="dot" style="background:#2e7d4f;"></span>Confirmed</span>
+          <span><span class="dot" style="background:#fdf0e0; border:1px solid #d99b3a;"></span>Awaiting seller</span>
+          <span><span class="dot" style="background:#1a1a1a;"></span>Open house</span>
+          <a href="search.html" style="margin-left:auto; font-weight:500; color:var(--ink); text-decoration:none;">+ Book a new tour</a>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div>
+        <!-- Active offer -->
+        <div class="offer-card">
+          <h3>Active offer</h3>
+          <div class="offer-addr">412 Magnolia Lane, Asheville NC</div>
+          <div class="offer-amount">$598,000</div>
+          <div class="offer-status">Under negotiation · Counter-offer received</div>
+          <a href="negotiation.html" class="btn btn-white btn-sm" style="margin-top:0.85rem; display:inline-block;">Review counter →</a>
+        </div>
+
+        <!-- Saved homes -->
+        <div class="side-card">
+          <h3>Saved homes (12)</h3>
+          <a href="listing.html?id=L-001" class="saved-home">
+            <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=200&q=80');"></div>
+            <div class="info">
+              <div class="addr">412 Magnolia Lane</div>
+              <div class="price">$615,000 · Asheville NC</div>
+            </div>
+          </a>
+          <a href="listing.html?id=L-002" class="saved-home">
+            <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=200&q=80');"></div>
+            <div class="info">
+              <div class="addr">78 Cedar Hollow Rd</div>
+              <div class="price">$489,000 · Boone NC</div>
+            </div>
+          </a>
+          <a href="listing.html?id=L-003" class="saved-home">
+            <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=200&q=80');"></div>
+            <div class="info">
+              <div class="addr">215 Sunset Ridge Dr</div>
+              <div class="price">$729,000 · Greenville SC</div>
+            </div>
+          </a>
+          <a href="listing.html?id=L-004" class="saved-home">
+            <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=200&q=80');"></div>
+            <div class="info">
+              <div class="addr">9 Bramble Court</div>
+              <div class="price">$542,000 · Charlotte NC</div>
+            </div>
+          </a>
+          <a href="search.html" class="btn btn-outline btn-sm" style="margin-top:0.85rem; display:block; text-align:center;">See all 12 saved</a>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="side-card">
+          <h3>Quick actions</h3>
+          <a href="search.html" class="btn btn-outline btn-sm" style="display:block; text-align:center; margin-bottom:0.5rem;">Browse new listings (3)</a>
+          <a href="education.html" class="btn btn-outline btn-sm" style="display:block; text-align:center; margin-bottom:0.5rem;">Visit Education Center</a>
+          <a href="best-practices.html" class="btn btn-outline btn-sm" style="display:block; text-align:center;">Best Practices</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============== Upcoming tours list ============== -->
+  <section style="padding: 1.5rem 0 3rem;">
+    <div class="container">
+      <h2 style="font-size:1.25rem; margin-bottom:1rem;">Upcoming tours</h2>
+      <div class="upcoming-item">
+        <div class="upcoming-date"><div class="mon">May</div><div class="day">25</div><div class="dow">Mon</div></div>
+        <div class="upcoming-meta"><div class="title">412 Magnolia Lane · Asheville NC</div><div class="time">5:00 PM · 30 min · Solo tour</div></div>
+        <span class="upcoming-status confirmed">Confirmed</span>
+      </div>
+      <div class="upcoming-item">
+        <div class="upcoming-date"><div class="mon">May</div><div class="day">26</div><div class="dow">Tue</div></div>
+        <div class="upcoming-meta"><div class="title">78 Cedar Hollow Rd · Boone NC</div><div class="time">6:00 PM · 30 min · Solo tour</div></div>
+        <span class="upcoming-status confirmed">Confirmed</span>
+      </div>
+      <div class="upcoming-item">
+        <div class="upcoming-date"><div class="mon">May</div><div class="day">27</div><div class="dow">Wed</div></div>
+        <div class="upcoming-meta"><div class="title">22 Brookline Way · Asheville NC</div><div class="time">5:00 PM · 30 min · Requested</div></div>
+        <span class="upcoming-status pending">Awaiting seller</span>
+      </div>
+      <div class="upcoming-item">
+        <div class="upcoming-date"><div class="mon">May</div><div class="day">28</div><div class="dow">Thu</div></div>
+        <div class="upcoming-meta"><div class="title">215 Sunset Ridge Dr · Greenville SC</div><div class="time">6:00 PM · 30 min · Solo tour</div></div>
+        <span class="upcoming-status confirmed">Confirmed</span>
+      </div>
+      <div class="upcoming-item">
+        <div class="upcoming-date"><div class="mon">May</div><div class="day">30</div><div class="dow">Sat</div></div>
+        <div class="upcoming-meta"><div class="title">Open House · 412 Magnolia Lane</div><div class="time">11:00 AM – 1:00 PM · You RSVP'd</div></div>
+        <span class="upcoming-status open-house">Open House</span>
+      </div>
+      <div class="upcoming-item">
+        <div class="upcoming-date"><div class="mon">May</div><div class="day">31</div><div class="dow">Sun</div></div>
+        <div class="upcoming-meta"><div class="title">9 Bramble Court · Charlotte NC</div><div class="time">3:00 PM · 30 min · Solo tour</div></div>
+        <span class="upcoming-status confirmed">Confirmed</span>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

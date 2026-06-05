@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Roadmap — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* === Overall progress bar (5 phases) === */
+    .phase-strip { display:grid; grid-template-columns:repeat(5, 1fr); gap:0.6rem; margin-top:1.5rem; }
+    .phase-pill { padding:0.85rem 1rem; border-radius:12px; background:#f4f2ed; border:1px solid var(--line); position:relative; overflow:hidden; }
+    .phase-pill .phase-name { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; font-weight:700; color:var(--muted); margin-bottom:0.3rem; }
+    .phase-pill .phase-count { font-size:1.05rem; font-weight:700; color:var(--ink); letter-spacing:-0.02em; }
+    .phase-pill .phase-fill { position:absolute; left:0; bottom:0; height:3px; background:var(--ink); border-radius:0 2px 2px 0; }
+    .phase-pill.active { background:white; border-color:var(--ink); box-shadow:0 0 0 1px var(--ink); }
+    .phase-pill.complete .phase-name { color:#2e7d4f; }
+    .phase-pill.complete .phase-fill { background:#2e7d4f; }
+    .phase-pill.active .phase-name { color:#2c6e9e; }
+    .phase-pill.active .phase-fill { background:#2c6e9e; }
+
+    /* === Current step hero === */
+    .current-hero { background:white; border:1px solid var(--line); border-radius:20px; padding:2rem; display:grid; grid-template-columns:1fr auto; gap:1.5rem; align-items:center; box-shadow:0 4px 20px rgba(44,110,158,0.08); border-left:4px solid #2c6e9e; }
+    .current-hero .badge { display:inline-block; font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:0.35rem 0.85rem; border-radius:999px; background:#2c6e9e; color:white; margin-bottom:0.85rem; }
+    .current-hero .step-num { font-size:0.85rem; color:var(--muted); margin-bottom:0.4rem; font-weight:500; }
+    .current-hero h2 { font-size:1.75rem; margin:0 0 0.6rem; letter-spacing:-0.02em; }
+    .current-hero .detail { color:var(--ink-soft, #4a4a4a); margin-bottom:1rem; max-width:540px; font-size:0.98rem; }
+    .current-hero .date-strip { font-size:0.85rem; color:var(--muted); }
+    .current-hero .date-strip strong { color:var(--ink); font-weight:600; }
+
+    /* === Timeline === */
+    .phase-section { margin-bottom:2.5rem; }
+    .phase-section-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem; }
+    .phase-section-header .badge { font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.4rem 0.85rem; border-radius:999px; color:white; }
+    .phase-section-header .summary { font-size:0.85rem; color:var(--muted); }
+
+    .pre .badge { background:#4a7c59; }
+    .offer .badge { background:#2c6e9e; }
+    .contract .badge { background:#7a5230; }
+    .closing .badge { background:#b03a2e; }
+    .post .badge { background:#6b4c9a; }
+
+    .timeline { position:relative; padding-left:2.25rem; }
+    .timeline::before { content:""; position:absolute; left:13px; top:8px; bottom:8px; width:2px; background:#e6e4df; }
+
+    .step-item { position:relative; padding:0.75rem 0 0.75rem 0.5rem; }
+    .step-item .dot { position:absolute; left:-2.25rem; top:0.85rem; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; z-index:1; }
+    .step-item.complete .dot { background:#2e7d4f; color:white; }
+    .step-item.current .dot { background:#2c6e9e; color:white; box-shadow:0 0 0 4px rgba(44,110,158,0.2); }
+    .step-item.upcoming .dot { background:white; border:2px solid #d4d2cd; color:#999; }
+
+    .step-row { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; flex-wrap:wrap; }
+    .step-content .step-num-label { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:600; margin-bottom:0.15rem; }
+    .step-content .step-name { font-weight:600; font-size:1rem; color:var(--ink); margin-bottom:0.25rem; }
+    .step-content .step-detail { font-size:0.88rem; color:var(--muted); max-width:520px; line-height:1.5; }
+    .step-item.upcoming .step-name { color:#999; font-weight:500; }
+    .step-item.complete .step-name { color:var(--ink); }
+    .step-meta { font-size:0.78rem; color:var(--muted); text-align:right; min-width:120px; }
+    .step-meta .date { font-weight:600; color:var(--ink); }
+    .step-item.upcoming .step-meta .date { color:#999; font-weight:500; }
+
+    @media (max-width: 720px) {
+      .phase-strip { grid-template-columns: repeat(2, 1fr); }
+      .current-hero { grid-template-columns: 1fr; padding:1.5rem; }
+      .current-hero h2 { font-size:1.4rem; }
+      .step-meta { text-align:left; min-width:0; width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav: gets data-role and data-user set from URL params before main.js loads -->
+  <div data-include="nav" data-active="dashboard" data-loggedin="true"></div>
+  <script>
+    (function() {
+      const navDiv = document.querySelector('[data-include="nav"]');
+      const params = new URLSearchParams(window.location.search);
+      const role = params.get("role") || "buyer";
+      const user = params.get("user") || (role === "seller" ? "Bryon" : "Jennifer");
+      navDiv.dataset.role = role;
+      navDiv.dataset.user = user;
+      window.ABODE_VIEWER = { role, user };
+      // Point the "Back to Dashboard" button at the correct dashboard.
+      // This runs before main.js so the link is right by the time the page paints.
+      document.addEventListener("DOMContentLoaded", function() {
+        const back = document.getElementById("backToDashboard");
+        if (back) back.href = role === "seller" ? "seller-dashboard.html" : "buyer-dashboard.html";
+      });
+    })();
+  </script>
+
+  <!-- ============== Header ============== -->
+  <section style="padding: 2.5rem 0 1rem;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1.5rem; flex-wrap:wrap;">
+        <div>
+          <div class="eyebrow" style="margin-bottom:0.4rem;">Your transaction · 412 Magnolia Lane, Asheville NC</div>
+          <h1 style="font-size: clamp(2rem, 3.5vw, 2.5rem); margin:0;">Your closing roadmap</h1>
+          <p id="headerSub" style="color:var(--muted); margin:0.5rem 0 0; max-width:640px;">Track every step from offer to keys-in-hand. Updated in real time as your transaction progresses.</p>
+        </div>
+        <a id="backToDashboard" href="buyer-dashboard.html" class="btn btn-outline btn-sm" style="flex-shrink:0;">← Back to Dashboard</a>
+      </div>
+
+      <div style="display:flex; gap:2rem; margin-top:1.25rem; flex-wrap:wrap; font-size:0.88rem;">
+        <div><span style="color:var(--muted);">Started</span> <strong style="margin-left:0.25rem;">May 12, 2026</strong></div>
+        <div><span style="color:var(--muted);">Estimated close</span> <strong style="margin-left:0.25rem;">July 2, 2026</strong></div>
+        <div><span style="color:var(--muted);">Days in transaction</span> <strong style="margin-left:0.25rem;">12</strong></div>
+      </div>
+
+      <!-- 5-phase progress strip -->
+      <div class="phase-strip">
+        <div class="phase-pill complete">
+          <div class="phase-name">Pre-Transaction</div>
+          <div class="phase-count">3 / 3</div>
+          <div class="phase-fill" style="width:100%;"></div>
+        </div>
+        <div class="phase-pill active">
+          <div class="phase-name">Offer</div>
+          <div class="phase-count">1 / 4 · in progress</div>
+          <div class="phase-fill" style="width:37%;"></div>
+        </div>
+        <div class="phase-pill">
+          <div class="phase-name">Under Contract</div>
+          <div class="phase-count">0 / 8</div>
+          <div class="phase-fill" style="width:0;"></div>
+        </div>
+        <div class="phase-pill">
+          <div class="phase-name">Closing</div>
+          <div class="phase-count">0 / 5</div>
+          <div class="phase-fill" style="width:0;"></div>
+        </div>
+        <div class="phase-pill">
+          <div class="phase-name">Post-Closing</div>
+          <div class="phase-count">0 / 2</div>
+          <div class="phase-fill" style="width:0;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Current Step Hero ============== -->
+  <section style="padding: 1.5rem 0;">
+    <div class="container">
+      <div class="current-hero">
+        <div>
+          <div class="badge">Where you are now</div>
+          <div class="step-num">Step 5 of 22 · Offer phase</div>
+          <h2>Offer Negotiation</h2>
+          <p class="detail" id="currentDetail">You submitted an offer of $598,000 on May 16. The seller responded with a counter-offer of $612,000 on May 20. Review the counter and decide whether to accept, counter back, or walk away.</p>
+          <div class="date-strip">Open since <strong>May 20, 2026</strong> · Respond by <strong>May 23, 2026</strong></div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.5rem; min-width:180px;">
+          <a href="negotiation.html" class="btn btn-primary">Review counter →</a>
+          <a href="document-center.html" class="btn btn-outline btn-sm" id="documentsLink">Open documents</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Detailed Timeline ============== -->
+  <section style="padding: 2rem 0 3rem;">
+    <div class="container" id="timelineContainer">
+      <!-- Phase sections rendered by JS below -->
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    // ---------- Step data (role-aware) ----------
+    const STEPS = [
+      { n:1, name:"Get Pre-Approved", phase:"pre", status:"complete",
+        buyer:{ date:"Apr 14, 2026", detail:"Pre-approved by First National Bank for up to $625,000." },
+        seller:{ date:"Apr 14, 2026", detail:"Your buyer (Jennifer K.) is pre-approved for $625,000." } },
+      { n:2, name:"List the Property", phase:"pre", status:"complete",
+        buyer:{ date:"May 12, 2026", detail:"Property listed on Abode by the seller." },
+        seller:{ date:"May 12, 2026", detail:"You listed your home on Abode." } },
+      { n:3, name:"Home Search", phase:"pre", status:"complete",
+        buyer:{ date:"May 14, 2026", detail:"You found 412 Magnolia Lane and scheduled a tour." },
+        seller:{ date:"May 12 – present", detail:"Listing is active · 1,247 views · 84 saves · 7 showings booked." } },
+      { n:4, name:"Submit an Offer", phase:"offer", status:"complete",
+        buyer:{ date:"May 16, 2026", detail:"Submitted offer at $598,000 · 20% down · 30-day close." },
+        seller:{ date:"May 16, 2026", detail:"Received offer from Jennifer K. at $598,000." } },
+      { n:5, name:"Offer Negotiation", phase:"offer", status:"current",
+        buyer:{ date:"May 20 – 23", detail:"Seller countered at $612,000. Awaiting your response." },
+        seller:{ date:"May 20 – 23", detail:"You sent a counter-offer at $612,000. Awaiting buyer's response." } },
+      { n:6, name:"Offer Accepted", phase:"offer", status:"upcoming",
+        buyer:{ date:"Est. May 24", detail:"Both parties sign the final agreed terms." },
+        seller:{ date:"Est. May 24", detail:"Both parties sign the final agreed terms." } },
+      { n:7, name:"Earnest Money Deposited", phase:"offer", status:"upcoming",
+        buyer:{ date:"Est. May 26", detail:"$5,980 (1%) wired to escrow within 3 business days." },
+        seller:{ date:"Est. May 26", detail:"Earnest money held in escrow by the title company." } },
+      { n:8, name:"Open Title / Escrow", phase:"contract", status:"upcoming",
+        buyer:{ date:"Est. May 27", detail:"Title company opens escrow and begins title search." },
+        seller:{ date:"Est. May 27", detail:"Title company opens escrow and begins title search." } },
+      { n:9, name:"Home Inspection", phase:"contract", status:"upcoming",
+        buyer:{ date:"Est. May 28 – Jun 3", detail:"Your inspector evaluates the home (10-day contingency window)." },
+        seller:{ date:"Est. May 28 – Jun 3", detail:"Buyer's inspector evaluates the home." } },
+      { n:10, name:"Inspection Negotiations", phase:"contract", status:"upcoming",
+        buyer:{ date:"Est. Jun 4 – 6", detail:"Request repairs, credits, or a price reduction if issues are found." },
+        seller:{ date:"Est. Jun 4 – 6", detail:"Respond to any repair requests from the buyer." } },
+      { n:11, name:"Appraisal Ordered", phase:"contract", status:"upcoming",
+        buyer:{ date:"Est. May 30", detail:"Your lender orders an independent appraisal." },
+        seller:{ date:"Est. May 30", detail:"Buyer's lender orders an independent appraisal." } },
+      { n:12, name:"Loan Processing & Underwriting", phase:"contract", status:"upcoming",
+        buyer:{ date:"Est. Jun 1 – 25", detail:"Your lender processes paperwork and underwrites the loan." },
+        seller:{ date:"Est. Jun 1 – 25", detail:"Buyer's lender processes the loan." } },
+      { n:13, name:"Title Search & Insurance", phase:"contract", status:"upcoming",
+        buyer:{ date:"Est. Jun 5", detail:"Title cleared and title insurance issued." },
+        seller:{ date:"Est. Jun 5", detail:"Title cleared and title insurance issued." } },
+      { n:14, name:"Homeowner's Insurance", phase:"contract", status:"upcoming",
+        buyer:{ date:"Est. Jun 10", detail:"Bind a homeowner's insurance policy before closing." },
+        seller:{ date:"Est. Jun 10", detail:"Buyer secures their homeowner's insurance policy." } },
+      { n:15, name:"Clear to Close (CTC)", phase:"contract", status:"upcoming",
+        buyer:{ date:"Est. Jun 28", detail:"Your lender issues final approval to close." },
+        seller:{ date:"Est. Jun 28", detail:"Buyer's loan is approved to close." } },
+      { n:16, name:"Final Walk-Through", phase:"closing", status:"upcoming",
+        buyer:{ date:"Est. Jul 1", detail:"Confirm the home is in the agreed condition." },
+        seller:{ date:"Est. Jul 1", detail:"Buyer does a final walk-through." } },
+      { n:17, name:"Closing Disclosure Review", phase:"closing", status:"upcoming",
+        buyer:{ date:"Est. Jun 28", detail:"Review the CD 3 business days before closing." },
+        seller:{ date:"Est. Jun 28", detail:"Buyer reviews the closing disclosure." } },
+      { n:18, name:"Sign Closing Documents", phase:"closing", status:"upcoming",
+        buyer:{ date:"Est. Jul 2", detail:"Sign ~40 documents at the closing table." },
+        seller:{ date:"Est. Jul 2", detail:"Sign the deed and transfer documents." } },
+      { n:19, name:"Fund & Record the Transaction", phase:"closing", status:"upcoming",
+        buyer:{ date:"Est. Jul 2", detail:"Lender funds the loan and deed is recorded with the county." },
+        seller:{ date:"Est. Jul 2", detail:"Proceeds wired to your account and deed is recorded." } },
+      { n:20, name:"Keys Handed Over", phase:"closing", status:"upcoming",
+        buyer:{ date:"Est. Jul 2", detail:"You receive the keys and a welcome packet from the seller." },
+        seller:{ date:"Est. Jul 2", detail:"Hand over the keys and a welcome packet to the buyer." } },
+      { n:21, name:"Update Address & Utilities", phase:"post", status:"upcoming",
+        buyer:{ date:"Est. Jul 3+", detail:"Transfer utilities, update USPS, and notify your employer." },
+        seller:{ date:"Est. Jul 3+", detail:"Cancel utilities at this address and forward your mail." } },
+      { n:22, name:"First Mortgage Payment", phase:"post", status:"upcoming",
+        buyer:{ date:"Est. Aug 1", detail:"First mortgage payment due ~30 days after closing." },
+        seller:{ date:"—", detail:"Transaction complete. Congratulations on your sale!" } }
+    ];
+
+    const PHASES = {
+      pre:      { label:"Pre-Transaction", cls:"pre",     count:"3 / 3 complete" },
+      offer:    { label:"Offer",           cls:"offer",   count:"1 / 4 complete · 1 in progress" },
+      contract: { label:"Under Contract",  cls:"contract", count:"0 / 8 complete" },
+      closing:  { label:"Closing",         cls:"closing", count:"0 / 5 complete" },
+      post:     { label:"Post-Closing",    cls:"post",    count:"0 / 2 complete" }
+    };
+
+    // ---------- Render ----------
+    const viewer = window.ABODE_VIEWER || { role:"buyer", user:"Jennifer" };
+    const role = viewer.role === "seller" ? "seller" : "buyer";
+
+    // Update header subtitle and link based on role
+    const headerSub = document.getElementById("headerSub");
+    if (role === "seller") {
+      headerSub.textContent = "Track every step from listing to keys-handover. Updated in real time as your sale progresses.";
+    }
+
+    // Update current step detail based on role
+    const currentDetail = document.getElementById("currentDetail");
+    if (role === "seller") {
+      currentDetail.textContent = "You received an offer of $598,000 on May 16 and countered at $612,000 on May 20. The buyer (Jennifer K.) has until May 23 to respond.";
+    }
+
+    // Update Documents link to include role param
+    document.getElementById("documentsLink").href = `document-center.html?role=${role}&user=${encodeURIComponent(viewer.user)}`;
+
+    // Build phase sections
+    const container = document.getElementById("timelineContainer");
+    Object.keys(PHASES).forEach(phaseKey => {
+      const phaseInfo = PHASES[phaseKey];
+      const phaseSteps = STEPS.filter(s => s.phase === phaseKey);
+
+      const stepsHTML = phaseSteps.map(step => {
+        const data = step[role];
+        const statusLabel =
+          step.status === "complete" ? "✓" :
+          step.status === "current" ? step.n :
+          step.n;
+        return `
+          <div class="step-item ${step.status}">
+            <div class="dot">${statusLabel}</div>
+            <div class="step-row">
+              <div class="step-content">
+                <div class="step-num-label">Step ${step.n}</div>
+                <div class="step-name">${step.name}</div>
+                <div class="step-detail">${data.detail}</div>
+              </div>
+              <div class="step-meta">
+                <div class="date">${data.date}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const sectionHTML = `
+        <div class="phase-section ${phaseInfo.cls}">
+          <div class="phase-section-header">
+            <span class="badge">${phaseInfo.label}</span>
+            <span class="summary">${phaseInfo.count}</span>
+          </div>
+          <div class="timeline">
+            ${stepsHTML}
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML("beforeend", sectionHTML);
+    });
+  </script>
+</body>
+</html>

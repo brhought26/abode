@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How does it work? — Selling on Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Step card — small circle icon + title + description */
+    .step-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .step-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--brand-light);
+      border: 1px solid var(--line);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--brand);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .step-card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+    }
+    .step-card p {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav"></div>
+
+  <section class="section">
+    <div class="container">
+      <h1 style="text-align:center; margin-bottom: 0.75rem;">How does it work?</h1>
+      <p style="text-align:center; color:var(--muted); max-width: 580px; margin: 0 auto 3rem;">A walk-through of every step from signing up to closing day — so you know exactly what Abode helps you do.</p>
+
+      <div class="steps-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+
+        <div class="step-card">
+          <div class="step-icon">1</div>
+          <h3>Sign up</h3>
+          <p>Create an account to start your listing. Choose what service tier is right for you. You can upgrade tiers at any time.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">2</div>
+          <h3>Build your listing</h3>
+          <p>Set up your listing with Abode's easy-to-use suite of templates to effectively market your home.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">3</div>
+          <h3>Post your sign</h3>
+          <p>Savvy Seller tier users can order a custom yard sign complete with web listing QR code linkage.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">4</div>
+          <h3>Advertise</h3>
+          <p>Your listing is now live on Abode and affiliate sites. Take advantage of our other marketing offers such as open house fliers, mailers and social media post templates.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">5</div>
+          <h3>Manage showings</h3>
+          <p>Manage your showings and open houses with our calendar tool and messaging portal. Only verified buyers can request showings.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">6</div>
+          <h3>View offers</h3>
+          <p>View and compare offers and negotiate all through Abode's seller dashboard.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">7</div>
+          <h3>Go to contract</h3>
+          <p>Once terms are agreed upon, Abode facilitates the transfer of documents for signature and prompts you on the next steps for a successful closing.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">8</div>
+          <h3>Due diligence</h3>
+          <p>Manage and track buyer inspections, surveys and appraisals on Abode's closing roadmap tool.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">9</div>
+          <h3>Document management</h3>
+          <p>After entering important contact details for critical roles such as your closing attorney's office, Abode will automatically distribute executed contracts. You'll be prompted with reminders for important milestones and tasks prior to closing.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">10</div>
+          <h3>Set up closing</h3>
+          <p>Agree on a closing date and time with your buyer and closing attorney's office. Communicate with the attorney's office to ensure all parties have the necessary documents for a smooth closing.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">11</div>
+          <h3>Attend closing</h3>
+          <p>Show up and sign! You've just completed a successful sale and likely saved thousands by putting in the legwork — made easy by Abode!</p>
+        </div>
+
+      </div>
+
+      <!-- Closing CTA -->
+      <div style="text-align:center; margin-top: 4rem;">
+        <a href="create-listing.html" class="btn btn-primary btn-lg">Sign up today</a>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+
+  <style>
+    @media (max-width: 900px) {
+      .steps-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    }
+    @media (max-width: 560px) {
+      .steps-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</body>
+</html>

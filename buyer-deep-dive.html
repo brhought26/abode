@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Here's how it works — Buying on Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .step-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .step-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--brand-light);
+      border: 1px solid var(--line);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--brand);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .step-card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+    }
+    .step-card p {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav"></div>
+
+  <section class="section">
+    <div class="container">
+      <h1 style="text-align:center; margin-bottom: 0.75rem;">Here's how it works</h1>
+      <p style="text-align:center; color:var(--muted); max-width: 580px; margin: 0 auto 3rem;">A walk-through of every step from search to keys — so you know exactly what to expect when you buy a home on Abode.</p>
+
+      <div class="steps-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+
+        <div class="step-card">
+          <div class="step-icon">1</div>
+          <h3>Start your search</h3>
+          <p>Know that you'll be dealing directly with sellers who have chosen not to pay agency fees. So if you've already signed a realtor's agreement, you will be required to pay their commission yourself.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">2</div>
+          <h3>Sign up</h3>
+          <p>Browsing homes does not require an account, saving favorites does. There are no charges until you're ready to make an offer.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">3</div>
+          <h3>View properties</h3>
+          <p>Our open house alerts will provide you with a list of all open houses in your chosen area. You can also communicate directly with sellers and set up a viewing time from their calendar of availability. Some sellers will require you to have a pre-approval letter for non-open house showings.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">4</div>
+          <h3>Make an offer</h3>
+          <p>Abode's tools make the offer process easy. Submit your offer to purchase complete with terms — including purchase price, closing window, due diligence and earnest money amounts, and other pertinent information.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">5</div>
+          <h3>Negotiate</h3>
+          <p>The seller may choose to accept your offer or negotiate further. Our offer portal and messaging tools make communication easy. We'll guide you with tips and advice on best practices along the way.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">6</div>
+          <h3>Execute a contract</h3>
+          <p>When terms are agreed, Abode will facilitate the transfer of contract documents for electronic signature.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">7</div>
+          <h3>Due diligence & earnest money</h3>
+          <p>Depending on the state and your contract terms, you may need to send checks to the seller and/or closing attorney for earnest money or due diligence amounts. We'll prompt you again on best practices. Most banks and closing attorneys will require you to write a physical check for documentation purposes.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">8</div>
+          <h3>Inspections</h3>
+          <p>Coordinate with the seller and your home inspector via the messaging portal. Attend the inspection if you choose, and review the report. If you find repairs are needed, use our tools to issue a repair addendum to the seller.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">9</div>
+          <h3>Document management</h3>
+          <p>After entering your lender and closing attorney's contact information, we'll automatically distribute your executed contract to them. Contact both offices to see what further information may be required. We'll prompt you with reminders.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">10</div>
+          <h3>Set up closing</h3>
+          <p>Agree on a date and time for closing with the seller and closing attorney. Review the closing roadmap and Abode prompts to make sure all your ducks are in a row for a successful closing.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">11</div>
+          <h3>Attend closing</h3>
+          <p>Bring your ID, checkbook or certified check to the attorney's office at the scheduled time, and start signing.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-icon">12</div>
+          <h3>Collect your keys</h3>
+          <p>Congratulations on your new home purchase! You took charge of the process — made easier by Abode!</p>
+        </div>
+
+      </div>
+
+      <!-- Closing CTA -->
+      <div style="text-align:center; margin-top: 4rem;">
+        <a href="search.html" class="btn btn-primary btn-lg">Search Listings</a>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+
+  <style>
+    @media (max-width: 900px) {
+      .steps-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    }
+    @media (max-width: 560px) {
+      .steps-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</body>
+</html>

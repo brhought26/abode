@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Title Insurance — Abode Education Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .article h2 {
+      font-size: 1.6rem;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .article h2:first-of-type { margin-top: 0; }
+    .article p {
+      font-size: 1.02rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      margin-bottom: 1.1rem;
+    }
+    .article ul, .article ol {
+      margin: 0 0 1.5rem 0;
+      padding-left: 1.5rem;
+    }
+    .article ul li, .article ol li {
+      font-size: 1.02rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      margin-bottom: 0.85rem;
+    }
+    .article li strong { color: var(--ink); }
+    .article ol { counter-reset: item; padding-left: 0; }
+    .article ol > li {
+      list-style: none;
+      counter-increment: item;
+      padding-left: 2.5rem;
+      position: relative;
+    }
+    .article ol > li::before {
+      content: counter(item);
+      position: absolute;
+      left: 0;
+      top: 0.1em;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--brand-light);
+      color: var(--brand);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="education"></div>
+
+  <article>
+    <!-- ============== Hero ============== -->
+    <section style="padding: 3rem 0 1rem;">
+      <div class="container-narrow" style="text-align:center;">
+        <div style="font-size:0.85rem; color:var(--muted); margin-bottom:1rem;">
+          <a href="education.html">Education Center</a>
+          <span style="margin: 0 0.4rem;">›</span>
+          Title Insurance
+        </div>
+        <h1 style="font-size: clamp(2.5rem, 5vw, 3.75rem); margin-bottom: 2rem;">Title Insurance</h1>
+        <div style="aspect-ratio: 16/9; background-image:url('https://images.unsplash.com/photo-1589998059171-988d887df646?w=1400&q=80'); background-size:cover; background-position:center; border-radius: 16px; margin-bottom: 2rem;"></div>
+      </div>
+    </section>
+
+    <!-- ============== Body ============== -->
+    <section style="padding-bottom: 3rem;">
+      <div class="container-narrow article">
+
+        <h2>Background</h2>
+        <p>Title insurance is a safeguard for both homebuyers and lenders, protecting against potential legal issues related to property ownership. Unlike other types of insurance that cover future events, title insurance protects against past claims or disputes over property ownership, ensuring a clean and undisputed title transfer.</p>
+
+        <h2>When Title Insurance is Required</h2>
+        <p>Most mortgage lenders require lender's title insurance as a condition for approving a home loan. This policy protects the lender's financial interest in the property in case of ownership disputes, unpaid liens, or errors in the public record. Homeowner's title insurance is optional but highly recommended, as it protects the buyer from legal claims that could arise after purchasing the home.</p>
+
+        <h2>Lender's vs. Homeowner's Title Insurance</h2>
+        <p>There are two main types of title insurance:</p>
+        <ul>
+          <li><strong>Lender's Title Insurance:</strong> Required by mortgage lenders, this policy ensures the lender has a valid claim to the property if ownership issues arise. It does not protect the homeowner.</li>
+          <li><strong>Homeowner's Title Insurance:</strong> Optional for buyers, this policy protects the homeowner's investment from title defects, such as forged documents, undisclosed heirs, or clerical errors.</li>
+        </ul>
+        <p>Unlike lender's title insurance, which only lasts as long as the mortgage, homeowner's title insurance remains in effect for as long as the buyer owns the property.</p>
+
+        <h2>Cost of Title Insurance</h2>
+        <p>The cost of title insurance varies by state and property value. On average:</p>
+        <ul>
+          <li>Lender's title insurance ranges from <strong>$500 to $1,500</strong> and is usually included in closing costs.</li>
+          <li>Homeowner's title insurance costs between <strong>$700 and $2,000</strong>, depending on property price and location.</li>
+        </ul>
+        <p>These are one-time fees paid at closing, with no ongoing premiums required.</p>
+
+        <h2>How to Get Title Insurance</h2>
+        <ol>
+          <li><strong>Choose a Title Company:</strong> Your lender or attorney can recommend reputable title insurance companies.</li>
+          <li><strong>Title Search and Examination:</strong> The title company reviews public records to identify potential ownership issues or claims.</li>
+          <li><strong>Policy Issuance:</strong> After ensuring a clear title, the title insurance policy is issued to protect against future claims.</li>
+          <li><strong>Closing Process:</strong> The insurance fee is included in closing costs and paid at settlement.</li>
+        </ol>
+
+        <h2>Conclusion</h2>
+        <p>Title insurance is a vital protection against potential legal disputes over property ownership. While lender's title insurance is mandatory for homebuyers using a mortgage, homeowner's title insurance is optional but provides long-term security and peace of mind.</p>
+      </div>
+    </section>
+
+    <!-- ============== Closing CTA ============== -->
+    <section style="padding: 1rem 0 4rem; text-align:center; border-top: 1px solid var(--line);">
+      <div class="container-narrow" style="padding-top: 3rem;">
+        <h2 style="margin-bottom: 1.25rem;">Ready to put this knowledge to work?</h2>
+        <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+          <a href="search.html" class="btn btn-primary">Browse Homes</a>
+          <a href="education.html" class="btn btn-outline">Back to Education Center</a>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
