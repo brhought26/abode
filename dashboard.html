@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div data-include="nav"></div>
+
+  <section style="padding:2rem 0;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom: 2rem;">
+        <div>
+          <h1 style="font-size:1.75rem; margin:0;">Welcome back</h1>
+          <div style="color:var(--muted); font-size:0.95rem;" id="welcomeSub">Here's everything happening with your account.</div>
+        </div>
+        <!-- Role toggle (demo) -->
+        <div style="background:white; border:1px solid var(--line); padding:0.25rem; border-radius:9999px; display:flex; gap:0.25rem;">
+          <button class="roleBtn btn btn-sm" data-role="buyer">Buyer Dashboard</button>
+          <button class="roleBtn btn btn-sm" data-role="seller">Seller Dashboard</button>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div id="statsRow" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-bottom:2rem;"></div>
+
+      <!-- Main grid -->
+      <div style="display:grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap:1.5rem; align-items:flex-start;">
+        <div id="mainColumn" style="display:grid; gap:1.5rem;"></div>
+        <div id="sideColumn" style="display:grid; gap:1.5rem;"></div>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ---------- Read which dashboard to show ----------
+    const params = new URLSearchParams(window.location.search);
+    let role = (params.get("role") === "seller") ? "seller" : "buyer";
+
+    // ---------- Render ----------
+    function render() {
+      document.querySelectorAll(".roleBtn").forEach(btn => {
+        const active = btn.dataset.role === role;
+        btn.style.background = active ? "var(--brand)" : "transparent";
+        btn.style.color = active ? "white" : "var(--ink)";
+        btn.style.border = "none";
+      });
+
+      document.getElementById("welcomeSub").textContent =
+        role === "buyer"
+          ? "Here's where you stand on the homes you're considering."
+          : "Here's how your listings are performing.";
+
+      renderStats();
+      renderMain();
+      renderSide();
+    }
+
+    // ---------- Stats ----------
+    function renderStats() {
+      const row = document.getElementById("statsRow");
+      if (role === "buyer") {
+        row.innerHTML = `
+          ${statCard("4", "Saved homes", "var(--brand)")}
+          ${statCard("1", "Active offer", "var(--accent)")}
+          ${statCard("2", "Showings booked", "var(--brand)")}
+          ${statCard("3", "Unread messages", "var(--accent)")}
+        `;
+      } else {
+        row.innerHTML = `
+          ${statCard("1", "Active listing", "var(--brand)")}
+          ${statCard(String(ABODE.PENDING_OFFERS.length), "Pending offers", "var(--accent)")}
+          ${statCard("12", "Saved by buyers", "var(--brand)")}
+          ${statCard("47", "Listing views (7d)", "var(--brand)")}
+        `;
+      }
+    }
+    function statCard(num, label, color) {
+      return `
+        <div class="card" style="padding:1.1rem 1.25rem;">
+          <div style="font-weight:700; letter-spacing:-0.02em; font-size:1.75rem; color:${color};">${num}</div>
+          <div style="font-size:0.85rem; color:var(--muted);">${label}</div>
+        </div>
+      `;
+    }
+
+    // ---------- Main column ----------
+    function renderMain() {
+      const main = document.getElementById("mainColumn");
+      if (role === "buyer") {
+        main.innerHTML = `
+          ${buyerActiveOffers()}
+          ${savedListings()}
+        `;
+      } else {
+        main.innerHTML = `
+          ${sellerOfferDashboard()}
+          ${sellerListings()}
+        `;
+      }
+    }
+
+    function buyerActiveOffers() {
+      return `
+        <div class="card" style="padding:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h2 style="margin:0; font-size:1.2rem;">Active offers</h2>
+            <a href="search.html" style="font-size:0.9rem;">Browse more →</a>
+          </div>
+          ${ABODE.BUYER_OFFERS.map(o => {
+            const listing = ABODE.findListing(o.listingId);
+            return `
+              <div style="display:flex; gap:1rem; align-items:center; padding:0.85rem 0; border-top:1px solid var(--line);">
+                <div style="width:64px; height:50px; background-image:url('${listing.photos[0]}'); background-size:cover; background-position:center; border-radius:8px; flex-shrink:0;"></div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-weight:500;">${o.address}</div>
+                  <div style="font-size:0.85rem; color:var(--muted);">Your offer: ${ABODE.formatPrice(o.price)} · ${o.status}</div>
+                </div>
+                <a href="negotiation.html" class="btn btn-outline btn-sm">View thread</a>
+              </div>
+            `;
+          }).join("")}
+          <div style="display:flex; gap:1rem; align-items:center; padding:0.85rem 0; border-top:1px solid var(--line); color:var(--muted); font-size:0.9rem;">
+            <div style="width:64px; height:50px; background:var(--brand-light); border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center;">+</div>
+            <div style="flex:1;">Make a new offer on a saved home</div>
+            <a href="search.html" class="btn btn-ghost btn-sm">Browse homes</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function savedListings() {
+      const saved = ABODE.LISTINGS.slice(0, 3);
+      return `
+        <div class="card" style="padding:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h2 style="margin:0; font-size:1.2rem;">Saved homes</h2>
+            <a href="search.html" style="font-size:0.9rem;">View all →</a>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
+            ${saved.map(l => `
+              <a href="listing.html?id=${l.id}" style="display:block; text-decoration:none; color:inherit;">
+                <div style="aspect-ratio:4/3; background-image:url('${l.photos[0]}'); background-size:cover; background-position:center; border-radius:10px;"></div>
+                <div style="margin-top:0.5rem; font-weight:700; letter-spacing:-0.02em; color:var(--brand);">${ABODE.formatPrice(l.price)}</div>
+                <div style="font-size:0.85rem;">${l.address}</div>
+                <div style="font-size:0.78rem; color:var(--muted);">${l.beds}bd · ${l.baths}ba · ${l.sqft.toLocaleString()} sqft</div>
+              </a>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function sellerOfferDashboard() {
+      // Sort offers chronologically — first-received first.
+      const offers = [...ABODE.PENDING_OFFERS].sort(
+        (a, b) => new Date(a.receivedAt) - new Date(b.receivedAt)
+      );
+
+      // Score each offer objectively. Higher score = stronger terms.
+      // Used to find "best on merits" + detect ties for the first-received rule.
+      function scoreOffer(o) {
+        let score = 0;
+        score += o.price * 1.0;                              // every $1 = 1 point
+        score += o.earnestMoney * 0.5;                       // earnest money is half-weighted
+        score += (o.financing === "Cash" ? 15000 : 0);       // cash adds ~$15k in confidence
+        score += (4 - o.contingencies.length) * 5000;        // fewer contingencies = stronger
+        return score;
+      }
+      const scored = offers.map(o => ({ ...o, _score: scoreOffer(o) }));
+      const topScore = Math.max(...scored.map(o => o._score));
+      const topOffers = scored.filter(o => Math.abs(o._score - topScore) < 1000);
+      const isTie = topOffers.length > 1;
+      const winner = topOffers[0]; // earliest of the tied — first-received wins
+
+      // Render each offer as a comparison-style row.
+      function offerCard(o, idx) {
+        const isTop = (o.id === winner.id);
+        const headerNote = isTop
+          ? (isTie
+              ? `<span class="pill pill-good">★ Recommended · first received of tied offers</span>`
+              : `<span class="pill pill-good">★ Strongest terms</span>`)
+          : "";
+
+        return `
+          <div class="card" style="padding:1.1rem 1.25rem; margin-top:0.75rem; border:1px solid ${isTop ? "var(--brand)" : "var(--line)"};">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:0.6rem;">
+                <span style="font-weight:700; letter-spacing:-0.02em; color:var(--brand); font-size:1rem;">Offer #${idx + 1}</span>
+                <span style="font-size:0.8rem; color:var(--muted);">received ${ABODE.formatDateTime(o.receivedAt)}</span>
+                ${headerNote}
+              </div>
+              <span class="pill pill-muted">${o.status}</span>
+            </div>
+
+            <!-- Anonymized buyer card -->
+            <div style="display:flex; align-items:center; gap:0.65rem; margin-top:0.85rem; padding:0.65rem 0.85rem; background:var(--cream); border-radius:8px;">
+              <div style="width:36px; height:36px; border-radius:50%; background:var(--brand-light); color:var(--brand); display:flex; align-items:center; justify-content:center; font-weight:600;">?</div>
+              <div style="flex:1; min-width:0;">
+                <div style="font-weight:500;" id="buyerName-${o.id}">Buyer (identity hidden)</div>
+                <div style="font-size:0.78rem; color:var(--muted);">Names are hidden until you actively choose to view — protects you from accidental bias.</div>
+              </div>
+              <button class="btn btn-outline btn-sm" id="revealBtn-${o.id}" onclick="revealBuyer('${o.id}', '${o.buyerName.replace(/'/g, "\\'")}')">Reveal name</button>
+            </div>
+
+            <!-- Objective comparison -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:0.5rem; margin-top:0.85rem;">
+              <div style="padding:0.55rem 0.75rem; background:white; border:1px solid var(--line); border-radius:8px;">
+                <div style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">Price</div>
+                <div style="font-weight:600;">${ABODE.formatPrice(o.price)}</div>
+              </div>
+              <div style="padding:0.55rem 0.75rem; background:white; border:1px solid var(--line); border-radius:8px;">
+                <div style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">Earnest</div>
+                <div style="font-weight:600;">${ABODE.formatPrice(o.earnestMoney)}</div>
+              </div>
+              <div style="padding:0.55rem 0.75rem; background:white; border:1px solid var(--line); border-radius:8px;">
+                <div style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">Closing</div>
+                <div style="font-weight:600;">${ABODE.formatDate(o.closingDate)}</div>
+              </div>
+              <div style="padding:0.55rem 0.75rem; background:white; border:1px solid var(--line); border-radius:8px;">
+                <div style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">Financing</div>
+                <div style="font-weight:600;">${o.financing}</div>
+              </div>
+              <div style="padding:0.55rem 0.75rem; background:white; border:1px solid var(--line); border-radius:8px;">
+                <div style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">Contingencies</div>
+                <div style="font-weight:600;">${o.contingencies.length}</div>
+              </div>
+              <div style="padding:0.55rem 0.75rem; background:white; border:1px solid var(--line); border-radius:8px;">
+                <div style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">Proof of funds</div>
+                <div style="font-weight:600; color:${o.proofOfFunds ? "var(--good)" : "var(--warn)"};">${o.proofOfFunds ? "✓ On file" : "Missing"}</div>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:0.5rem; margin-top:0.85rem;">
+              ${o.threadId
+                ? `<a href="negotiation.html" class="btn btn-primary btn-sm">Open thread</a>`
+                : `<a href="negotiation.html" class="btn btn-outline btn-sm">Open offer</a>`}
+              <button class="btn btn-ghost btn-sm" onclick="alert('Counter prepared (demo).')">Counter</button>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="card" style="padding:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+            <h2 style="margin:0; font-size:1.2rem;">Pending offers</h2>
+            <span class="pill pill-accent">${offers.length} need a response</span>
+          </div>
+
+          <!-- Educational banner — Fair Housing compliance -->
+          <div class="card" style="padding:1rem 1.25rem; background:var(--brand-light); border-color:transparent; margin-bottom:0.5rem;">
+            <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+              <div style="font-size:1.4rem;">⚖️</div>
+              <div>
+                <div style="font-weight:600; margin-bottom:0.25rem;">Compare offers on the merits.</div>
+                <div style="font-size:0.88rem; color:var(--ink);">
+                  Buyer names, photos, and personal details are hidden by default — you can reveal them when you're ready, but evaluating on price, earnest money, contingencies, and closing terms first helps you stay aligned with <a href="education.html" style="color:var(--brand);">Fair Housing law</a>. ${isTie ? `<stro

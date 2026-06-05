@@ -1,0 +1,373 @@
+/* ========================================================================
+   ABODE — Brand styles
+   ------------------------------------------------------------------------
+   Aesthetic notes (matching the Framer mockups):
+   - Inter sans-serif everywhere. No serif fonts.
+   - Photographic heroes with white text overlays.
+   - Black is the primary accent color (buttons, prices, headlines).
+   - Brand green is reserved for the logo, hero subtleties, and pills.
+   - Cards are minimal — thin borders or no borders, no decorative shadows.
+   - Lots of whitespace.
+
+   To change the brand color of the whole site, edit the --brand variable
+   at the top.
+   ======================================================================== */
+
+:root {
+  /* Brand palette */
+  --brand: #2d5a3d;          /* deep forest green — used in logo + subtle accents */
+  --brand-dark: #1f3f2a;
+  --brand-light: #e6efe9;    /* tinted pill background */
+  --ink: #0a0a0a;            /* near-black for headings, prices, buttons */
+  --ink-soft: #1a1a1a;       /* slightly softer black for body */
+  --muted: #6b6b6b;          /* secondary text */
+  --line: #ececea;           /* borders / dividers */
+  --cream: #fbf9f4;          /* page background */
+  --good: #2d7a4d;
+  --warn: #b8541f;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--ink-soft);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.55;
+  font-feature-settings: "ss01", "cv11";
+}
+
+/* All headings: sans-serif, tight, black */
+h1, h2, h3, h4, h5 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--ink);
+  margin: 0;
+}
+h1 { font-size: clamp(2.25rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.75rem, 3vw, 2.25rem); }
+h3 { font-size: 1.25rem; }
+
+p { margin: 0; }
+
+a { color: var(--ink); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.92rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  font-family: inherit;
+}
+.btn:hover { text-decoration: none; }
+
+/* Primary: black pill (the default Framer-style CTA) */
+.btn-primary {
+  background: var(--ink);
+  color: white;
+}
+.btn-primary:hover { background: #2a2a2a; }
+
+/* White: for use over photographic backgrounds */
+.btn-white {
+  background: white;
+  color: var(--ink);
+}
+.btn-white:hover { background: #f5f5f5; }
+
+/* Accent: kept for legacy compatibility; same as primary now */
+.btn-accent {
+  background: var(--ink);
+  color: white;
+}
+.btn-accent:hover { background: #2a2a2a; }
+
+/* Outline: black border */
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.btn-outline:hover { background: var(--ink); color: white; }
+
+/* Ghost: no fill */
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+}
+.btn-ghost:hover { background: rgba(0,0,0,0.05); }
+
+.btn-sm { padding: 0.45rem 1rem; font-size: 0.82rem; }
+.btn-lg { padding: 0.95rem 1.85rem; font-size: 1rem; }
+
+/* ---------- Cards (minimal Framer style) ---------- */
+.card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.card-hover:hover { border-color: var(--ink); }
+
+/* ---------- Pills (small status chips) ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--brand-light);
+  color: var(--brand);
+}
+.pill-accent { background: #f4f0e8; color: #4a3520; }
+.pill-muted  { background: #f2f1ee; color: var(--muted); }
+.pill-good   { background: #dcefe2; color: var(--good); }
+.pill-warn   { background: #fae5d6; color: var(--warn); }
+
+/* ---------- Forms ---------- */
+.input, .select, .textarea {
+  width: 100%;
+  padding: 0.7rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: white;
+  font: inherit;
+  color: var(--ink);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input:focus, .select:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+}
+
+/* Calculator input row — used by payment, closing-cost, and affordability calculators */
+.calc-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+.calc-field input {
+  width: 140px;
+  padding: 0.55rem 0.8rem;
+  border: 1.5px solid #c8c2b0;
+  border-radius: 8px;
+  background: #fafaf6;
+  font: inherit;
+  text-align: right;
+  color: var(--ink);
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.calc-field input:hover { border-color: #8e8771; background: white; }
+.calc-field input:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+}
+
+.label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+.hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 0.35rem;
+}
+
+/* ---------- Nav ---------- */
+.nav-wrap {
+  background: rgba(251, 249, 244, 0.92);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(8px);
+}
+.nav-link {
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+}
+.nav-link:hover { background: rgba(0,0,0,0.04); text-decoration: none; }
+.nav-link.active { color: var(--brand); }
+
+.logo {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.logo::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background: var(--brand);
+  border-radius: 4px;
+  /* Tiny leaf-ish glyph cue with a clip-path */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+/* ---------- Section helpers ---------- */
+.section { padding: 5rem 0; }
+.section-tight { padding: 3rem 0; }
+.container { max-width: 1180px; margin: 0 auto; padding: 0 1.5rem; }
+.container-narrow { max-width: 740px; margin: 0 auto; padding: 0 1.5rem; }
+
+.eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ---------- Photo hero (over-image text) ---------- */
+.photo-hero {
+  position: relative;
+  min-height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  background-size: cover;
+  background-position: center;
+}
+.photo-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.5) 100%);
+}
+.photo-hero > * { position: relative; z-index: 1; }
+.photo-hero h1,
+.photo-hero h2,
+.photo-hero h3 { color: white; }
+
+/* ---------- Photo card (for journey grids) ---------- */
+.photo-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.photo-card .photo {
+  aspect-ratio: 4/3;
+  background-size: cover;
+  background-position: center;
+  border-radius: 14px;
+  margin-bottom: 1rem;
+}
+.photo-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+.photo-card p {
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* ---------- Roadmap / stepper ---------- */
+.step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem 0;
+  position: relative;
+}
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  z-index: 1;
+}
+.step.done .step-dot {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: white;
+}
+.step.active .step-dot {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: white;
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
+}
+.step-line {
+  position: absolute;
+  left: 13px;
+  top: 36px;
+  bottom: -16px;
+  width: 2px;
+  background: var(--line);
+}
+.step:last-child .step-line { display: none; }
+.step.done .step-line { background: var(--ink); }
+
+/* ---------- Footer ---------- */
+footer {
+  background: var(--ink);
+  color: #d4d4d4;
+  padding: 3.5rem 0 2rem;
+  margin-top: 5rem;
+}
+footer a { color: #d4d4d4; }
+footer .logo { color: white; }
+footer .logo::before { background: white; }
+
+/* ---------- Utility ---------- */
+.divider { height: 1px; background: var(--line); margin: 2rem 0; }
+.text-muted { color: var(--muted); }
+.price {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  font-feature-settings: "tnum" 1;
+}
+
+/* Hide elements until JS replaces them */
+[data-include] { display: none; }

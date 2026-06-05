@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Negotiation Room — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Page-scoped accent color used by .ball-in-court.you-act and .event-buyer .event-avatar.
+       Without this fallback, var(--accent) was undefined and the "Your move" banner
+       rendered as white text on a transparent background. */
+    :root { --accent: #b86e00; }
+
+    /* Negotiation-specific styles */
+    .event {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    .event-row {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+    }
+    .event-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display:flex; align-items:center; justify-content:center;
+      color:white; font-weight:600; font-size:0.85rem;
+      flex-shrink:0;
+    }
+    .event-buyer .event-avatar { background: var(--accent); }
+    .event-seller .event-avatar { background: var(--brand); }
+
+    .event-bubble {
+      flex: 1;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1.1rem 1.25rem;
+    }
+    .event-buyer .event-bubble  { border-color: #fbeee2; background: #fffbf5; }
+    .event-seller .event-bubble { border-color: var(--line); }
+
+    .terms-table {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin: 0.85rem 0 0.5rem;
+    }
+    .term-cell {
+      padding: 0.6rem 0.75rem;
+      background: var(--cream);
+      border-radius: 8px;
+    }
+    .term-cell .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 0.2rem; }
+    .term-cell .value { font-weight: 600; font-size: 0.95rem; }
+
+    .ball-in-court {
+      background: var(--brand);
+      color: white;
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .ball-in-court.you-act {
+      background: var(--accent);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(26,38,32,0.5);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav"></div>
+
+  <section style="padding: 2rem 0 1rem;">
+    <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <div class="eyebrow" style="margin-bottom:0.4rem; color: var(--ink);">Negotiation Room</div>
+        <h1 style="font-size:1.75rem; margin:0;">412 Magnolia Lane</h1>
+        <div style="color:var(--ink-soft, #4a4a4a); font-size:0.95rem;">Active offer between Demo Buyer and Marcus &amp; Lila Hartwell</div>
+      </div>
+      <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+        <a id="compareOffers" href="offers.html" class="btn btn-outline btn-sm">⊞ Compare offers</a>
+        <a id="backToDashboard" href="buyer-dashboard.html" class="btn btn-outline btn-sm">← Back to Dashboard</a>
+        <!-- Perspective toggle (demo only) -->
+        <div style="background: white; border:1px solid var(--line); padding:0.25rem; border-radius:9999px; display:flex; gap:0.25rem;">
+          <button class="perspectiveBtn btn btn-sm" data-role="buyer">View as Buyer</button>
+          <button class="perspectiveBtn btn btn-sm" data-role="seller">View as Seller</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-bottom: 4rem;">
+    <div class="container" style="display:grid; grid-template-columns: minmax(0, 1fr) 320px; gap:2rem; align-items:flex-start;">
+
+      <!-- LEFT: thread + action -->
+      <div>
+        <!-- Ball in court banner -->
+        <div id="ballInCourt" class="ball-in-court">
+          <div style="font-size:1.5rem;">⏳</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;" id="bicTitle">Waiting on buyer</div>
+            <div style="font-size:0.9rem; opacity:0.9;" id="bicSub">The buyer is reviewing your counter offer.</div>
+          </div>
+        </div>
+
+        <!-- Thread -->
+        <div id="thread"></div>
+
+        <!-- Action panel -->
+        <div id="actionPanel" class="card" style="padding: 1.5rem; margin-top:1.25rem;">
+          <h3 style="margin: 0 0 0.5rem; font-size:1.1rem;" id="actionTitle">Your move</h3>
+          <p id="actionSubtitle" style="color:var(--muted); font-size:0.95rem; margin:0 0 1.25rem;">Respond to the latest message or take action below.</p>
+          <div id="actionButtons" style="display:flex; gap:0.5rem; flex-wrap:wrap;"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: sidebar -->
+      <aside>
+        <!-- Property mini card -->
+        <a href="listing.html?id=L-001" class="card" style="display:flex; gap:0.85rem; padding:0.85rem; align-items:center; text-decoration:none; color:inherit; margin-bottom:1.25rem;">
+          <div style="width:60px; height:60px; background-image:url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400'); background-size:cover; background-position:center; border-radius:8px; flex-shrink:0;"></div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-weight:500; font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">412 Magnolia Lane</div>
+            <div style="font-size:0.78rem; color:var(--muted);">List: $615,000</div>
+          </div>
+        </a>
+
+        <!-- Closing roadmap link -->
+        <a href="closing-roadmap.html" class="card" style="display:block; padding:1.25rem; text-decoration:none; color:inherit; margin-bottom:1.25rem;">
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <div style="font-size:1.5rem;">🗺</div>
+            <div>
+              <div style="font-weight:500;">Closing Roadmap</div>
+              <div style="font-size:0.85rem; color:var(--muted);">See every step from offer to keys.</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Negotiation timeline -->
+        <div class="card" style="padding:1.25rem;">
+          <h3 style="font-size:0.95rem; margin:0 0 1rem;">Activity timeline</h3>
+          <div id="timeline" style="font-size:0.85rem; display:grid; gap:0.65rem; color:var(--muted);"></div>
+        </div>
+
+        <!-- Helpful resources -->
+        <div class="card" style="padding:1.25rem; margin-top:1.25rem; background: var(--brand-light); border-color: transparent;">
+          <div style="font-weight:500; margin-bottom:0.5rem;">Need help?</div>
+          <a href="education.html" style="display:block; font-size:0.9rem; padding:0.25rem 0;">How counter offers work →</a>
+          <a href="professionals.html" style="display:block; font-size:0.9rem; padding:0.25rem 0;">Find a closing attorney →</a>
+          <a href="education.html" style="display:block; font-size:0.9rem; padding:0.25rem 0;">Repair addendum guide →</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============== Counter offer modal ============== -->
+  <div id="counterModal" class="modal-backdrop" onclick="if(event.target===this) closeModal('counterModal')">
+    <div class="card" style="max-width:560px; width:100%; padding:2rem;">
+      <h2 style="margin: 0 0 0.5rem;">Send a counter offer</h2>
+      <p style="color:var(--muted); margin: 0 0 1.5rem;">Adjust any terms you'd like to change. The other party will see your counter as a new offer.</p>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <label class="label">Price</label>
+          <input type="text" id="counterPrice" class="input" value="$600,000">
+        </div>
+        <div>
+          <label class="label">Earnest money</label>
+          <input type="text" id="counterEarnest" class="input" value="$9,000">
+        </div>
+        <div>
+          <label class="label">Closing date</label>
+          <input type="date" id="counterClose" class="input">
+        </div>
+        <div>
+          <label class="label">Financing contingency</label>
+          <select class="select" id="counterFin">
+            <option>21 days</option>
+            <option selected>30 days</option>
+            <option>None</option>
+          </select>
+        </div>
+      </div>
+      <label class="label" style="margin-top:1rem;">Message (optional)</label>
+      <textarea id="counterMsg" class="textarea" rows="3" placeholder="Explain your counter..."></textarea>
+
+      <div style="display:flex; justify-content:space-between; margin-top:1.5rem; gap:0.5rem;">
+        <button class="btn btn-ghost" onclick="closeModal('counterModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="sendCounter()">Send counter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== Repair addendum modal ============== -->
+  <div id="repairModal" class="modal-backdrop" onclick="if(event.target===this) closeModal('repairModal')">
+    <div class="card" style="max-width:560px; width:100%; padding:2rem;">
+      <h2 style="margin: 0 0 0.5rem;">Request repairs</h2>
+      <p style="color:var(--muted); margin: 0 0 1.5rem;">Based on your inspection, list the items you'd like the seller to address before closing. They can accept, reject, or counter.</p>
+      <textarea class="textarea" rows="6" placeholder="• Replace HVAC capacitor (per inspection report, page 14)&#10;• Repair fascia board on south side of roof&#10;• ...">• Replace HVAC capacitor (per inspection report, page 14)&#10;• Repair fascia board on south side of roof</textarea>
+      <label class="label" style="margin-top:1rem;">Or request a credit instead</label>
+      <input type="text" class="input" placeholder="$2,500 credit at closing">
+      <div style="display:flex; justify-content:space-between; margin-top:1.5rem; gap:0.5rem;">
+        <button class="btn btn-ghost" onclick="closeModal('repairModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="alert('Repair addendum sent! (Demo only.)'); closeModal('repairModal')">Send addendum</button>
+      </div>
+    </div>
+  </div>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ---------- State ----------
+    // 'role' controls whether we see the page as Buyer or Seller.
+    // We default to whichever side has the ball.
+    let role = "buyer"; // 'buyer' | 'seller'
+    const thread = ABODE.OFFER_THREAD;
+
+    // ---------- Rendering ----------
+    function render() {
+      renderBallInCourt();
+      renderThread();
+      renderActionPanel();
+      renderTimeline();
+      // Highlight active perspective button
+      document.querySelectorAll(".perspectiveBtn").forEach(btn => {
+        const active = btn.dataset.role === role;
+        btn.style.background = active ? "var(--brand)" : "transparent";
+        btn.style.color = active ? "white" : "var(--ink)";
+        btn.style.border = "none";
+      });
+      // Point "Back to Dashboard" at the correct dashboard for the active perspective
+      const back = document.getElementById("backToDashboard");
+      if (back) back.href = role === "seller" ? "seller-dashboard.html" : "buyer-dashboard.html";
+    }
+
+    function lastOfferEvent() {
+      // The most recent offer or counter (skip plain messages)
+      for (let i = thread.events.length - 1; i >= 0; i--) {
+        const e = thread.events[i];
+        if (e.type === "offer" || e.type === "counter") return e;
+      }
+      return null;
+    }
+
+    function whoseTurn() {
+      // Whoever did NOT send the last offer/counter is on the clock.
+      const last = lastOfferEvent();
+      return last.from === "buyer" ? "seller" : "buyer";
+    }
+
+    function renderBallInCourt() {
+      const bic = document.getElementById("ballInCourt");
+      const turn = whoseTurn();
+      const yourTurn = (turn === role);
+
+      bic.classList.toggle("you-act", yourTurn);
+      const titleEl = document.getElementById("bicTitle");
+      const subEl = document.getElementById("bicSub");
+
+      const last = lastOfferEvent();
+      const lastLabel = last.type === "counter" ? "counter offer" : "offer";
+
+      if (yourTurn) {
+        titleEl.textContent = `Your move — respond to the ${lastLabel}`;
+        subEl.textContent = `Accept, counter, or decline the ${lastLabel} at ${ABODE.formatPrice(last.price)}.`;
+        bic.querySelector("div:first-child").textContent = "⚡";
+      } else {
+        titleEl.textContent = `Waiting on ${turn}`;
+        subEl.textContent = `Your ${lastLabel} was sent ${ABODE.formatDateTime(last.date)}. We'll notify you the moment they respond.`;
+        bic.querySelector("div:first-child").textContent = "⏳";
+      }
+    }
+
+    function renderThread() {
+      const t = document.getElementById("thread");
+      t.innerHTML = thread.events.map(e => eventHTML(e)).join("");
+    }
+
+    function eventHTML(e) {
+      const who = e.from === "buyer" ? "Demo Buyer" : "Marcus &amp; Lila Hartwell";
+      const initials = e.from === "buyer" ? "DB" : "MH";
+      const className = "event event-" + e.from;
+
+      if (e.type === "message") {
+        return `
+          <div class="${className}">
+            <div class="event-row">
+              <div class="event-avatar">${initials}</div>
+              <div class="event-bubble">
+                <div style="display:flex; justify-content:space-between; gap:1rem;">
+                  <strong>${who}</strong>
+                  <span style="font-size:0.8rem; color:var(--muted);">${ABODE.formatDateTime(e.date)}</span>
+                </div>
+                <div style="margin-top:0.4rem;">${e.message}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      const label = e.type === "offer" ? "made an offer" : "sent a counter";
+      const pillClass = e.type === "offer" ? "pill-accent" : "pill";
+      return `
+        <div class="${className}">
+          <div class="event-row">
+            <div class="event-avatar">${initials}</div>
+            <div class="event-bubble">
+              <div style="display:flex; justify-content:space-between; gap:1rem; align-items:center;">
+                <div><strong>${who}</strong> <span class="pill ${pillClass}" style="margin-left:0.4rem;">${label}</span></div>
+                <span style="font-size:0.8rem; color:var(--muted);">${ABODE.formatDateTime(e.date)}</span>
+              </div>
+
+              <div class="terms-table">
+                <div class="term-cell"><div class="label">Price</div><div class="value">${ABODE.formatPrice(e.price)}</div></div>
+                <div class="term-cell"><div class="label">Earnest</div><div class="value">${ABODE.formatPrice(e.earnestMoney)}</div></div>
+                <div class="term-cell"><div class="label">Closing</div><div class="value">${ABODE.formatDate(e.closingDate)}</div></div>
+                <div class="term-cell"><div class="label">Contingencies</div><div class="value" style="font-size:0.82rem;">${e.contingencies.join(", ")}</div></div>
+              </div>
+
+              ${e.message ? `<div style="margin-top:0.5rem; padding-top:0.75rem; border-top:1px solid var(--line); font-size:0.93rem;">${e.message}</div>` : ""}
+              ${e.attachments && e.attachments.length ? `
+                <div style="margin-top:0.5rem; display:flex; gap:0.4rem; flex-wrap:wrap;">
+                  ${e.attachments.map(a => `<span class="pill pill-muted">📎 ${a}</span>`).join("")}
+                </div>
+              ` : ""}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderActionPanel() {
+      const turn = whoseTurn();
+      const yourTurn = (turn === role);
+      const last = lastOfferEvent();
+      const title = document.getElementById("actionTitle");
+      const sub = document.getElementById("actionSubtitle");
+      const btns = document.getElementById("actionButtons");
+
+      if (!yourTurn) {
+        title.textContent = "Waiting for a response";
+        sub.textContent = "You can send a message or withdraw your offer.";
+        btns.innerHTML = `
+          <button class="btn btn-outline" onclick="alert('Message sent (demo).')">Send a message</button>
+          <button class="btn btn-ghost" onclick="alert('Offer withdrawn (demo).')">Withdraw offer</button>
+        `;
+        return;
+      }
+
+      // Your turn — show Accept / Counter / Decline
+      const lastLabel = last.type === "counter" ? "counter offer" : "offer";
+      title.textContent = `Respond to the ${lastLabel}`;
+      sub.innerHTML = `Latest terms: <strong>${ABODE.formatPrice(last.price)}</strong> with closing on <strong>${ABODE.formatDate(last.closingDate)}</strong>. What would you like to do?`;
+      btns.innerHTML = `
+        <button class="btn btn-primary" onclick="acceptOffer()">✓ Accept</button>
+        <button class="btn btn-accent" onclick="openModal('counterModal')">↺ Counter</button>
+        <button class="btn btn-ghost" onclick="declineOffer()">✕ Decline</button>
+      `;
+    }
+
+    function renderTimeline() {
+      const lines = [
+        { date: "May 9, 2:22 PM", text: "Initial offer received" },
+        { date: "May 10, 9:15 AM", text: "Counter offer sent" },
+        { date: "May 10, 4:40 PM", text: "Buyer responded" },
+        { date: "Pending", text: "Awaiting buyer decision" }
+      ];
+      document.getElementById("timeline").innerHTML = lines.map((l, i) => `
+        <div style="display:flex; gap:0.5rem;">
+          <span style="color: ${i < 3 ? "var(--brand)" : "var(--muted)"}; font-weight:600;">${i < 3 ? "●" : "○"}</span>
+          <div>
+            <div style="color:var(--ink); font-weight:500;">${l.text}</div>
+            <div style="font-size:0.78rem;">${l.date}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // ---------- Actions ----------
+    function acceptOffer() {
+      if (!confirm("Accept this offer? You'll be taken to the closing roadmap.")) return;
+      window.location.href = "closing-roadmap.html?accepted=1";
+    }
+
+    function declineOffer() {
+      if (!confirm("Decline this offer? The other party will be notified.")) return;
+      alert("Offer declined. (Demo only.)");
+    }
+
+    function sendCounter() {
+      const newEvent = {
+        type: "counter",
+        from: role,
+        date: new Date().toISOString(),
+        price: parseInt(document.getElementById("counterPrice").value.replace(/[^0-9]/g, ""), 10),
+        earnestMoney: parseInt(document.getElementById("counterEarnest").value.replace(/[^0-9]/g, ""), 10),
+        closingDate: document.getElementById("counterClose").value || "2026-06-25",
+        contingencies: ["Inspection", "Financing", "Appraisal"],
+        message: document.getElementById("counterMsg").value || "Counter offer attached."
+      };
+      thread.events.push(newEvent);
+      closeModal("counterModal");
+      render();
+    }
+
+    // ---------- Modal helpers ----------
+    function openModal(id) {
+      document.getElementById(id).style.display = "flex";
+    }
+    function closeModal(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    // ---------- Init ----------
+    document.querySelectorAll(".perspectiveBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        role = btn.dataset.role;
+        render();
+      });
+    });
+
+    // Default closing date for counter modal
+    const defaultClose = new Date();
+    defaultClose.setDate(defaultClose.getDate() + 45);
+    document.getElementById("counterClose").value = defaultClose.toISOString().slice(0,10);
+
+    // Default to whichever role has the ball
+    role = whoseTurn();
+    render();
+  </script>
+</body>
+</html>

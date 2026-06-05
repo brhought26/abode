@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Homes — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <style>
+    /* === Map view (split layout) === */
+    #mapView { display:flex; height:640px; border-radius:16px; border:1px solid var(--line); overflow:hidden; background:white; }
+    #mapPane { flex:1.6; position:relative; background:#f5f1e8; min-width:0; }
+    #mapPane svg { width:100%; height:100%; display:block; }
+    #leafletMap { width:100%; height:100%; }
+
+    /* Custom Leaflet price marker (the pill bubbles) */
+    .price-marker {
+      background: #2e7d4f;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      border: 2px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .price-marker.selected { background: #1a1a1a; }
+    .price-marker:hover { background: #1a1a1a; cursor: pointer; }
+
+    /* Leaflet popup tweaks to match the site aesthetic */
+    .leaflet-popup-content-wrapper { border-radius: 12px; }
+    .leaflet-popup-content { margin: 0; width: 220px !important; }
+    .listing-popup .photo { height: 120px; background-size:cover; background-position:center; border-radius:12px 12px 0 0; }
+    .listing-popup .info { padding: 0.7rem 0.9rem 0.85rem; }
+    .listing-popup .price { font-weight: 700; color: var(--brand); font-size: 1.05rem; letter-spacing: -0.02em; }
+    .listing-popup .addr { font-size: 0.85rem; font-weight: 500; margin-top: 0.2rem; }
+    .listing-popup .meta { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; }
+    .listing-popup .open-listing { display:block; margin-top:0.6rem; font-size:0.78rem; color: var(--ink); font-weight:600; text-decoration:none; padding-top:0.5rem; border-top:1px solid var(--line); }
+    #mapListings { width:360px; flex-shrink:0; border-left:1px solid var(--line); display:flex; flex-direction:column; }
+    #mapListings .listings-header { padding:1rem 1.25rem; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; }
+    #mapListings .listings-header .count { font-size:0.92rem; font-weight:600; }
+    #mapListings .listings-header .sort { font-size:0.85rem; color:var(--muted); }
+    #mapListings .listings-scroll { overflow-y:auto; flex:1; }
+
+    .map-list-card { display:flex; gap:0.85rem; padding:0.85rem 1rem; border-bottom:1px solid var(--line); text-decoration:none; color:inherit; transition:background 0.15s ease; }
+    .map-list-card:hover { background:#faf8f4; }
+    .map-list-card .thumb { width:96px; height:74px; background-size:cover; background-position:center; border-radius:7px; flex-shrink:0; position:relative; }
+    .map-list-card .heart { position:absolute; top:5px; right:5px; width:22px; height:22px; background:rgba(255,255,255,0.92); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.78rem; }
+    .map-list-card .info { flex:1; min-width:0; }
+    .map-list-card .price { font-weight:700; font-size:1rem; color:var(--brand); letter-spacing:-0.02em; }
+    .map-list-card .addr { font-size:0.85rem; font-weight:500; margin-top:0.15rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .map-list-card .meta { font-size:0.74rem; color:var(--muted); margin-top:0.2rem; }
+    .map-list-card .save-pill { display:inline-block; font-size:0.66rem; background:#e7f3ec; color:#2e7d4f; padding:0.1rem 0.4rem; border-radius:999px; font-weight:600; margin-top:0.25rem; }
+
+    /* === Map overlays === */
+    .map-overlay { position:absolute; z-index:2; }
+    .search-area-btn { top:0.85rem; left:0.85rem; background:white; border:1px solid var(--line); border-radius:999px; padding:0.5rem 0.85rem 0.5rem 0.75rem; font-size:0.82rem; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:0.4rem; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
+    .search-area-btn:hover { background:#faf8f4; }
+    .map-controls { top:0.85rem; right:0.85rem; display:flex; flex-direction:column; gap:0.35rem; }
+    .map-controls button { width:36px; height:36px; background:white; border:1px solid var(--line); border-radius:8px; cursor:pointer; font-size:1rem; font-weight:600; color:var(--ink); box-shadow:0 2px 8px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; }
+    .map-controls button:hover { background:#faf8f4; }
+    .map-controls .zoom-group { display:flex; flex-direction:column; gap:0; border-radius:8px; overflow:hidden; }
+    .map-controls .zoom-group button { border-radius:0; box-shadow:none; border-bottom:none; }
+    .map-controls .zoom-group button:first-child { border-radius:8px 8px 0 0; }
+    .map-controls .zoom-group button:last-child { border-radius:0 0 8px 8px; border-bottom:1px solid var(--line); }
+
+    .map-scale { bottom:0.85rem; left:0.85rem; background:rgba(255,255,255,0.92); padding:0.35rem 0.7rem; border-radius:6px; font-size:0.7rem; color:var(--ink); display:flex; align-items:center; gap:0.5rem; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+    .map-scale .scale-bar { width:60px; height:6px; border:2px solid var(--ink); border-top:none; }
+
+    .map-attrib { bottom:0.85rem; right:0.85rem; font-size:0.65rem; color:var(--muted); background:rgba(255,255,255,0.92); padding:0.2rem 0.5rem; border-radius:4px; }
+
+    /* Selected pin popup card */
+    .pin-popup { position:absolute; background:white; border:1px solid var(--line); border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,0.18); padding:0; width:240px; z-index:3; overflow:hidden; pointer-events:none; }
+    .pin-popup::after { content:""; position:absolute; bottom:-9px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:9px solid transparent; border-right:9px solid transparent; border-top:9px solid white; }
+    .pin-popup .photo { height:130px; background-size:cover; background-position:center; }
+    .pin-popup .info { padding:0.7rem 0.85rem; }
+    .pin-popup .price { font-weight:700; color:var(--brand); font-size:1.05rem; letter-spacing:-0.02em; }
+    .pin-popup .addr { font-size:0.82rem; margin-top:0.2rem; }
+    .pin-popup .meta { font-size:0.72rem; color:var(--muted); margin-top:0.15rem; }
+
+    /* Pin styles */
+    .map-pin { cursor:pointer; }
+    .map-pin .pin-bg { transition:all 0.15s ease; }
+    .map-pin:hover .pin-bg { fill:#1a1a1a; }
+    .map-pin.selected .pin-bg { fill:#1a1a1a; }
+    .map-pin.selected .pin-text { fill:white; }
+    .map-pin.saved .pin-bg { fill:#d63384; }
+
+    @media (max-width: 900px) {
+      #mapView { flex-direction:column; height:auto; }
+      #mapPane { height:380px; }
+      #mapListings { width:auto; max-height:420px; border-left:none; border-top:1px solid var(--line); }
+      .aff-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="search"></div>
+
+  <!-- ============== Search header ============== -->
+  <section style="padding:2rem 0 1rem; background: white; border-bottom: 1px solid var(--line);">
+    <div class="container">
+      <h1 style="font-size:1.75rem; margin:0 0 1rem;">Find your next home</h1>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+        <div style="flex:1; min-width:240px; position:relative;">
+          <input type="text" id="searchBox" class="input" placeholder="Search by city, ZIP, or address" style="padding-left: 2.5rem;">
+          <span style="position:absolute; left: 0.85rem; top:50%; transform: translateY(-50%); color:var(--muted);">⌕</span>
+        </div>
+        <button id="viewToggle" class="btn btn-outline btn-sm" type="button">Map view</button>
+        <select id="filterBeds" class="select" style="max-width:140px;">
+          <option value="0">Any beds</option>
+          <option value="2">2+ beds</option>
+          <option value="3">3+ beds</option>
+          <option value="4">4+ beds</option>
+          <option value="5">5+ beds</option>
+        </select>
+        <select id="filterBaths" class="select" style="max-width:140px;">
+          <option value="0">Any baths</option>
+          <option value="1">1+ baths</option>
+          <option value="1.5">1.5+ baths</option>
+          <option value="2">2+ baths</option>
+          <option value="2.5">2.5+ baths</option>
+          <option value="3">3+ baths</option>
+          <option value="4">4+ baths</option>
+        </select>
+        <select id="filterPrice" class="select" style="max-width:180px;">
+          <option value="0">Any price</option>
+          <option value="400000">Under $400K</option>
+          <option value="500000">Under $500K</option>
+          <option value="700000">Under $700K</option>
+          <option value="1000000">Under $1M</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Results ============== -->
+  <section style="padding: 2rem 0;">
+    <div class="container">
+      <div id="resultsCount" style="margin-bottom:1rem; color:var(--muted); font-size:0.92rem;">Showing all listings</div>
+
+      <!-- Grid view -->
+      <div id="gridView" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:1.5rem;">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Map view (split: map + listings side panel) -->
+      <div id="mapView" style="display:none;">
+
+        <!-- Left: map pane (real Leaflet/OpenStreetMap) -->
+        <div id="mapPane">
+          <div id="leafletMap"></div>
+          <!-- DELETED-SVG-BLOCK-START
+          <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <!-- Light contour pattern for terrain texture -->
+              <pattern id="contour" width="80" height="80" patternUnits="userSpaceOnUse">
+                <circle cx="40" cy="40" r="36" fill="none" stroke="#ebe4d2" stroke-width="0.4"/>
+                <circle cx="40" cy="40" r="20" fill="none" stroke="#ebe4d2" stroke-width="0.4"/>
+              </pattern>
+            </defs>
+
+            <!-- Base terrain -->
+            <rect width="800" height="500" fill="#f5f1e8"/>
+            <rect width="800" height="500" fill="url(#contour)" opacity="0.5"/>
+
+            <!-- Parks (green spaces) -->
+            <path d="M 50 70 Q 120 50 180 75 L 220 130 Q 200 170 140 175 Q 80 165 55 130 Z" fill="#cfdcb3" opacity="0.85"/>
+            <path d="M 600 30 Q 700 40 720 100 L 700 160 Q 640 175 590 145 Q 575 80 600 30 Z" fill="#cfdcb3" opacity="0.85"/>
+            <path d="M 320 380 Q 400 365 440 395 L 450 460 Q 380 480 320 465 Z" fill="#cfdcb3" opacity="0.85"/>
+            <text x="125" y="125" fill="#5a7a3e" font-size="9" font-weight="500" font-family="Inter,sans-serif" font-style="italic" text-anchor="middle">Carrier Park</text>
+            <text x="655" y="105" fill="#5a7a3e" font-size="9" font-weight="500" font-family="Inter,sans-serif" font-style="italic" text-anchor="middle">Beaver Lake</text>
+            <text x="385" y="430" fill="#5a7a3e" font-size="9" font-weight="500" font-family="Inter,sans-serif" font-style="italic" text-anchor="middle">Biltmore Estate</text>
+
+            <!-- River (French Broad) -->
+            <path d="M -20 230 Q 100 210 250 245 T 500 270 T 820 255 L 820 305 Q 600 295 400 305 T -20 290 Z" fill="#aac6e4" opacity="0.9"/>
+            <path d="M -20 245 Q 100 225 250 260 T 500 285 T 820 270" stroke="#7ea8cf" stroke-width="1" fill="none" opacity="0.55"/>
+            <text x="80" y="295" fill="#3e6a96" font-size="9" font-weight="500" font-family="Inter,sans-serif" font-style="italic">French Broad River</text>
+
+            <!-- Highway corridors (I-240 east-west, I-26 north-south) -->
+            <g>
+              <!-- I-240 -->
+              <path d="M -10 195 Q 200 210 400 195 T 810 200" stroke="#d8c98c" stroke-width="8" fill="none"/>
+              <path d="M -10 195 Q 200 210 400 195 T 810 200" stroke="#fff" stroke-width="1.5" fill="none" stroke-dasharray="10 8" opacity="0.8"/>
+              <!-- I-26 -->
+              <path d="M 380 -10 L 410 510" stroke="#d8c98c" stroke-width="8" fill="none"/>
+              <path d="M 380 -10 L 410 510" stroke="#fff" stroke-width="1.5" fill="none" stroke-dasharray="10 8" opacity="0.8"/>
+              <!-- Highway shields -->
+              <g transform="translate(700, 180)"><rect x="-14" y="-9" width="28" height="18" rx="3" fill="#4a6b8c"/><text x="0" y="4" fill="white" font-size="9" font-weight="700" text-anchor="middle" font-family="Inter,sans-serif">240</text></g>
+              <g transform="translate(395, 60)"><rect x="-14" y="-9" width="28" height="18" rx="3" fill="#4a6b8c"/><text x="0" y="4" fill="white" font-size="9" font-weight="700" text-anchor="middle" font-family="Inter,sans-serif">26</text></g>
+            </g>
+
+            <!-- Main streets -->
+            <g stroke="#e8dfc6" stroke-width="2.5" fill="none">
+              <path d="M -10 100 L 810 110"/>
+              <path d="M -10 350 L 810 360"/>
+              <path d="M 600 -10 L 620 510"/>
+              <path d="M 200 -10 L 220 510"/>
+              <path d="M -10 430 Q 200 420 400 430 T 810 425"/>
+            </g>
+
+            <!-- Side streets (grid) -->
+            <g stroke="#ece4cc" stroke-width="0.8" fill="none" opacity="0.85">
+              <path d="M -10 50 L 810 55"/>
+              <path d="M -10 150 L 810 155"/>
+              <path d="M -10 250 L 810 256"/>
+              <path d="M -10 320 L 810 325"/>
+              <path d="M -10 390 L 810 395"/>
+              <path d="M -10 470 L 810 475"/>
+              <path d="M 80 -10 L 90 510"/>
+              <path d="M 290 -10 L 300 510"/>
+              <path d="M 340 -10 L 350 510"/>
+              <path d="M 460 -10 L 475 510"/>
+              <path d="M 540 -10 L 555 510"/>
+              <path d="M 680 -10 L 700 510"/>
+              <path d="M 750 -10 L 770 510"/>
+            </g>
+
+            <!-- Building footprints (clusters in dense areas) -->
+            <g fill="#e8e1d0" stroke="#d8d0bd" stroke-width="0.3">
+              <!-- West Asheville cluster -->
+              <rect x="60" y="220" width="12" height="9"/><rect x="76" y="220" width="11" height="9"/><rect x="91" y="220" width="13" height="9"/>
+              <rect x="60" y="232" width="14" height="11"/><rect x="78" y="232" width="11" height="11"/><rect x="93" y="232" width="12" height="11"/>
+              <rect x="115" y="180" width="13" height="10"/><rect x="132" y="180" width="11" height="10"/><rect x="147" y="180" width="14" height="10"/>
+              <rect x="115" y="194" width="12" height="11"/><rect x="131" y="194" width="13" height="11"/><rect x="148" y="194" width="11" height="11"/>
+              <!-- Downtown cluster (denser) -->
+              <rect x="455" y="115" width="16" height="11"/><rect x="475" y="115" width="14" height="11"/><rect x="493" y="115" width="13" height="11"/><rect x="510" y="115" width="15" height="11"/><rect x="529" y="115" width="12" height="11"/><rect x="545" y="115" width="14" height="11"/>
+              <rect x="455" y="130" width="14" height="13"/><rect x="473" y="130" width="13" height="13"/><rect x="490" y="130" width="15" height="13"/><rect x="509" y="130" width="13" height="13"/><rect x="526" y="130" width="14" height="13"/><rect x="544" y="130" width="13" height="13"/>
+              <rect x="455" y="147" width="15" height="11"/><rect x="474" y="147" width="13" height="11"/><rect x="491" y="147" width="12" height="11"/><rect x="507" y="147" width="14" height="11"/><rect x="525" y="147" width="13" height="11"/><rect x="542" y="147" width="14" height="11"/>
+              <rect x="455" y="162" width="13" height="10"/><rect x="472" y="162" width="14" height="10"/><rect x="490" y="162" width="13" height="10"/><rect x="507" y="162" width="15" height="10"/><rect x="526" y="162" width="13" height="10"/><rect x="543" y="162" width="14" height="10"/>
+              <!-- North Asheville scattered -->
+              <rect x="615" y="70" width="14" height="11"/><rect x="633" y="70" width="11" height="11"/>
+              <rect x="660" y="90" width="13" height="12"/><rect x="677" y="90" width="14" height="12"/>
+              <!-- Biltmore Village -->
+              <rect x="350" y="395" width="13" height="11"/><rect x="367" y="395" width="14" height="11"/><rect x="385" y="395" width="12" height="11"/>
+              <rect x="350" y="410" width="14" height="11"/><rect x="368" y="410" width="13" height="11"/><rect x="385" y="410" width="14" height="11"/>
+              <!-- Kenilworth -->
+              <rect x="640" y="300" width="12" height="10"/><rect x="656" y="300" width="13" height="10"/>
+              <rect x="640" y="313" width="14" height="10"/><rect x="658" y="313" width="11" height="10"/>
+            </g>
+
+            <!-- Neighborhood labels -->
+            <g font-family="Inter,sans-serif" fill="#7a6d56" font-weight="700" letter-spacing="1.5">
+              <text x="110" y="265" font-size="11">WEST ASHEVILLE</text>
+              <text x="500" y="100" font-size="12">DOWNTOWN</text>
+              <text x="660" y="65" font-size="10">NORTH ASHEVILLE</text>
+              <text x="380" y="350" font-size="10">BILTMORE VILLAGE</text>
+              <text x="640" y="290" font-size="10">KENILWORTH</text>
+              <text x="260" y="285" font-size="9" font-weight="600" font-style="italic" opacity="0.7">RIVER ARTS</text>
+            </g>
+
+            <!-- Property pins (rendered by JS) -->
+            <g id="mapPins"></g>
+          </svg>
+
+          <!-- Overlays -->
+          <button class="map-overlay search-area-btn">
+            <span style="font-size:0.9rem;">⤿</span>
+            <span>Search this area</span>
+          </button>
+
+          <div class="map-overlay map-controls">
+            <div class="zoom-group">
+              <button title="Zoom in">+</button>
+              <button title="Zoom out">−</button>
+            </div>
+            <button title="Draw search area">✎</button>
+            <button title="Map layers">⊞</button>
+            <button title="My location">⌖</button>
+          </div>
+
+          <div class="map-overlay map-scale">
+            <div class="scale-bar"></div>
+            <span>1 mi</span>
+          </div>
+
+          <div class="map-overlay map-attrib">Asheville, NC · Demo map</div>
+
+          DELETED-SVG-BLOCK-END -->
+        </div>
+
+        <!-- Right: scrollable listings panel -->
+        <div id="mapListings">
+          <div class="listings-header">
+            <div class="count" id="mapListingsCount">— homes shown</div>
+            <div class="sort">Sort: Newest</div>
+          </div>
+          <div class="listings-scroll" id="mapListingsScroll">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Affordability calculator ============== -->
+  <section style="padding: 2rem 0 4rem; border-top: 1px solid var(--line); background: white;">
+    <div class="container">
+
+      <div style="margin-bottom: 1.5rem; max-width:640px;">
+        <div class="eyebrow" style="margin-bottom: 0.4rem;">For buyers</div>
+        <h2 style="margin: 0 0 0.5rem; font-size: clamp(1.5rem, 3vw, 2rem);">Affordability Calculator</h2>
+        <p style="color: var(--muted); margin: 0; font-size: 0.98rem;">
+          Not sure what you can afford? Plug in your numbers and we'll show you the maximum home price your budget supports — using the same debt-to-income (DTI) guidelines lenders use.
+        </p>
+      </div>
+
+      <div class="aff-card" style="background:white; border:1px solid var(--line); border-radius:18px; padding:1.75rem;">
+
+        <!-- Big result banner -->
+        <div style="background: var(--ink); color: white; border-radius:12px; padding:1.5rem; margin-bottom:1.75rem;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:#a8a8a8; font-weight:700; margin-bottom:0.4rem;">Maximum purchase price</div>
+              <div id="affMaxPrice" style="font-size:2.5rem; font-weight:800; letter-spacing:-0.025em; line-height:1;">$0</div>
+              <div style="font-size:0.85rem; color:#a8a8a8; margin-top:0.6rem;" id="affMaxNote">Based on your inputs below</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:#a8a8a8; font-weight:700; margin-bottom:0.4rem;">Max monthly payment</div>
+              <div id="affMaxPiti" style="font-size:1.6rem; font-weight:700; letter-spacing:-0.015em;">$0</div>
+              <div style="font-size:0.78rem; color:#a8a8a8; margin-top:0.6rem;">Including taxes &amp; insurance</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two columns -->
+        <div class="aff-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 2.5rem;">
+
+          <!-- Inputs -->
+          <div>
+            <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:700; color:var(--muted); margin-bottom:0.85rem;">Your finances</div>
+            <div class="calc-field"><span>Annual gross income</span><input type="number" id="affIncome" value="120000" min="0" step="1000"></div>
+            <div class="calc-field"><span>Monthly debt payments</span><input type="number" id="affDebts" value="400" min="0" step="25"></div>
+            <div class="calc-field"><span>Down payment available</span><input type="number" id="affDown" value="50000" min="0" step="1000"></div>
+            <div class="calc-field"><span>Interest rate %</span><input type="number" id="affRate" value="6.75" step="0.01" min="0"></div>
+            <div class="calc-field"><span>Loan term (years)</span><input type="number" id="affTerm" value="30" min="1" max="40"></div>
+            <div class="calc-field"><span>Property tax rate %</span><input type="number" id="affTaxRate" value="0.85" step="0.01" min="0"></div>
+            <div class="calc-field"><span>Insurance /month</span><input type="number" id="affIns" value="150" min="0" step="10"></div>
+          </div>
+
+          <!-- Breakdown -->
+          <div>
+            <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:700; color:var(--muted); margin-bottom:0.85rem;">Breakdown at max price</div>
+            <div class="ledger">
+              <div class="ledger-row"><span class="ledger-label">Principal &amp; interest</span><span class="ledger-value" id="affPIAmt">$0</span></div>
+              <div class="ledger-row"><span class="ledger-label">Property tax</span><span class="ledger-value" id="affTaxAmt">$0</span></div>
+              <div class="ledger-row"><span class="ledger-label">Home insurance</span><span class="ledger-value" id="affInsAmt">$0</span></div>
+              <div class="ledger-row" style="border-top:1px solid var(--line); padding-top:0.65rem; margin-top:0.3rem; font-weight:700;"><span class="ledger-label">Total monthly (PITI)</span><span class="ledger-value" id="affPitiAmt">$0</span></div>
+              <div class="ledger-row"><span class="ledger-label">Loan amount</span><span class="ledger-value" id="affLoanAmt">$0</span></div>
+            </div>
+
+            <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:700; color:var(--muted); margin-top:1.25rem; margin-bottom:0.5rem;">Debt-to-income (DTI)</div>
+            <div class="ledger">
+              <div class="ledger-row"><span class="ledger-label">Front-end (housing only)</span><span class="ledger-value" id="affFrontDti">0%</span></div>
+              <div class="ledger-row"><span class="ledger-label">Back-end (housing + debts)</span><span class="ledger-value" id="affBackDti">0%</span></div>
+            </div>
+
+            <div style="font-size:0.78rem; color:var(--muted); margin-top:1rem; font-style:italic; line-height:1.55;">
+              Conservative limits: <strong>28% front-end</strong> and <strong>36% back-end</strong>. Most lenders will go to 43–50% back-end, but this gives you breathing room.
+              <a href="mortgages.html#qualification" style="display:inline-block; margin-top:0.4rem; font-style:normal; font-weight:600; color:var(--brand);">Learn how lenders qualify buyers →</a>
+            </div>
+
+            <div style="font-size:0.78rem; color:var(--muted); margin-top:1rem; padding-top:0.85rem; border-top:1px solid var(--line); line-height:1.6;">
+              <strong style="color:var(--ink);">Estimate only.</strong> This tool is not a loan pre-approval, financial advice, or a guarantee of any borrowing capacity. <strong style="color:var(--ink);">Abode is not a lender, mortgage broker, or financial advisor</strong> and makes no representation or warranty as to the accuracy of these figures. Your actual qualifying amount depends on your full credit profile, the loan program you select, your lender's underwriting standards, and the specific property. <strong style="color:var(--ink);">Talk to a licensed mortgage lender for a real pre-approval before making any offer on a property</strong> — they will run the precise math for your circumstances and produce the pre-approval letter sellers expect.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ---------- Search & filter logic ----------
+    const searchBox = document.getElementById("searchBox");
+    const filterBeds = document.getElementById("filterBeds");
+    const filterBaths = document.getElementById("filterBaths");
+    const filterPrice = document.getElementById("filterPrice");
+    const gridView = document.getElementById("gridView");
+    const mapView = document.getElementById("mapView");
+    const viewToggle = document.getElementById("viewToggle");
+    const resultsCount = document.getElementById("resultsCount");
+    const mapPins = document.getElementById("mapPins");
+    const mapListingsScroll = document.getElementById("mapListingsScroll");
+    const mapListingsCount = document.getElementById("mapListingsCount");
+    const pinPopup = document.getElementById("pinPopup");
+    // ---------- Leaflet map setup ----------
+    // Initialize the real map centered on continental US, zoom 4 (whole country visible).
+    // We defer creating it until the user first toggles into map view (avoids a zero-size init).
+    let leafletMap = null;
+    let leafletMarkers = []; // markers currently on the map, for clearing/recreating
+    function ensureLeafletMap() {
+      if (leafletMap) return;
+      leafletMap = L.map("leafletMap", {
+        zoomControl: true,
+        scrollWheelZoom: true,
+      }).setView([39.5, -98.35], 4); // center of contiguous US
+      // Strip Leaflet's default "Leaflet 🇺🇦" prefix from the attribution control.
+      leafletMap.attributionControl.setPrefix("");
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
+        maxZoom: 18,
+      }).addTo(leafletMap);
+    }
+
+    function renderLeafletMarkers(listings) {
+      if (!leafletMap) return;
+      // Clear old markers
+      leafletMarkers.forEach(m => leafletMap.removeLayer(m));
+      leafletMarkers = [];
+      // Add a marker per listing that has coordinates
+      const bounds = [];
+      listings.forEach(l => {
+        if (typeof l.lat !== "number" || typeof l.lng !== "number") return;
+        const label = "$" + Math.round(l.price / 1000) + "K";
+        const icon = L.divIcon({
+          className: "",
+          html: `<div class="price-marker">${label}</div>`,
+          iconSize: null,
+          iconAnchor: [25, 15],
+        });
+        const marker = L.marker([l.lat, l.lng], { icon }).addTo(leafletMap);
+        marker.bindPopup(`
+          <div class="listing-popup">
+            <div class="photo" style="background-image:url('${l.photos[0]}');"></div>
+            <div class="info">
+              <div class="price">${ABODE.formatPrice(l.price)}</div>
+              <div class="addr">${l.address}</div>
+              <div class="meta">${l.city}, ${l.state} &middot; ${l.beds}bd &middot; ${l.baths}ba &middot; ${l.sqft.toLocaleString()} sqft</div>
+              <a class="open-listing" href="listing.html?id=${l.id}">View listing &rarr;</a>
+            </div>
+          </div>
+        `);
+        leafletMarkers.push(marker);
+        bounds.push([l.lat, l.lng]);
+      });
+      // Fit map to markers when there are any
+      if (bounds.length === 1) {
+        leafletMap.setView(bounds[0], 11);
+      } else if (bounds.length > 1) {
+        leafletMap.fitBounds(bounds, { padding: [40, 40] });
+      }
+    }
+
+    let isMap = false;
+
+    function listingCard(listing) {
+      return `
+        <a href="listing.html?id=${listing.id}" class="card card-hover" style="text-decoration:none; color:inherit; display:block;">
+          <div style="aspect-ratio: 4/3; background-image:url('${listing.photos[0]}'); background-size:cover; background-position:center; position:relative;">
+            <span class="pill pill-good" style="position:absolute; top:0.75rem; left:0.75rem; background:white;">Save ${ABODE.formatPrice(listing.commissionSavings)}</span>
+          </div>
+          <div style="padding: 1.1rem 1.25rem;">
+            <div style="font-weight:700; letter-spacing:-0.02em; font-size:1.4rem; color: var(--brand);">${ABODE.formatPrice(listing.price)}</div>
+            <div style="margin-top:0.4rem; font-weight:500;">${listing.address}</div>
+            <div style="font-size:0.88rem; color: var(--muted);">${listing.city}, ${listing.state} ${listing.zip}</div>
+            <div style="margin-top:0.75rem; font-size:0.88rem; color: var(--muted); display:flex; gap:1rem;">
+              <span>${listing.beds} bd</span>
+              <span>${listing.baths} ba</span>
+              <span>${listing.sqft.toLocaleString()} sqft</span>
+            </div>
+          </div>
+        </a>
+      `;
+    }
+
+    function applyFilters() {
+      const q = searchBox.value.trim().toLowerCase();
+      const minBeds = parseInt(filterBeds.value, 10);
+      const minBaths = parseFloat(filterBaths.value);
+      const maxPrice = parseInt(filterPrice.value, 10);
+
+      const filtered = ABODE.LISTINGS.filter(l => {
+        const matchesText = !q
+          || l.city.toLowerCase().includes(q)
+          || l.zip.includes(q)
+          || l.address.toLowerCase().includes(q)
+          || `${l.city}, ${l.state}`.toLowerCase().includes(q);
+        const matchesBeds = !minBeds || l.beds >= minBeds;
+        const matchesBaths = !minBaths || l.baths >= minBaths;
+        const matchesPrice = !maxPrice || l.price <= maxPrice;
+        return matchesText && matchesBeds && matchesBaths && matchesPrice;
+      });
+
+      resultsCount.textContent = filtered.length + " home" + (filtered.length === 1 ? "" : "s") + " for sale";
+
+      // Grid
+      gridView.innerHTML = filtered.length
+        ? filtered.map(listingCard).join("")
+        : `<div style="grid-column: 1/-1; padding:3rem; text-align:center; color:var(--muted);">No homes match your filters yet. Try widening your search.</div>`;
+
+      // Refresh Leaflet markers to match the filtered listings.
+      renderLeafletMarkers(filtered);
+
+      // Side panel: compact cards
+      mapListingsCount.textContent = filtered.length + " home" + (filtered.length === 1 ? "" : "s") + " shown";
+      mapListingsScroll.innerHTML = filtered.length
+        ? filtered.map((l, i) => {
+            const isSaved = i === 0; // demo: first one marked saved
+            return `
+              <a href="listing.html?id=${l.id}" class="map-list-card">
+                <div class="thumb" style="background-image:url('${l.photos[0]}');">
+                  <div class="heart">${isSaved ? '♥' : '♡'}</div>
+                </div>
+                <div class="info">
+                  <div class="price">${ABODE.formatPrice(l.price)}</div>
+                  <div class="addr">${l.address}</div>
+                  <div class="meta">${l.city}, ${l.state} · ${l.beds}bd · ${l.baths}ba · ${l.sqft.toLocaleString()} sqft</div>
+                  <span class="save-pill">Save ${ABODE.formatPrice(l.commissionSavings)}</span>
+                </div>
+              </a>
+            `;
+          }).join("")
+        : `<div style="padding:2rem; text-align:center; color:var(--muted); font-size:0.88rem;">No homes match. Try widening your filters.</div>`;
+    }
+
+    viewToggle.addEventListener("click", () => {
+      isMap = !isMap;
+      gridView.style.display = isMap ? "none" : "grid";
+      mapView.style.display = isMap ? "flex" : "none";
+      viewToggle.textContent = isMap ? "List view" : "Map view";
+      // Lazy-init Leaflet the first time we show the map (avoids zero-size init bugs),
+      // and rerun filter logic so markers are present and bounds are fit.
+      if (isMap) {
+        ensureLeafletMap();
+        // Leaflet needs a "invalidateSize" call after its container becomes visible
+        setTimeout(() => {
+          if (leafletMap) leafletMap.invalidateSize();
+          applyFilters();
+        }, 0);
+      }
+    });
+
+    [searchBox, filterBeds, filterBaths, filterPrice].forEach(el => el.addEventListener("input", applyFilters));
+    applyFilters();
+
+    // ---------- Affordability calculator ----------
+    // Standard DTI guidelines: 28% front-end (housing) / 36% back-end (housing + other debts).
+    // We compute the maximum purchase price under whichever limit binds first.
+    function runAffordability() {
+      const income     = parseFloat(document.getElementById("affIncome").value)   || 0;
+      const debts      = parseFloat(document.getElementById("affDebts").value)    || 0;
+      const down       = parseFloat(document.getElementById("affDown").value)     || 0;
+      const rate       = parseFloat(document.getElementById("affRate").value)     || 0;
+      const term       = parseFloat(document.getElementById("affTerm").value)     || 30;
+      const taxRate    = parseFloat(document.getElementById("affTaxRate").value)  || 0;
+      const insurance  = parseFloat(document.getElementById("affIns").value)      || 0;
+
+      const monthlyIncome = income / 12;
+      const monthlyRate   = (rate / 100) / 12;
+      const n             = term * 12;
+
+      // Mortgage payment factor (how much P&I you pay per dollar of loan, per month)
+      const pmtFactor = monthlyRate > 0
+        ? (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1)
+        : 1 / n;
+
+      // PITI cap = lower of front-end (28% of income) and back-end (36% - debts)
+      const frontCap = monthlyIncome * 0.28;
+      const backCap  = monthlyIncome * 0.36 - debts;
+      const pitiCap  = Math.max(0, Math.min(frontCap, backCap));
+
+      // Solve: (price - down)*pmt + price*(taxRate/100)/12 + insurance = pitiCap
+      // => price = (pitiCap - insurance + down*pmt) / (pmt + taxRate/100/12)
+      const monthlyTaxFactor = (taxRate / 100) / 12;
+      let maxPrice = (pitiCap - insurance + down * pmtFactor) / (pmtFactor + monthlyTaxFactor);
+      if (!isFinite(maxPrice) || maxPrice < 0) maxPrice = 0;
+      maxPrice = Math.max(maxPrice, down); // can't be less than your down payment
+
+      // Compute actual PITI at this price
+      const loan    = Math.max(0, maxPrice - down);
+      const pi      = loan * pmtFactor;
+      const tax     = maxPrice * monthlyTaxFactor;
+      const piti    = pi + tax + insurance;
+
+      // DTI ratios at this PITI
+      const frontDti = monthlyIncome > 0 ? (piti / monthlyIncome) * 100 : 0;
+      const backDti  = monthlyIncome > 0 ? ((piti + debts) / monthlyIncome) * 100 : 0;
+
+      const fmt = n => "$" + Math.round(n).toLocaleString();
+      const pct = n => n.toFixed(1) + "%";
+
+      document.getElementById("affMaxPrice").textContent  = fmt(maxPrice);
+      document.getElementById("affMaxPiti").textContent   = fmt(piti);
+      document.getElementById("affPIAmt").textContent     = fmt(pi);
+      document.getElementById("affTaxAmt").textContent    = fmt(tax);
+      document.getElementById("affInsAmt").textContent    = fmt(insurance);
+      document.getElementById("affPitiAmt").textContent   = fmt(piti);
+      document.getElementById("affLoanAmt").textContent   = fmt(loan);
+      document.getElementById("affFrontDti").textContent  = pct(frontDti);
+      document.getElementById("affBackDti").textContent   = pct(backDti);
+
+      // Note which constraint is binding
+      const noteEl = document.getElementById("affMaxNote");
+      if (pitiCap <= 0) noteEl.textContent = "Your existing debts exceed 36% of income — pay down debt first.";
+      else if (frontCap <= backCap) noteEl.textContent = "Housing cap is the binding constraint (28% of income)";
+      else noteEl.textContent = "Total-debt cap is the binding constraint (36% of income)";
+    }
+
+    // Wire live updates on all affordability inputs
+    document.querySelectorAll("#affIncome, #affDebts, #affDown, #affRate, #affTerm, #affTaxRate, #affIns")
+      .forEach(el => el.addEventListener("input", runAffordability));
+    runAffordability();
+  </script>
+</body>
+</html>

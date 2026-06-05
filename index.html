@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abode — Buy and sell your home, without the 6%</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div data-include="nav" data-active="home"></div>
+
+  <!-- ================= HERO ================= -->
+  <section class="photo-hero" style="background-image:url('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=2400&q=80'); min-height: 560px;">
+    <div class="container" style="padding: 4rem 1.5rem;">
+      <h1 style="font-size: clamp(3rem, 8vw, 5.5rem); margin: 0 0 1.25rem; letter-spacing: -0.03em;">Abode</h1>
+      <p style="font-size: clamp(1.1rem, 2vw, 1.4rem); max-width: 640px; margin: 0 auto 2rem; font-weight: 500; line-height: 1.35;">
+        Our comprehensive marketing, education and contract management tools give you the confidence to sell your home yourself.
+      </p>
+      <a href="get-started.html" class="btn btn-white btn-lg">Get Started</a>
+    </div>
+  </section>
+
+  <!-- ================= SELLERS ROW ================= -->
+  <section class="section">
+    <div class="container" style="display:grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items:center;">
+      <div>
+        <div style="aspect-ratio: 4/3; background-image:url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80'); background-size:cover; background-position:center; border-radius:16px;"></div>
+      </div>
+      <div>
+        <h2 style="margin-bottom:1.25rem; font-size: clamp(2.75rem, 5.5vw, 4rem); letter-spacing: -0.025em;">Sellers</h2>
+        <p style="color:var(--muted); font-size:1.05rem; margin-bottom: 1.75rem; max-width: 440px;">
+          Retain your hard-earned equity by engaging interested buyers directly — no realtor commissions.
+        </p>
+        <a href="get-started.html#sellers" class="btn btn-primary">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BUYERS ROW ================= -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container" style="display:grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items:center;">
+      <div>
+        <h2 style="margin-bottom:1.25rem; font-size: clamp(2.75rem, 5.5vw, 4rem); letter-spacing: -0.025em;">Buyers</h2>
+        <p style="color:var(--muted); font-size:1.05rem; margin-bottom: 1.75rem; max-width: 440px;">
+          Search our network of properties and get easy direct access to sellers — no realtor commissions.
+        </p>
+        <a href="get-started.html#buyers" class="btn btn-primary">Learn More</a>
+      </div>
+      <div>
+        <div style="aspect-ratio: 4/3; background-image:url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200&q=80'); background-size:cover; background-position:center; border-radius:16px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= COMMISSION SAVINGS (minimal) ================= -->
+  <section class="section">
+    <div class="container-narrow" style="text-align:center;">
+      <div class="card" style="padding: 2rem;">
+        <h3 style="margin: 0 0 1.5rem; font-size: 1.25rem; text-align: center; letter-spacing: -0.01em;">Savings Calculator</h3>
+        <label class="label" for="homePrice" style="text-align:left;">Your home's expected sale price</label>
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom: 1.5rem;">
+          <input type="range" id="homePrice" min="100000" max="2000000" step="10000" value="500000" style="flex:1; accent-color: var(--ink);">
+          <div id="homePriceLabel" class="price" style="font-size:1.5rem; min-width:140px; text-align:right;">$500,000</div>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align:left;">
+          <div style="padding:1rem; border:1px solid var(--line); border-radius:12px;">
+            <div style="font-size:0.72rem; text-transform:uppercase; color:var(--muted); letter-spacing:0.06em; font-weight:600;">Traditional agent</div>
+            <div id="traditionalCost" class="price" style="font-size:1.5rem; margin-top:0.3rem;">$30,000</div>
+            <div style="font-size:0.78rem; color:var(--muted);">6% commission</div>
+          </div>
+          <div style="padding:1rem; border:1px solid var(--line); border-radius:12px;">
+            <div style="font-size:0.72rem; text-transform:uppercase; color:var(--muted); letter-spacing:0.06em; font-weight:600;">With Abode</div>
+            <div id="abodeCost" class="price" style="font-size:1.5rem; margin-top:0.3rem;">$499</div>
+            <div style="font-size:0.78rem; color:var(--muted);">Savvy Seller</div>
+          </div>
+          <div style="padding:1rem; background: var(--ink); color:white; border-radius:12px;">
+            <div style="font-size:0.72rem; text-transform:uppercase; color:#a8a8a8; letter-spacing:0.06em; font-weight:600;">You keep</div>
+            <div id="savings" class="price" style="font-size:1.5rem; color:white; margin-top:0.3rem;">$29,501</div>
+            <div style="font-size:0.78rem; color:#a8a8a8;">in your pocket</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FEATURED LISTINGS ================= -->
+  <section class="section" style="padding-top: 1rem;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 2rem; gap:1rem; flex-wrap:wrap;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 0.4rem;">Browse</div>
+          <h2 style="margin:0;">Homes on Abode</h2>
+        </div>
+        <a href="search.html" class="btn btn-outline btn-sm">View all listings</a>
+      </div>
+      <div id="featuredListings" style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem;"></div>
+    </div>
+  </section>
+
+  <!-- ================= FINAL CTA ================= -->
+  <section class="section" style="text-align:center;">
+    <div class="container-narrow">
+      <h2 style="font-size: clamp(2rem, 4vw, 2.75rem); margin-bottom: 1.75rem;">Sign up today.</h2>
+      <a href="get-started.html" class="btn btn-primary btn-lg">Get Started</a>
+    </div>
+  </section>
+
+  <!-- ================= TESTIMONIALS ================= -->
+  <section class="section" style="background: white; padding-top: 4rem; padding-bottom: 5rem; border-top: 1px solid var(--line);">
+    <div class="container">
+
+      <div style="text-align:center; margin-bottom: 3rem;">
+        <div class="eyebrow" style="margin-bottom: 0.5rem;">What our users say</div>
+        <h2 style="margin: 0; font-size: clamp(1.75rem, 3.5vw, 2.5rem);">Real people. Real savings.</h2>
+      </div>
+
+      <div class="testimonial-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem;">
+
+        <!-- Testimonial 1 -->
+        <div class="card" style="padding: 2rem; display:flex; flex-direction:column;">
+          <div style="font-size: 3.5rem; color: var(--brand); font-family: Georgia, serif; line-height: 0.5; margin-bottom: 0.85rem; height: 1.25rem;">&ldquo;</div>
+          <p style="margin: 0 0 1.25rem; line-height: 1.65; flex: 1; color: var(--ink);">
+            At first I was anxious to list my home myself, but Abode's roadmap and education center walked us through every step. We sold in 12 days for above asking &mdash; and kept $27,000 we would have paid in commission.
+          </p>
+          <div style="color: #f4a000; letter-spacing: 0.15em; margin-bottom: 1rem; font-size: 0.95rem;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <div style="display:flex; gap: 0.75rem; align-items: center; padding-top: 1rem; border-top: 1px solid var(--line);">
+            <div style="width:40px; height:40px; border-radius:50%; background: var(--brand); color: white; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:0.85rem; flex-shrink:0;">ST</div>
+            <div>
+              <div style="font-weight: 600; font-size: 0.95rem;">Sarah Tate</div>
+              <div style="font-size: 0.78rem; color: var(--muted);">Seller &middot; Asheville, NC</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="card" style="padding: 2rem; display:flex; flex-direction:column;">
+          <div style="font-size: 3.5rem; color: var(--brand); font-family: Georgia, serif; line-height: 0.5; margin-bottom: 0.85rem; height: 1.25rem;">&ldquo;</div>
+          <p style="margin: 0 0 1.25rem; line-height: 1.65; flex: 1; color: var(--ink);">
+            Buying our first home felt overwhelming until we found Abode. The pre-approval guidance and clear contract templates made it feel manageable. We messaged the seller directly through the platform &mdash; no middleman, no games.
+          </p>
+          <div style="color: #f4a000; letter-spacing: 0.15em; margin-bottom: 1rem; font-size: 0.95rem;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <div style="display:flex; gap: 0.75rem; align-items: center; padding-top: 1rem; border-top: 1px solid var(--line);">
+            <div style="width:40px; height:40px; border-radius:50%; background: #4a7c9c; color: white; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:0.85rem; flex-shrink:0;">JR</div>
+            <div>
+              <div style="font-weight: 600; font-size: 0.95rem;">Jennifer Reyes</div>
+              <div style="font-size: 0.78rem; color: var(--muted);">Buyer &middot; Greenville, SC</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="card" style="padding: 2rem; display:flex; flex-direction:column;">
+          <div style="font-size: 3.5rem; color: var(--brand); font-family: Georgia, serif; line-height: 0.5; margin-bottom: 0.85rem; height: 1.25rem;">&ldquo;</div>
+          <p style="margin: 0 0 1.25rem; line-height: 1.65; flex: 1; color: var(--ink);">
+            We thought selling ourselves would be too much work on top of busy jobs and kids. Abode made it easy. The extra money we saved is going straight into our daughter's college fund.
+          </p>
+          <div style="color: #f4a000; letter-spacing: 0.15em; margin-bottom: 1rem; font-size: 0.95rem;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <div style="display:flex; gap: 0.75rem; align-items: center; padding-top: 1rem; border-top: 1px solid var(--line);">
+            <div style="width:40px; height:40px; border-radius:50%; background: #7a5230; color: white; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:0.85rem; flex-shrink:0;">DR</div>
+            <div>
+              <div style="font-weight: 600; font-size: 0.95rem;">David &amp; Lisa Reilly</div>
+              <div style="font-size: 0.78rem; color: var(--muted);">Sellers &middot; Charlotte, NC</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <style>
+    @media (max-width: 900px) {
+      .testimonial-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+
+  <div data-include="footer"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ---------- Commission calculator ----------
+    const priceSlider = document.getElementById("homePrice");
+    const priceLabel = document.getElementById("homePriceLabel");
+    const traditional = document.getElementById("traditionalCost");
+    const abode = document.getElementById("abodeCost");
+    const savings = document.getElementById("savings");
+
+    function updateCalc() {
+      const price = parseInt(priceSlider.value, 10);
+      const trad = Math.round(price * 0.06);
+      const abodeFee = 499;
+      priceLabel.textContent = "$" + price.toLocaleString();
+      traditional.textContent = "$" + trad.toLocaleString();
+      abode.textContent = "$" + abodeFee.toLocaleString();
+      savings.textContent = "$" + (trad - abodeFee).toLocaleString();
+    }
+    priceSlider.addEventListener("input", updateCalc);
+    updateCalc();
+
+    // ---------- Featured listings ----------
+    // Five hand-picked listings shown on the landing page.
+    // Edit this array to swap which homes appear on the home page.
+    const featured = document.getElementById("featuredListings");
+    const featuredIds = ["L-001", "L-002", "L-003", "L-007", "L-008"];
+    featuredIds.forEach(id => {
+      const listing = ABODE.findListing(id);
+      if (!listing) return;
+      featured.innerHTML += `
+        <a href="listing.html?id=${listing.id}" class="photo-card" style="display:block;">
+          <div class="photo" style="background-image:url('${listing.photos[0]}');"></div>
+          <div class="price" style="font-size:1.15rem;">${ABODE.formatPrice(listing.price)}</div>
+          <h3 style="margin-top:0.35rem; font-size:0.95rem; font-weight:500;">${listing.address}</h3>
+          <p style="margin-top:0.15rem; font-size:0.82rem;">${listing.city}, ${listing.state} · ${listing.beds}bd · ${listing.baths}ba · ${listing.sqft.toLocaleString()} sqft</p>
+        </a>
+      `;
+    });
+  </script>
+
+  <!-- Responsive: stack the alternating rows + featured listings on small screens -->
+  <style>
+    @media (max-width: 768px) {
+      .container > div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+      }
+    }
+    /* Featured listings: 5 cols on wide screens, gracefully degrade */
+    @media (max-width: 1100px) {
+      #featuredListings { grid-template-columns: repeat(3, 1fr) !important; }
+    }
+    @media (max-width: 720px) {
+      #featuredListings { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
+    }
+    @media (max-width: 460px) {
+      #featuredListings { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</body>
+</html>

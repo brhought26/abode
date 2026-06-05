@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Make an Offer — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div data-include="nav" data-active="search"></div>
+
+  <section style="padding:2.5rem 0;">
+    <div class="container" style="max-width: 900px;">
+
+      <!-- Property summary at top -->
+      <div id="propertySummary" style="margin-bottom: 1.5rem;"></div>
+
+      <!-- Stepper -->
+      <div style="display:flex; gap:0.5rem; margin-bottom:2rem; flex-wrap:wrap;">
+        <div class="stepperItem active" data-step="1" style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 1rem; border-radius:9999px; background:var(--brand); color:white; font-size:0.9rem;">1. Proof of Funds</div>
+        <div class="stepperItem" data-step="2" style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 1rem; border-radius:9999px; background:var(--line); color:var(--muted); font-size:0.9rem;">2. Offer Terms</div>
+        <div class="stepperItem" data-step="3" style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 1rem; border-radius:9999px; background:var(--line); color:var(--muted); font-size:0.9rem;">3. Review &amp; Send</div>
+      </div>
+
+      <!-- ============== STEP 1: Proof of Funds ============== -->
+      <div id="step1" class="step-content card" style="padding:2rem;">
+        <h2 style="margin:0 0 0.5rem;">Step 1 · Proof of funds</h2>
+        <p style="color:var(--muted); margin: 0 0 1.5rem;">Upload a pre-approval letter (if you're financing) or a bank statement (if you're paying cash). The seller won't see anything else until you submit your offer.</p>
+
+        <label class="label">Financing type</label>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:0.75rem; margin-bottom:1.5rem;">
+          <label class="card" style="padding:1rem; cursor:pointer; display:flex; gap:0.75rem; align-items:flex-start;">
+            <input type="radio" name="finType" value="conventional" checked style="margin-top:0.2rem;">
+            <div>
+              <div style="font-weight:500;">Conventional loan</div>
+              <div style="font-size:0.85rem; color:var(--muted);">Most common — needs pre-approval letter.</div>
+            </div>
+          </label>
+          <label class="card" style="padding:1rem; cursor:pointer; display:flex; gap:0.75rem; align-items:flex-start;">
+            <input type="radio" name="finType" value="cash" style="margin-top:0.2rem;">
+            <div>
+              <div style="font-weight:500;">Cash</div>
+              <div style="font-size:0.85rem; color:var(--muted);">Needs a recent bank or investment statement.</div>
+            </div>
+          </label>
+          <label class="card" style="padding:1rem; cursor:pointer; display:flex; gap:0.75rem; align-items:flex-start;">
+            <input type="radio" name="finType" value="other" style="margin-top:0.2rem;">
+            <div>
+              <div style="font-weight:500;">FHA / VA / Other</div>
+              <div style="font-size:0.85rem; color:var(--muted);">We'll guide you through the right docs.</div>
+            </div>
+          </label>
+        </div>
+
+        <label class="label">Upload document</label>
+        <div id="dropZone" style="border:2px dashed var(--line); border-radius:12px; padding:2rem; text-align:center; cursor:pointer; transition:background 0.15s;" onclick="document.getElementById('fileInput').click()">
+          <div style="font-size:2rem; color:var(--brand); margin-bottom:0.5rem;">⬆</div>
+          <div style="font-weight:500;">Drag a file here or click to choose</div>
+          <div class="hint">PDF, JPG, or PNG — under 10 MB</div>
+          <input type="file" id="fileInput" style="display:none;" accept=".pdf,.jpg,.jpeg,.png">
+          <div id="fileLabel" class="hint" style="margin-top:1rem; color:var(--brand); display:none;"></div>
+        </div>
+
+        <!-- Sensitive-info warning -->
+        <div style="background:#fff4e0; border-left:4px solid #b86e00; border-radius:0 12px 12px 0; padding:1rem 1.25rem; margin-top:1rem;">
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <div style="font-size:1.2rem; flex-shrink:0; line-height:1.2;">⚠️</div>
+            <div>
+              <div style="font-weight:600; color:#b86e00; font-size:0.95rem; margin-bottom:0.35rem;">Protect your sensitive information</div>
+              <div style="font-size:0.88rem; color:var(--ink); line-height:1.55;">
+                Before you upload, <strong>redact or black out</strong> any of the following from your document:
+              </div>
+              <ul style="margin:0.5rem 0 0; padding-left:1.2rem; font-size:0.85rem; color:var(--ink); line-height:1.6;">
+                <li>Full Social Security numbers (the last 4 digits are usually enough)</li>
+                <li>Full bank account or routing numbers</li>
+                <li>Driver's license or passport numbers</li>
+                <li>Date of birth, if not required for the document</li>
+              </ul>
+              <div style="font-size:0.82rem; color:var(--muted); margin-top:0.6rem;">Sellers only need to verify your financing capacity &mdash; not your full identity. You can always provide additional details directly to your closing attorney later.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- One-active-offer policy note -->
+        <div style="background:#eef3f8; border-left:4px solid #2c6e9e; border-radius:0 12px 12px 0; padding:1rem 1.25rem; margin-top:0.85rem;">
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <div style="font-size:1.2rem; flex-shrink:0; line-height:1.2;">ℹ️</div>
+            <div>
+              <div style="font-weight:600; color:#2c6e9e; font-size:0.95rem; margin-bottom:0.35rem;">One active offer at a time</div>
+              <div style="font-size:0.88rem; color:var(--ink); line-height:1.55;">
+                While this offer is live, Abode will not let you submit a new offer on another property. You can withdraw an offer to free up the slot, or wait for it to expire or be resolved.
+              </div>
+              <div style="font-size:0.82rem; color:var(--muted); margin-top:0.6rem;">
+                Need to make offers on multiple homes at once? Upgrade to the <a href="pricing.html?role=buyer" style="font-weight:600; color:#2c6e9e;">Investor tier ($150/yr)</a> for unlimited concurrent offers. Requires proof of funds and standard identity verification.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p style="font-size:0.85rem; color:var(--muted); margin-top:1rem;">🔒 Your document is encrypted and only shared after you submit the offer.</p>
+
+        <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+          <a href="javascript:history.back()" class="btn btn-ghost">← Back to listing</a>
+          <button class="btn btn-primary" onclick="goToStep(2)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- ============== STEP 2: Offer Terms ============== -->
+      <div id="step2" class="step-content card" style="padding:2rem; display:none;">
+        <h2 style="margin:0 0 0.5rem;">Step 2 · Offer terms</h2>
+        <p style="color:var(--muted); margin: 0 0 1.5rem;">These are the terms the seller will respond to. We'll auto-fill a standard contract using your answers.</p>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1rem;">
+          <div>
+            <label class="label" for="offerPrice">Offer price</label>
+            <input type="text" id="offerPrice" class="input" value="">
+            <div class="hint" id="listVsOffer"></div>
+          </div>
+          <div>
+            <label class="label" for="earnestMoney">Earnest money</label>
+            <input type="text" id="earnestMoney" class="input" value="$5,000">
+            <div class="hint">Refundable deposit (typically 1–3% of price)</div>
+          </div>
+          <div>
+            <label class="label" for="closingDate">Closing date</label>
+            <input type="date" id="closingDate" class="input">
+            <div class="hint">Most closings happen 30–45 days after offer.</div>
+          </div>
+          <div>
+            <label class="label" for="financingDays">Financing contingency</label>
+            <select id="financingDays" class="select">
+              <option>15 days</option>
+              <option>20 days</option>
+              <option selected>30 days</option>
+              <option>45 days</option>
+              <option>60 days</option>
+              <option>None (waive contingency)</option>
+            </select>
+            <div class="hint" style="margin-top:0.4rem;">
+              <span style="color:#b86e00; font-weight:700;">*</span> Check with your lender for any window under 30 days.
+            </div>
+          </div>
+          <div>
+            <label class="label" for="offerExpiresDays">Offer expires in</label>
+            <select id="offerExpiresDays" class="select">
+              <!-- 1–60 day options populated by JS below -->
+            </select>
+            <div class="hint">How long the seller has to accept, counter, or decline.</div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.5rem;">
+          <label class="label">Standard contingencies</label>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:0.5rem;">
+            <label style="display:flex; gap:0.5rem; align-items:center;"><input type="checkbox" checked> Inspection</label>
+            <label style="display:flex; gap:0.5rem; align-items:center;"><input type="checkbox" checked> Financing</label>
+            <label style="display:flex; gap:0.5rem; align-items:center;"><input type="checkbox" checked> Appraisal</label>
+            <label style="display:flex; gap:0.5rem; align-items:center;"><input type="checkbox"> Sale of current home</label>
+          </div>
+        </div>
+
+        <div style="margin-top:1.5rem;">
+          <label class="label" for="offerMessage">Message to seller (optional)</label>
+          <textarea id="offerMessage" class="textarea" rows="4" placeholder="A personal note can go a long way. Why do you love this home?"></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+          <button class="btn btn-ghost" onclick="goToStep(1)">← Back</button>
+          <button class="btn btn-primary" onclick="goToStep(3)">Review offer →</button>
+        </div>
+      </div>
+
+      <!-- ============== STEP 3: Review & Send ============== -->
+      <div id="step3" class="step-content card" style="padding:2rem; display:none;">
+        <h2 style="margin:0 0 0.5rem;">Step 3 · Review &amp; send</h2>
+        <p style="color:var(--muted); margin: 0 0 1.5rem;">Take one last look. Once you send, the seller will see your offer immediately.</p>
+
+        <div id="reviewSummary" style="background: var(--brand-light); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem;">
+          <!-- Filled by JS -->
+        </div>
+
+        <div class="card" style="padding:1.25rem; background:#fffaf3; border-color: #f4dec2; margin-bottom:1.5rem;">
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <div style="font-size:1.5rem;">📜</div>
+            <div style="flex:1;">
+              <div style="font-weight:600; margin-bottom:0.25rem;">Generated contract preview</div>
+              <div style="font-size:0.9rem; color:var(--muted); margin-bottom:0.75rem;">Abode has pre-filled a standard purchase agreement using your terms. You'll be able to review and e-sign once the seller accepts or counters.</div>
+              <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <a href="contracts/sample-purchase-agreement.pdf" target="_blank" rel="noopener" class="btn btn-outline btn-sm">View draft (PDF)</a>
+                <a href="contracts/sample-purchase-agreement.pdf" download="purchase-agreement.pdf" class="btn btn-ghost btn-sm">Download</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <label style="display:flex; gap:0.5rem; align-items:flex-start; font-size:0.9rem;">
+          <input type="checkbox" id="agreeBox" style="margin-top:0.3rem;">
+          <span>I understand this is a real offer. If accepted, I'll be bound by the terms above. <a href="education.html">Learn what happens next →</a></span>
+        </label>
+
+        <div style="display:flex; justify-content:space-between; margin-top:2rem;">
+          <button class="btn btn-ghost" onclick="goToStep(2)">← Back</button>
+          <button class="btn btn-primary btn-lg" id="sendOfferBtn" onclick="sendOffer()" disabled>Send Offer</button>
+        </div>
+      </div>
+
+      <!-- ============== STEP 4: Confirmation ============== -->
+      <div id="step4" class="step-content card" style="padding:3rem 2rem; display:none; text-align:center;">
+        <div style="font-size:3rem; color:var(--brand); margin-bottom:1rem;">✓</div>
+        <h2 style="margin:0 0 0.5rem;">Offer sent!</h2>
+        <p style="color:var(--muted); max-width:480px; margin: 0 auto 1.5rem;">The seller has been notified. You'll see their response in the Negotiation Room as soon as they reply.</p>
+        <div style="display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap;">
+          <a href="buyer-dashboard.html" class="btn btn-primary">View my dashboard</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ---------- Load listing context ----------
+    const params = new URLSearchParams(window.location.search);
+    const listingId = params.get("id") || "L-001";
+    const listing = ABODE.findListing(listingId);
+
+    // Render property summary at top
+    document.getElementById("propertySummary").innerHTML = `
+      <a href="listing.html?id=${listing.id}" style="display:flex; gap:1rem; align-items:center; padding:1rem; background:white; border:1px solid var(--line); border-radius:12px; text-decoration:none; color:inherit;">
+        <div style="width:80px; height:60px; border-radius:8px; background-image:url('${listing.photos[0]}'); background-size:cover; background-position:center;"></div>
+        <div style="flex:1;">
+          <div style="font-weight:500;">${listing.address}</div>
+          <div style="font-size:0.85rem; color:var(--muted);">${listing.city}, ${listing.state} · ${listing.beds}bd · ${listing.baths}ba</div>
+        </div>
+        <div style="font-weight:700; letter-spacing:-0.02em; color:var(--brand); font-size:1.3rem;">${ABODE.formatPrice(listing.price)}</div>
+      </a>
+    `;
+
+    // Defaults
+    document.getElementById("offerPrice").value = "$" + (listing.price - 25000).toLocaleString();
+    const defaultClose = new Date();
+    defaultClose.setDate(defaultClose.getDate() + 45);
+    document.getElementById("closingDate").value = defaultClose.toISOString().slice(0,10);
+
+    // Populate the "Offer expires in" dropdown with 1–60 day options (default = 7 days)
+    const expiresSelect = document.getElementById("offerExpiresDays");
+    for (let i = 1; i <= 60; i++) {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = i === 1 ? "1 day" : `${i} days`;
+      if (i === 7) opt.selected = true;
+      expiresSelect.appendChild(opt);
+    }
+
+    // Live label: how does offer compare to list?
+    const offerInput = document.getElementById("offerPrice");
+    const listVsOffer = document.getElementById("listVsOffer");
+    function updateOfferDelta() {
+      const num = parseInt(offerInput.value.replace(/[^0-9]/g, ""), 10) || 0;
+      const delta = num - listing.price;
+      if (delta === 0) listVsOffer.textContent = "Same as list price.";
+      else if (delta < 0) listVsOffer.textContent = "$" + Math.abs(delta).toLocaleString() + " below list.";
+      else listVsOffer.textContent = "$" + delta.toLocaleString() + " above list.";
+    }
+    offerInput.addEventListener("input", updateOfferDelta);
+    updateOfferDelta();
+
+    // File picker
+    document.getElementById("fileInput").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (file) {
+        const label = document.getElementById("fileLabel");
+        label.style.display = "block";
+        label.textContent = "✓ " + file.name + " (" + Math.round(file.size/1024) + " KB)";
+      }
+    });
+
+    // Stepper
+    function goToStep(n) {
+      [1,2,3,4].forEach(i => {
+        document.getElementById("step"+i).style.display = (i === n) ? "block" : "none";
+      });
+      document.querySelectorAll(".stepperItem").forEach(el => {
+        const idx = parseInt(el.dataset.step, 10);
+        if (idx <= n) {
+          el.style.background = "var(--brand)";
+          el.style.color = "white";
+        } else {
+          el.style.background = "var(--line)";
+          el.style.color = "var(--muted)";
+        }
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      // Populate review summary
+      if (n === 3) {
+        const summary = document.getElementById("reviewSummary");
+        summary.innerHTML = `
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem 2rem;">
+            <div><div style="font-size:0.75rem; text-transform:uppercase; color:var(--brand); font-weight:600; letter-spacing:0.05em;">Property</div><div style="font-weight:500;">${listing.address}</div></div>
+            <div><div style="font-size:0.75rem; text-transform:uppercase; color:var(--brand); font-weight:600; letter-spacing:0.05em;">Offer price</div><div style="font-weight:500;">${document.getElementById("offerPrice").value}</div></div>
+            <div><div style="font-size:0.75rem; text-transform:uppercase; color:var(--brand); font-weight:600; letter-spacing:0.05em;">Earnest money</div><div style="font-weight:500;">${document.getElementById("earnestMoney").value}</div></div>
+            <div><div style="font-size:0.75rem; text-transform:uppercase; color:var(--brand); font-weight:600; letter-spacing:0.05em;">Closing date</div><div style="font-weight:500;">${document.getElementById("closingDate").value}</div></div>
+            <div><div style="font-size:0.75rem; text-transform:uppercase; color:var(--brand); font-weight:600; letter-spacing:0.05em;">Financing</div><div style="font-weight:500;">${document.getElementById("financingDays").value}</div></div>
+            <div><div style="font-size:0.75rem; text-transform:uppercase; color:var(--brand); font-weight:600; letter-spacing:0.05em;">Offer expires in</div><div style="font-weight:500;">${(() => { const s = document.getElementById("offerExpiresDays"); return s.options[s.selectedIndex].text; })()}</div></div>
+            <div><div style="font-size:0.75rem; text-transform:uppercase; color:var(--brand); font-weight:600; letter-spacing:0.05em;">Proof of funds</div><div style="font-weight:500;">Uploaded ✓</div></div>
+          </div>
+        `;
+      }
+    }
+
+    document.getElementById("agreeBox").addEventListener("change", e => {
+      document.getElementById("sendOfferBtn").disabled = !e.target.checked;
+    });
+
+    function sendOffer() {
+      goToStep(4);
+    }
+  </script>
+</body>
+</html>

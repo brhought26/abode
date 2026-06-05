@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Closing Roadmap — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .roadmap-step {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 1rem;
+      position: relative;
+      padding: 1.25rem 0;
+    }
+    .roadmap-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 27px;
+      top: 60px;
+      bottom: -8px;
+      width: 2px;
+      background: var(--line);
+    }
+    .roadmap-step.done:not(:last-child)::after { background: var(--brand); }
+
+    .step-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid var(--line);
+      display:flex; align-items:center; justify-content:center;
+      font-size: 1.4rem;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+    }
+    .roadmap-step.done .step-icon { background: var(--brand); border-color: var(--brand); color: white; }
+    .roadmap-step.active .step-icon {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+      box-shadow: 0 0 0 6px rgba(201,134,84,0.2);
+    }
+
+    .step-body {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+    }
+    .roadmap-step.active .step-body {
+      border-color: var(--accent);
+      box-shadow: 0 6px 20px rgba(201,134,84,0.1);
+    }
+    .roadmap-step.done .step-body { background: #f4f9f5; }
+
+    .substeps {
+      list-style: none;
+      padding: 0;
+      margin: 0.85rem 0 0;
+      display: grid;
+      gap: 0.4rem;
+    }
+    .substeps li {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      font-size: 0.92rem;
+      color: var(--ink);
+    }
+    .substeps li.done { color: var(--muted); text-decoration: line-through; }
+    .substeps .check { width: 18px; height: 18px; border-radius: 50%; background: var(--line); display:inline-flex; align-items:center; justify-content:center; color:white; font-size:0.7rem; flex-shrink:0; }
+    .substeps li.done .check { background: var(--brand); }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav"></div>
+
+  <section style="padding:2rem 0 1rem;">
+    <div class="container" style="max-width: 920px;">
+      <div class="eyebrow" style="margin-bottom:0.4rem;">Closing Roadmap</div>
+      <h1 style="font-size:2rem; margin: 0 0 0.5rem;">From accepted offer to keys</h1>
+      <p style="color:var(--muted); margin:0;">Every step from contract signing through funding day. Abode handles the paperwork, scheduling, and reminders so nothing falls through the cracks.</p>
+
+      <!-- Property header -->
+      <div class="card" style="margin-top:1.5rem; padding:1.25rem; display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+        <div style="width:80px; height:60px; background-image:url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400'); background-size:cover; background-position:center; border-radius:8px;"></div>
+        <div style="flex:1; min-width:200px;">
+          <div style="font-weight:500;">412 Magnolia Lane, Asheville NC</div>
+          <div style="font-size:0.88rem; color:var(--muted);">Buyer: Demo Buyer · Seller: Marcus &amp; Lila Hartwell</div>
+        </div>
+        <div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
+          <div>
+            <div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Accepted price</div>
+            <div style="font-weight:700; letter-spacing:-0.02em; font-size:1.3rem; color:var(--brand);">$605,000</div>
+          </div>
+          <div>
+            <div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Closing date</div>
+            <div style="font-weight:700; letter-spacing:-0.02em; font-size:1.3rem;">Jun 25, 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress overview -->
+      <div style="display:flex; gap:1rem; margin-top:1.25rem; flex-wrap:wrap;">
+        <div class="card" style="flex:1; min-width:160px; padding:1rem;">
+          <div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Progress</div>
+          <div style="font-weight:700; letter-spacing:-0.02em; font-size:1.5rem; color:var(--brand); margin-top:0.25rem;">3 of 8</div>
+          <div style="height:6px; background:var(--line); border-radius:3px; margin-top:0.5rem;"><div style="width:37%; height:100%; background:var(--brand); border-radius:3px;"></div></div>
+        </div>
+        <div class="card" style="flex:1; min-width:160px; padding:1rem;">
+          <div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Days to close</div>
+          <div style="font-weight:700; letter-spacing:-0.02em; font-size:1.5rem; margin-top:0.25rem;">42</div>
+          <div style="font-size:0.78rem; color:var(--muted); margin-top:0.25rem;">On track</div>
+        </div>
+        <div class="card" style="flex:1; min-width:160px; padding:1rem;">
+          <div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Next action</div>
+          <div style="font-weight:700; letter-spacing:-0.02em; font-size:1.1rem; margin-top:0.25rem;">Book inspection</div>
+          <div style="font-size:0.78rem; color:var(--accent); margin-top:0.25rem;">Due May 18</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-bottom:4rem;">
+    <div class="container" style="max-width:920px;">
+      <!-- Steps -->
+      <div id="roadmap"></div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ---------- Roadmap steps ----------
+    // Each step has a status: done | active | upcoming
+    // and a list of substeps.
+    const STEPS = [
+      {
+        status: "done",
+        icon: "📝",
+        title: "Offer accepted",
+        date: "Completed May 12",
+        body: "Both parties have signed the purchase agreement.",
+        subs: [
+          { text: "Buyer's offer accepted", done: true },
+          { text: "Purchase agreement generated", done: true },
+          { text: "Both parties digitally signed", done: true }
+        ]
+      },
+      {
+        status: "done",
+        icon: "💰",
+        title: "Earnest money deposited",
+        date: "Completed May 13",
+        body: "$9,000 deposited into escrow with selected closing attorney.",
+        subs: [
+          { text: "Closing attorney selected", done: true },
+          { text: "Escrow account opened", done: true },
+          { text: "Earnest money wired", done: true }
+        ]
+      },
+      {
+        status: "done",
+        icon: "🔍",
+        title: "Inspection scheduled",
+        date: "Completed May 14",
+        body: "Inspection booked with Mountain View Home Inspections for May 18.",
+        subs: [
+          { text: "Inspector chosen from Abode directory", done: true },
+          { text: "Appointment confirmed for May 18, 10 AM", done: true }
+        ]
+      },
+      {
+        status: "active",
+        icon: "🛠",
+        title: "Inspection & repair negotiation",
+        date: "Due by May 25",
+        body: "After the inspection, the buyer has 7 days to request repairs. The seller can accept, reject, or counter through Abode.",
+        action: { label: "Open repair addendum tool", href: "negotiation.html" },
+        subs: [
+          { text: "Inspection scheduled", done: true },
+          { text: "Receive inspection report", done: false },
+          { text: "Submit repair addendum (or waive)", done: false },
+          { text: "Seller response received", done: false }
+        ]
+      },
+      {
+        status: "upcoming",
+        icon: "🏦",
+        title: "Financing & appraisal",
+        date: "Due by Jun 9",
+        body: "Lender finalizes the loan, orders an appraisal, and locks the rate. Abode reminds you to send documents on time.",
+        subs: [
+          { text: "Submit loan application", done: false },
+          { text: "Appraisal ordered", done: false },
+          { text: "Appraisal received", done: false },
+          { text: "Final loan approval", done: false }
+        ]
+      },
+      {
+        status: "upcoming",
+        icon: "📑",
+        title: "Title & survey",
+        date: "Due by Jun 16",
+        body: "Closing attorney runs a title search, orders title insurance, and a property survey if needed.",
+        subs: [
+          { text: "Title search complete", done: false },
+          { text: "Title insurance ordered", done: false },
+          { text: "Survey complete (if needed)", done: false }
+        ]
+      },
+      {
+        status: "upcoming",
+        icon: "📋",
+        title: "Final walk-through",
+        date: "Jun 24 — 1 day before closing",
+        body: "Buyer does a final walk-through to confirm the property is in the agreed condition.",
+        subs: [
+          { text: "Walk-through scheduled", done: false },
+          { text: "Condition confirmed or issues raised", done: false }
+        ]
+      },
+      {
+        status: "upcoming",
+        icon: "🔑",
+        title: "Closing day",
+        date: "Jun 25, 2026",
+        body: "Both parties sign at the closing attorney's office. Funds are released, deed is recorded, and the buyer gets the keys.",
+        subs: [
+          { text: "Buyer sends wire for downpayment + closing costs", done: false },
+          { text: "Documents signed at attorney's office", done: false },
+          { text: "Deed recorded with the county", done: false },
+          { text: "Keys exchanged 🎉", done: false }
+        ]
+      }
+    ];
+
+    const root = document.getElementById("roadmap");
+    root.innerHTML = STEPS.map((s, idx) => `
+      <div class="roadmap-step ${s.status}">
+        <div class="step-icon">${s.status === "done" ? "✓" : s.icon}</div>
+        <div class="step-body">
+          <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+            <h3 style="margin:0; font-size:1.15rem;">${idx + 1}. ${s.title}</h3>
+            <span class="pill ${s.status === "active" ? "pill-accent" : s.status === "done" ? "pill-good" : "pill-muted"}">${s.status === "active" ? "In progress" : s.status === "done" ? "Done" : "Upcoming"}</span>
+          </div>
+          <div style="font-size:0.85rem; color:var(--muted); margin-top:0.25rem;">${s.date}</div>
+          <p style="margin: 0.75rem 0 0; color:var(--ink);">${s.body}</p>
+          <ul class="substeps">
+            ${s.subs.map(sub => `
+              <li class="${sub.done ? "done" : ""}">
+                <span class="check">${sub.done ? "✓" : ""}</span>
+                ${sub.text}
+              </li>
+            `).join("")}
+          </ul>
+          ${s.action ? `<a href="${s.action.href}" class="btn btn-accent btn-sm" style="margin-top:1rem;">${s.action.label} →</a>` : ""}
+        </div>
+      </div>
+    `).join("");
+  </script>
+</body>
+</html>

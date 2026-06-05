@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log in — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div data-include="nav"></div>
+
+  <section style="padding:3rem 0; min-height:60vh;">
+    <div class="container" style="max-width:440px;">
+      <div class="card" style="padding:2.5rem 2rem;">
+        <div style="text-align:center; margin-bottom:1.5rem;">
+          <div class="logo" style="font-size:2.25rem; margin-bottom:0.25rem;">Abode</div>
+          <p style="color:var(--muted); margin:0;">Welcome back.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div style="display:flex; gap:0.25rem; background:var(--brand-light); padding:0.25rem; border-radius:9999px; margin-bottom:1.5rem;">
+          <button class="tabBtn btn btn-sm" data-tab="login" style="flex:1; background:white; color:var(--ink);">Log in</button>
+          <button class="tabBtn btn btn-sm" data-tab="signup" style="flex:1; background:transparent;">Create account</button>
+        </div>
+
+        <!-- Login form -->
+        <div id="loginForm">
+          <label class="label">Email</label>
+          <input type="email" class="input" placeholder="you@example.com" value="bryon.houghton@gmail.com" style="margin-bottom:1rem;">
+          <label class="label">Password</label>
+          <input type="password" class="input" placeholder="••••••••" style="margin-bottom:0.5rem;">
+          <div style="text-align:right; margin-bottom:1.25rem;"><a href="#" style="font-size:0.85rem;">Forgot password?</a></div>
+          <button class="btn btn-primary" style="width:100%;" onclick="window.location.href='dashboard.html'">Log in</button>
+          <div style="text-align:center; margin:1.25rem 0; color:var(--muted); font-size:0.85rem;">or</div>
+          <button class="btn btn-outline" style="width:100%;">Continue with Google</button>
+        </div>
+
+        <!-- Signup form -->
+        <div id="signupForm" style="display:none;">
+          <label class="label">I want to</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:1rem;">
+            <label class="card" style="padding:0.85rem; cursor:pointer; display:flex; align-items:center; gap:0.5rem;">
+              <input type="radio" name="role" value="buyer" checked>
+              <span style="font-size:0.9rem;">Buy a home</span>
+            </label>
+            <label class="card" style="padding:0.85rem; cursor:pointer; display:flex; align-items:center; gap:0.5rem;">
+              <input type="radio" name="role" value="seller">
+              <span style="font-size:0.9rem;">Sell my home</span>
+            </label>
+          </div>
+          <label class="label">Full name</label>
+          <input type="text" class="input" placeholder="Jane Buyer" style="margin-bottom:1rem;">
+          <label class="label">Email</label>
+          <input type="email" class="input" placeholder="you@example.com" style="margin-bottom:1rem;">
+          <label class="label">Password</label>
+          <input type="password" class="input" placeholder="At least 8 characters" style="margin-bottom:1.25rem;">
+          <button class="btn btn-primary" style="width:100%;" onclick="window.location.href='dashboard.html'">Create account</button>
+          <p style="font-size:0.8rem; color:var(--muted); text-align:center; margin-top:1rem;">By creating an account you agree to Abode's Terms and Privacy Policy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.querySelectorAll(".tabBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tab = btn.dataset.tab;
+        document.getElementById("loginForm").style.display = tab === "login" ? "block" : "none";
+        document.getElementById("signupForm").style.display = tab === "signup" ? "block" : "none";
+        document.querySelectorAll(".tabBtn").forEach(b => {
+          b.style.background = b === btn ? "white" : "transparent";
+          b.style.color = b === btn ? "var(--ink)" : "var(--muted)";
+        });
+      });
+    });
+  </script>
+</body>
+</html>

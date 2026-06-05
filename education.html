@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Education Center — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .topic-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .topic-card .photo {
+      aspect-ratio: 4/3;
+      background-size: cover;
+      background-position: center;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+    .topic-card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+    }
+    .topic-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+      flex: 1;
+    }
+    /* When the last topic tile is alone on its row, center it. */
+    .topic-card.last-alone { grid-column: 2; }
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="education"></div>
+
+  <!-- ============== Hero: Knowledge = Confidence ============== -->
+  <section class="section">
+    <div class="container" style="display:grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items:center;" id="heroRow">
+      <div>
+        <h1 style="font-size: clamp(2.25rem, 4.5vw, 3.25rem); margin-bottom: 1.25rem; line-height: 1.1;">Knowledge =<br>Confidence</h1>
+        <p style="color: var(--muted); font-size: 1.05rem; margin-bottom: 1.75rem; max-width: 460px;">
+          Confidence = money in your pocket. Give yourself the knowledge you'll need to confidently buy or sell a home. Learn more about buying and selling, contracts, how to value a property and so much more in our education library.
+        </p>
+      </div>
+      <div>
+        <div style="aspect-ratio: 1/1; background-image:url('https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=1000&q=80'); background-size:cover; background-position:center; border-radius:16px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== Major resources: side-by-side tiles ============== -->
+  <section style="padding: 1.5rem 0 3rem;">
+    <div class="container">
+      <div id="majorResources" style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+
+        <!-- Real Estate Road Map -->
+        <a href="real-estate-roadmap.html" style="display:block; text-decoration:none; color:inherit;">
+          <div style="background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%); color: white; border-radius: 20px; padding: 2.5rem 2.25rem; min-height: 280px; display:flex; flex-direction:column; justify-content:space-between; transition: transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 36px rgba(46,125,79,0.25)';" onmouseout="this.style.transform=''; this.style.boxShadow='';">
+            <div>
+              <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.14em; opacity:0.8; font-weight:600; margin-bottom:0.6rem;">The full picture</div>
+              <h2 style="color: white; font-size: clamp(1.6rem, 2.6vw, 2rem); margin-bottom: 0.85rem; line-height:1.15;">Real Estate Road Map</h2>
+              <p style="opacity:0.9; font-size:0.98rem; line-height:1.55; margin:0;">Twenty-two steps across five phases — from pre-approval to keys in hand. See the whole journey at a glance, with each milestone clickable for a deeper dive.</p>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.75rem;">
+              <span style="font-size:0.92rem; font-weight:500; opacity:0.95;">View the road map</span>
+              <span style="font-size:1.8rem;">→</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Terminology Dictionary -->
+        <a href="dictionary.html" style="display:block; text-decoration:none; color:inherit;">
+          <div style="background: var(--ink, #1a1a1a); color: white; border-radius: 20px; padding: 2.5rem 2.25rem; min-height: 280px; display:flex; flex-direction:column; justify-content:space-between; transition: transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 36px rgba(26,26,26,0.25)';" onmouseout="this.style.transform=''; this.style.boxShadow='';">
+            <div>
+              <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.14em; opacity:0.7; font-weight:600; margin-bottom:0.6rem;">Look it up</div>
+              <h2 style="color: white; font-size: clamp(1.6rem, 2.6vw, 2rem); margin-bottom: 0.85rem; line-height:1.15;">Terminology Dictionary</h2>
+              <p style="opacity:0.85; font-size:0.98rem; line-height:1.55; margin:0;">Fifty-plus real estate terms defined in plain English. Searchable, sorted A–Z, and ready whenever you hit jargon you don't recognize.</p>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.75rem;">
+              <span style="font-size:0.92rem; font-weight:500; opacity:0.95;">Browse the dictionary</span>
+              <span style="font-size:1.8rem;">→</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== In-Depth Subjects ============== -->
+  <section class="section" style="padding-top: 1rem;">
+    <div class="container">
+      <h2 style="font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 2.5rem; text-align:center;">In-Depth Subjects:</h2>
+
+      <div id="topicsGrid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;"></div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    const TOPICS = [
+      {
+        title: "Mortgages",
+        photo: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
+        body: "Whether you're a buyer or a seller, understanding mortgage loan terminology and the various related documentation is a crucial starting point.",
+        link: "mortgages.html"
+      },
+      {
+        title: "Contracts",
+        photo: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80",
+        body: "Real estate contracts form the basis of an agreement to buy or sell. A contract protects both sides and lays out the rules of the road to keep both parties on the same page.",
+        link: "contracts.html"
+      },
+      {
+        title: "Home Owner's Insurance",
+        photo: "https://images.unsplash.com/photo-1530092285049-1c42085fd395?w=800&q=80",
+        body: "Different properties require different types of insurance. This can be affected by the location as well as the type of structure and surrounding land.",
+        link: "homeowners-insurance.html"
+      },
+      {
+        title: "Title Insurance",
+        photo: "https://images.unsplash.com/photo-1589998059171-988d887df646?w=800&q=80",
+        body: "When you buy a home, you're also buying its history. Most lenders will require borrowers to get title insurance that protects the lender.",
+        link: "title-insurance.html"
+      },
+      {
+        title: "Closing Attorneys & Agents",
+        photo: "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=800&q=80",
+        body: "Depending on your state, a closing attorney or title agent helps make sure everything is legal, fair and properly documented with the proper jurisdiction.",
+        link: "closing-attorneys.html"
+      },
+      {
+        title: "Home Inspections",
+        photo: "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?w=800&q=80",
+        body: "Anyone who has bought a home before can tell you how valuable a thorough home inspection is. Repairs can be expensive — know what you're getting into by hiring an inspector.",
+        link: "home-inspections.html"
+      },
+      {
+        title: "Home Warranties",
+        photo: "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800&q=80",
+        body: "Not sure how well the prior owner took care of the major systems in your new home? You may want to consider a home warranty.",
+        link: "home-warranties.html"
+      },
+      {
+        title: "Appraisals",
+        photo: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80",
+        body: "Determining the value of a property isn't magic, but it's not an exact science either. Having a licensed appraiser involved can remove the guess work.",
+        link: "appraisals.html"
+      },
+      {
+        title: "Valuating a Property",
+        photo: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
+        body: "What you might consider a fair price can differ from others. Every buyer and seller has their own needs, wants, and perspectives. Standard methods can help put two parties closer together.",
+        link: "valuating-a-property.html"
+      },
+      {
+        title: "Surveys",
+        photo: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=800&q=80",
+        body: "Understanding the legal boundaries of a property can help avoid disputes and put to paper exactly what you're buying or selling.",
+        link: "surveys.html"
+      },
+      {
+        title: "Mineral Rights",
+        photo: "https://images.unsplash.com/photo-1599658880436-c61792e70672?w=800&q=80",
+        body: "Not sure what's below your feet? Most homeowners may not think about this — but when it comes to land purchases, mineral rights matter.",
+        link: "mineral-rights.html"
+      },
+      {
+        title: "Credit Reports",
+        photo: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&q=80",
+        body: "Your credit history shapes what loan you qualify for and at what rate. Learn how to read your report and improve your score before you apply.",
+        link: "credit-reports.html"
+      },
+      {
+        title: "Discrimination in Real Estate",
+        photo: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=800&q=80",
+        body: "Real estate has a long, painful history of discrimination — and many of its modern forms are subtle. Learn how to recognize bias, evaluate offers on their merits, and keep the housing market fair for everyone.",
+        link: "discrimination.html"
+      },
+      {
+        title: "Fraud in Real Estate",
+        photo: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80",
+        body: "Wire fraud, fake listings, and title scams cost American buyers and sellers hundreds of millions every year. Learn the red flags, how closing-attorney phishing works, and the simple habits that keep your money safe.",
+        link: "fraud-in-real-estate.html"
+      },
+      {
+        title: "Best Practices",
+        photo: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80",
+        body: "Without an agent in the room, you become the cooler head. Learn the habits — keeping records, managing tone, protecting confidential information — that prevent costly missteps during your transaction.",
+        link: "best-practices.html"
+      },
+      {
+        title: "Termites &amp; Pests",
+        photo: "https://images.unsplash.com/photo-1571566882372-1598d88abd90?w=800&q=80",
+        body: "Termites cause an estimated $5 billion in damage to American homes every year &mdash; and most insurance doesn't cover it. Learn about termite bonds, regional risk zones, the WDO report many lenders require, and what to look for.",
+        link: "termites-and-pests.html"
+      },
+      {
+        title: "History of NAR",
+        photo: "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?w=800&q=80",
+        body: "The National Association of Realtors controls the MLS, the lockboxes, and &mdash; until very recently &mdash; the rules around real estate commissions. Learn how that monopoly was built, how the courts dismantled parts of it, and why the modern internet has made many of its functions obsolete.",
+        link: "history-of-nar.html"
+      }
+    ];
+
+    // Render topic tiles. If the last tile is alone on its row (i.e., total count
+    // leaves a remainder of 1 when divided by 3), it gets a "last-alone" class so
+    // we can center it in the middle column on desktop and constrain its width on
+    // smaller screens.
+    document.getElementById("topicsGrid").innerHTML = TOPICS.map((t, i) => {
+      const isLastAlone = (i === TOPICS.length - 1) && (TOPICS.length % 3 === 1);
+      return `
+        <div class="topic-card${isLastAlone ? ' last-alone' : ''}">
+          <div class="photo" style="background-image:url('${t.photo}');"></div>
+          <h3>${t.title}</h3>
+          <p>${t.body}</p>
+          <a href="${t.link || '#'}" class="btn btn-primary btn-sm" style="align-self:flex-start;">Learn More</a>
+        </div>
+      `;
+    }).join("");
+  </script>
+
+  <!-- Responsive: stack hero + grid on small screens -->
+  <style>
+    @media (max-width: 900px) {
+      #heroRow {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+      }
+      #topicsGrid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      #majorResources {
+        grid-template-columns: 1fr !important;
+      }
+      .topic-card.last-alone {
+        grid-column: 1 / -1 !important;
+        max-width: 380px;
+        margin: 0 auto;
+      }
+    }
+    @media (max-width: 560px) {
+      #topicsGrid {
+        grid-template-columns: 1fr !important;
+      }
+      .topic-card.last-alone {
+        grid-column: auto !important;
+        max-width: 100%;
+        margin: 0;
+      }
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List Your Home — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div data-include="nav" data-active="seller"></div>
+
+  <section style="padding:2.5rem 0;">
+    <div class="container" style="max-width:920px;">
+
+      <div style="margin-bottom:1.5rem;">
+        <div class="eyebrow" style="margin-bottom:0.4rem;">Sell your home</div>
+        <h1 style="font-size:1.75rem; margin:0;">Create your listing</h1>
+        <p style="color:var(--muted); margin:0.25rem 0 0;">It takes about 25 minutes. You can save and come back anytime.</p>
+      </div>
+
+      <!-- Stepper -->
+      <div style="display:flex; gap:0.5rem; margin-bottom:2rem; flex-wrap:wrap;" id="stepper">
+        <div class="stepBadge" data-step="1">1. Property details</div>
+        <div class="stepBadge" data-step="2">2. Photos &amp; description</div>
+        <div class="stepBadge" data-step="3">3. Price &amp; terms</div>
+        <div class="stepBadge" data-step="4">4. Showings</div>
+        <div class="stepBadge" data-step="5">5. Marketing</div>
+        <div class="stepBadge" data-step="6">6. Publish</div>
+      </div>
+
+      <!-- STEP 1: Property details -->
+      <div id="step1" class="step-content card" style="padding:2rem;">
+        <h2 style="margin:0 0 1rem;">Property details</h2>
+        <label class="label">Property type</label>
+        <select class="select" id="propertyType" style="margin-bottom:1rem;">
+          <option value="">Select a property type…</option>
+          <option value="single-family">Single-Family Home</option>
+          <option value="townhouse">Townhouse</option>
+          <option value="condo">Condominium</option>
+          <option value="multi-family">Multi-Family (2–4 units)</option>
+          <option value="apartment">Apartment Building (5+ units)</option>
+          <option value="manufactured">Manufactured / Mobile Home</option>
+          <option value="coop">Co-op</option>
+          <option value="land">Vacant Land / Lot</option>
+          <option value="farm">Farm / Ranch / Agricultural</option>
+          <option value="commercial-mixed">Mixed-Use / Commercial</option>
+          <option value="other">Other</option>
+        </select>
+        <label class="label">Street address</label>
+        <input type="text" class="input" placeholder="412 Magnolia Lane" style="margin-bottom:1rem;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:1rem; margin-bottom:1rem;">
+          <div><label class="label">City</label><input class="input" placeholder="Asheville"></div>
+          <div><label class="label">State</label><input class="input" placeholder="NC"></div>
+          <div><label class="label">ZIP</label><input class="input" placeholder="28801"></div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:1rem; margin-bottom:1rem;">
+          <div><label class="label">Bedrooms</label><input class="input" type="number" placeholder="4"></div>
+          <div><label class="label">Bathrooms</label><input class="input" type="number" placeholder="3"></div>
+          <div><label class="label">Square feet</label><input class="input" type="number" placeholder="2840"></div>
+          <div><label class="label">Year built</label><input class="input" type="number" placeholder="1998"></div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+          <button class="btn btn-primary" onclick="goToStep(2)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Photos & description -->
+      <div id="step2" class="step-content card" style="padding:2rem; display:none;">
+        <h2 style="margin:0 0 1rem;">Photos &amp; description</h2>
+        <label class="label">Upload photos (drag &amp; drop)</label>
+        <div style="border:2px dashed var(--line); border-radius:12px; padding:2rem; text-align:center; margin-bottom:1.25rem;">
+          <div style="font-size:2rem; color:var(--brand); margin-bottom:0.5rem;">📷</div>
+          <div style="font-weight:500;">Drop photos here or click to upload</div>
+          <div class="hint">Pro tip: 20+ photos sell faster. Bright, daytime shots work best.</div>
+        </div>
+        <label class="label">Listing description</label>
+        <textarea class="textarea" rows="6" placeholder="A craftsman charmer tucked into a quiet cul-de-sac..."></textarea>
+        <div class="hint">Need help? We have a <a href="education.html">listing-description guide</a> with examples that sell.</div>
+        <div style="display:flex; justify-content:space-between; margin-top:1.5rem;">
+          <button class="btn btn-ghost" onclick="goToStep(1)">← Back</button>
+          <button class="btn btn-primary" onclick="goToStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Price & terms -->
+      <div id="step3" class="step-content card" style="padding:2rem; display:none;">
+        <h2 style="margin:0 0 1rem;">Asking price &amp; terms</h2>
+        <p style="color:var(--muted); margin:0 0 1.5rem;">Abode's Comparative Market Analysis (CMA) tool looks at recent sales nearby and adjusts each for differences in size, age, and condition. Use it as your starting point — you can always set a custom price below.</p>
+
+        <!-- ============== Comparative Market Analysis ============== -->
+        <div class="cma-card" style="background:white; border:1px solid var(--line); border-radius:16px; padding:1.75rem; margin-bottom:1.5rem;">
+
+          <!-- Header -->
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem;">
+            <div>
+              <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); font-weight:700;">Comparative Market Analysis</div>
+              <h3 style="margin:0.25rem 0 0; font-size:1.2rem; letter-spacing:-0.01em;">Recent sales near your home</h3>
+            </div>
+            <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+              <span style="font-size:0.72rem; padding:0.3rem 0.7rem; background:#e7f3ec; color:#2e7d4f; border-radius:999px; font-weight:600;">5 comps</span>
+              <span style="font-size:0.72rem; padding:0.3rem 0.7rem; background:#f0eee9; color:var(--ink); border-radius:999px; font-weight:600;">6-month window</span>
+              <span style="font-size:0.72rem; padding:0.3rem 0.7rem; background:#f0eee9; color:var(--ink); border-radius:999px; font-weight:600;">within 1 mi</span>
+            </div>
+          </div>
+
+          <!-- Subject property summary -->
+          <div style="background:#faf8f4; border:1px solid var(--line); border-radius:10px; padding:0.85rem 1rem; margin-bottom:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+            <div>
+              <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:600;">Subject property</div>
+              <div style="font-weight:600; margin-top:0.15rem;">412 Magnolia Lane, Asheville NC</div>
+            </div>
+            <div style="font-size:0.85rem; color:var(--muted);">4 BD · 3 BA · 2,840 SF · 0.42 AC · Built 1998</div>
+          </div>
+
+          <!-- Big recommendation banner -->
+          <div style="background: var(--ink); color:white; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+              <div>
+                <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:#a8a8a8; font-weight:700; margin-bottom:0.4rem;">Recommended range</div>
+                <div style="font-size:2.25rem; font-weight:800; letter-spacing:-0.025em; line-height:1;">$615,000</div>
+                <div style="font-size:0.85rem; color:#a8a8a8; margin-top:0.55rem;">Range: <strong style="color:white;">$598,000 – $635,000</strong></div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:#a8a8a8; font-weight:700; margin-bottom:0.4rem;">Price per sq ft</div>
+                <div style="font-size:1.4rem; font-weight:700; letter-spacing:-0.015em;">$217 / sf</div>
+                <div style="font-size:0.78rem; color:#a8a8a8; margin-top:0.55rem;">Market avg $217 / sf</div>
+              </div>
+            </div>
+
+            <!-- Visual range bar -->
+            <div style="margin-top:1.25rem;">
+              <div style="height:8px; background:rgba(255,255,255,0.15); border-radius:999px; position:relative; overflow:hidden;">
+                <div style="position:absolute; top:0; left:25%; right:18%; bottom:0; background:linear-gradient(90deg, #4a7c9c, #2e7d4f, #4a7c9c); border-radius:999px;"></div>
+                <div style="position:absolute; top:-2px; left:46%; width:4px; height:12px; background:white; border-radius:2px;"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#a8a8a8; margin-top:0.5rem;">
+                <span>$550K</span>
+                <span style="color:white; font-weight:600;">▲ Your home</span>
+                <span>$680K</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comps table -->
+          <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:700; margin-bottom:0.6rem;">Comparable sales</div>
+          <div class="cma-table" style="border:1px solid var(--line); border-radius:10px; overflow:hidden;">
+            <div class="cma-row cma-head" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap:0.5rem; padding:0.7rem 0.85rem; background:#faf8f4; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:700;">
+              <div>Address</div>
+              <div style="text-align:right;">Sold</div>
+              <div style="text-align:right;">$ / sf</div>
+              <div style="text-align:right;">Adj.</div>
+              <div style="text-align:right;">Adj. value</div>
+            </div>
+            <div class="cma-row" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap:0.5rem; padding:0.85rem; border-top:1px solid var(--line); font-size:0.85rem; align-items:center;">
+              <div>
+                <div style="font-weight:600;">408 Magnolia Pl</div>
+                <div style="font-size:0.72rem; color:var(--muted);">4 BD · 3 BA · 2,720 SF · 0.1 mi · Apr 22, 2026</div>
+              </div>
+              <div style="text-align:right; font-weight:600;">$599,000</div>
+              <div style="text-align:right;">$220</div>
+              <div style="text-align:right; color:#2e7d4f; font-weight:600;" title="Smaller (+$15K)">+$15K</div>
+              <div style="text-align:right; font-weight:700; color:var(--ink);">$614,000</div>
+            </div>
+            <div class="cma-row" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap:0.5rem; padding:0.85rem; border-top:1px solid var(--line); font-size:0.85rem; align-items:center;">
+              <div>
+                <div style="font-weight:600;">215 Briar Hollow Rd</div>
+                <div style="font-size:0.72rem; color:var(--muted);">4 BD · 3 BA · 2,890 SF · 0.4 mi · Mar 15, 2026</div>
+              </div>
+              <div style="text-align:right; font-weight:600;">$625,000</div>
+              <div style="text-align:right;">$216</div>
+              <div style="text-align:right; color:#b03a2e; font-weight:600;" title="Slightly larger (−$5K)">−$5K</div>
+              <div style="text-align:right; font-weight:700; color:var(--ink);">$620,000</div>
+            </div>
+            <div class="cma-row" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap:0.5rem; padding:0.85rem; border-top:1px solid var(--line); font-size:0.85rem; align-items:center;">
+              <div>
+                <div style="font-weight:600;">532 Sunset Ridge Dr</div>
+                <div style="font-size:0.72rem; color:var(--muted);">3 BD · 3 BA · 2,640 SF · 0.6 mi · Apr 8, 2026</div>
+              </div>
+              <div style="text-align:right; font-weight:600;">$578,000</div>
+              <div style="text-align:right;">$219</div>
+              <div style="text-align:right; color:#2e7d4f; font-weight:600;" title="Smaller + one fewer bedroom (+$25K)">+$25K</div>
+              <div style="text-align:right; font-weight:700; color:var(--ink);">$603,000</div>
+            </div>
+            <div class="cma-row" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap:0.5rem; padding:0.85rem; border-top:1px solid var(--line); font-size:0.85rem; align-items:center;">
+              <div>
+                <div style="font-weight:600;">87 Hawthorne Ln</div>
+                <div style="font-size:0.72rem; color:var(--muted);">4 BD · 3.5 BA · 3,010 SF · 0.5 mi · Feb 28, 2026</div>
+              </div>
+              <div style="text-align:right; font-weight:600;">$642,000</div>
+              <div style="text-align:right;">$213</div>
+              <div style="text-align:right; color:#b03a2e; font-weight:600;" title="Larger + extra half bath (−$12K)">−$12K</div>
+              <div style="text-align:right; font-weight:700; color:var(--ink);">$630,000</div>
+            </div>
+            <div class="cma-row" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap:0.5rem; padding:0.85rem; border-top:1px solid var(--line); font-size:0.85rem; align-items:center;">
+              <div>
+                <div style="font-weight:600;">124 Maple Grove Ct</div>
+                <div style="font-size:0.72rem; color:var(--muted);">4 BD · 3 BA · 2,780 SF · 0.8 mi · Jan 18, 2026</div>
+              </div>
+              <div style="text-align:right; font-weight:600;">$608,000</div>
+              <div style="text-align:right;">$219</div>
+              <div style="text-align:right; color:#2e7d4f; font-weight:600;" title="Slightly smaller, older sale (+$8K)">+$8K</div>
+              <div style="text-align:right; font-weight:700; color:var(--ink);">$616,000</div>
+            </div>
+            <div class="cma-row" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap:0.5rem; padding:0.85rem 0.85rem; background:#faf8f4; border-top:2px solid var(--ink); font-size:0.88rem; font-weight:700; align-items:center;">
+              <div>Adjusted average</div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div style="text-align:right; color:var(--ink);">$616,600</div>
+            </div>
+          </div>
+          <div style="font-size:0.78rem; color:var(--muted); margin-top:0.65rem; font-style:italic;">Adjustments account for differences in square footage, bedrooms/baths, and how recent each sale is. Hover any number for the rationale.</div>
+
+          <!-- Market activity -->
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:0.75rem; margin-top:1.5rem;">
+            <div style="background:#faf8f4; border:1px solid var(--line); border-radius:10px; padding:0.85rem;">
+              <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:600;">Active listings</div>
+              <div style="font-size:1.5rem; font-weight:700; letter-spacing:-0.02em; margin-top:0.2rem;">3</div>
+              <div style="font-size:0.72rem; color:var(--muted);">competing within 1 mi</div>
+            </div>
+            <div style="background:#faf8f4; border:1px solid var(--line); border-radius:10px; padding:0.85rem;">
+              <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:600;">Pending sales</div>
+              <div style="font-size:1.5rem; font-weight:700; letter-spacing:-0.02em; margin-top:0.2rem;">2</div>
+              <div style="font-size:0.72rem; color:var(--muted);">under contract nearby</div>
+            </div>
+            <div style="background:#faf8f4; border:1px solid var(--line); border-radius:10px; padding:0.85rem;">
+              <div style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:600;">Avg days on market</div>
+              <div style="font-size:1.5rem; font-weight:700; letter-spacing:-0.02em; margin-top:0.2rem;">14</div>
+              <div style="font-size:0.72rem; color:var(--muted);">balanced market</div>
+            </div>
+          </div>
+
+          <!-- Apply button -->
+          <div style="margin-top:1.5rem; display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center;">
+            <button class="btn btn-primary" onclick="applyCmaPrice()">Apply recommended price ($615,000)</button>
+            <span style="font-size:0.82rem; color:var(--muted);">Or set your own asking price below.</span>
+          </div>
+        </div>
+
+        <label class="label">Asking price</label>
+        <input type="text" class="input" id="askingPriceInput" value="$615,000" style="margin-bottom:1rem;">
+
+        <!-- Viewing-required toggle -->
+        <div style="background: var(--brand-light, #e7f3ec); border: 1px solid #c8e0d0; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
+          <label style="display:flex; align-items:flex-start; gap:0.75rem; cursor:pointer;">
+            <input type="checkbox" id="viewingRequiredToggle" checked style="margin-top:0.3rem; flex-shrink:0; width:18px; height:18px; accent-color: var(--brand);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem; flex-wrap:wrap;">
+                <strong style="color: var(--ink);">Only accept offers from buyers who have viewed the property</strong>
+                <span style="font-size:0.65rem; background:var(--brand); color:white; padding:0.2rem 0.55rem; border-radius:999px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;">Recommended</span>
+              </div>
+              <div style="font-size:0.85rem; color:var(--ink-soft, #4a4a4a); line-height:1.55;">
+                Prevents speculative offers from buyers who haven't seen the home in person. Reduces the risk of a deal falling apart late in the transaction when the buyer discovers something they didn't know about the property.
+              </div>
+            </div>
+          </label>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-bottom:1rem;">
+          <div><label class="label">Preferred closing window</label>
+            <select class="select"><option>30–45 days</option><option>45–60 days</option><option>60+ days</option></select>
+          </div>
+          <div><label class="label">Open to seller financing?</label>
+            <select class="select"><option>No</option><option>Yes</option></select>
+          </div>
+        </div>
+        <label class="label">Items included with sale</label>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:0.5rem;">
+          <label style="display:flex; gap:0.5rem;"><input type="checkbox" checked> Refrigerator</label>
+          <label style="display:flex; gap:0.5rem;"><input type="checkbox" checked> Washer/dryer</label>
+          <label style="display:flex; gap:0.5rem;"><input type="checkbox"> Window treatments</label>
+          <label style="display:flex; gap:0.5rem;"><input type="checkbox"> Smart home devices</label>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:1.5rem;">
+          <button class="btn btn-ghost" onclick="goToStep(2)">← Back</button>
+          <button class="btn btn-primary" onclick="goToStep(4)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Showings -->
+      <div id="step4" class="step-content card" style="padding:2rem; display:none;">
+        <h2 style="margin:0 0 1rem;">Showing availability</h2>
+        <p style="color:var(--muted); margin:0 0 1.25rem;">When can buyers tour the home? You can update these anytime.</p>
+        <label class="label">Days &amp; times available</label>
+        <div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:0.4rem; margin-bottom:1rem;">
+          <label class="card" style="padding:0.5rem; text-align:center; cursor:pointer;"><input type="checkbox"> <span style="font-size:0.85rem;">Mon</span></label>
+          <label class="card" style="padding:0.5rem; text-align:center; cursor:pointer;"><input type="checkbox"> <span style="font-size:0.85rem;">Tue</span></label>
+          <label class="card" style="padding:0.5rem; text-align:center; cursor:pointer;"><input type="checkbox"> <span style="font-size:0.85rem;">Wed</span></label>
+          <label class="card" style="padding:0.5rem; text-align:center; cursor:pointer;"><input type="checkbox"> <span style="font-size:0.85rem;">Thu</span></label>
+          <label class="card" style="padding:0.5rem; text-align:center; cursor:pointer;"><input type="checkbox"> <span style="font-size:0.85rem;">Fri</span></label>
+          <label class="card" style="padding:0.5rem; text-align:center; cursor:pointer;"><input type="checkbox" checked> <span style="font-size:0.85rem;">Sat</span></label>
+          <label class="card" style="padding:0.5rem; text-align:center; cursor:pointer;"><input type="checkbox" checked> <span style="font-size:0.85rem;">Sun</span></label>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+          <div><label class="label">Earliest time</label><input class="input" type="time" value="09:00"></div>
+          <div><label class="label">Latest time</label><input class="input" type="time" value="19:00"></div>
+        </div>
+        <label style="display:flex; gap:0.5rem;"><input type="checkbox" checked> Schedule an open house — Saturday 11 AM – 1 PM</label>
+
+        <div style="display:flex; justify-content:space-between; margin-top:1.5rem;">
+          <button class="btn btn-ghost" onclick="goToStep(3)">← Back</button>
+          <button class="btn btn-primary" onclick="goToStep(5)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: Marketing -->
+      <div id="step5" class="step-content card" style="padding:2rem; display:none;">
+        <h2 style="margin:0 0 1rem;">Marketing &amp; merchandise</h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem;">
+          <label class="card" style="padding:1rem; cursor:pointer;">
+            <input type="checkbox" checked style="margin-bottom:0.4rem;">
+            <div style="font-weight:500;">🪧 Yard sign + lockbox</div>
+            <div style="font-size:0.85rem; color:var(--muted); margin-top:0.2rem;">Shipped to you. Included.</div>
+          </label>
+          <label class="card" style="padding:1rem; cursor:pointer;">
+            <input type="checkbox" checked style="margin-bottom:0.4rem;">
+            <div style="font-weight:500;">🏠 Zillow/Redfin syndication</div>
+            <div style="font-size:0.85rem; color:var(--muted); margin-top:0.2rem;">Auto-listed on major sites. Included.</div>
+          </label>
+          <label class="card" style="padding:1rem; cursor:pointer;">
+            <input type="checkbox" style="margin-bottom:0.4rem;">
+            <div style="font-weight:500;">📷 Professional photos</div>
+            <div style="font-size:0.85rem; color:var(--muted); margin-top:0.2rem;">$350 add-on</div>
+          </label>
+          <label class="card" style="padding:1rem; cursor:pointer;">
+            <input type="checkbox" style="margin-bottom:0.4rem;">
+            <div style="font-weight:500;">🎥 3D Matterport tour</div>
+            <div style="font-size:0.85rem; color:var(--muted); margin-top:0.2rem;">$249 add-on</div>
+          </label>
+          <label class="card" style="padding:1rem; cursor:pointer;">
+            <input type="checkbox" style="margin-bottom:0.4rem;">
+            <div style="font-weight:500;">📣 Social media kit</div>
+            <div style="font-size:0.85rem; color:var(--muted); margin-top:0.2rem;">Pre-made posts. Free.</div>
+          </label>
+          <label class="card" style="padding:1rem; cursor:pointer;">
+            <input type="checkbox" style="margin-bottom:0.4rem;">
+            <div style="font-weight:500;">📰 Local newspaper ad</div>
+            <div style="font-size:0.85rem; color:var(--muted); margin-top:0.2rem;">$99 add-on</div>
+          </label>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:1.5rem;">
+          <button class="btn btn-ghost" onclick="goToStep(4)">← Back</button>
+          <button class="btn btn-primary" onclick="goToStep(6)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 6: Publish -->
+      <div id="step6" class="step-content card" style="padding:2rem; display:none;">
+        <h2 style="margin:0 0 1rem;">Ready to publish</h2>
+        <div class="card" style="padding:1.5rem; background:var(--brand-light); border-color:transparent; margin-bottom:1.5rem;">
+          <div style="font-size:0.85rem; color:var(--brand); font-weight:600; text-transform:uppercase;">Listing fee</div>
+          <div style="font-weight:700; letter-spacing:-0.02em; font-size:2rem; color:var(--brand);">$499</div>
+          <div style="font-size:0.9rem; color:var(--ink); margin-top:0.25rem;">Charged at closing. If your home doesn't sell, you owe nothing.</div>
+        </div>
+
+        <h3 style="margin:1.5rem 0 0.75rem; font-size:1.05rem;">Final review</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem 1.5rem;">
+          <div><div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase;">Address</div><div>412 Magnolia Lane, Asheville NC</div></div>
+          <div><div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase;">Price</div><div>$615,000</div></div>
+          <div><div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase;">Beds / Baths</div><div>4 / 3</div></div>
+          <div><div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase;">Photos</div><div>14 uploaded</div></div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; margin-top:2rem; gap:1rem; flex-wrap:wrap;">
+          <button class="btn btn-ghost" onclick="goToStep(5)">← Back</button>
+          <button class="btn btn-primary btn-lg" onclick="window.location.href='dashboard.html?role=seller'">Publish my listing 🎉</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ---------- Step navigation ----------
+    function goToStep(n) {
+      // Hide every step panel, then show just the one we want
+      document.querySelectorAll(".step-content").forEach(el => el.style.display = "none");
+      const target = document.getElementById("step" + n);
+      if (target) target.style.display = "block";
+
+      // Update the stepper badges so the current step is highlighted
+      document.querySelectorAll(".stepBadge").forEach(b => {
+        b.classList.toggle("active", parseInt(b.dataset.step, 10) === n);
+      });
+
+      // Scroll to the top of the form for a clean transition
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ---------- CMA: apply recommended price ----------
+    // Fills the asking-price input with the CMA's recommended figure.
+    function applyCmaPrice() {
+      const input = document.getElementById("askingPriceInput");
+      if (input) {
+        input.value = "$615,000";
+        // Brief visual feedback so the user sees the change happen
+        input.style.transition = "background 0.2s ease";
+        input.style.background = "#e7f3ec";
+        setTimeout(() => { input.style.background = ""; }, 700);
+      }
+    }
+  </script>
+
+  <style>
+    /* Stepper badges */
+    .stepBadge {
+      font-size: 0.78rem;
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .stepBadge.active {
+      background: var(--ink);
+      color: white;
+      border-color: var(--ink);
+    }
+
+    /* CMA comp table: allow horizontal scroll on narrow screens so columns don't crush */
+    @media (max-width: 720px) {
+      .cma-table { overflow-x: auto; }
+      .cma-row { min-width: 560px; }
+    }
+  </style>
+</body>
+</html>

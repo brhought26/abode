@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listing — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Listing-specific styling */
+    .spec-row {
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      padding: 0.15rem 0;
+    }
+    .info-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .info-card h3 {
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-transform: none;
+      margin-bottom: 0.85rem;
+    }
+    .info-card .big-num {
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      font-size: 2rem;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .info-card .big-num-unit {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-left: 0.25rem;
+    }
+    .ledger {
+      margin-top: 1rem;
+      display: grid;
+      gap: 0.45rem;
+      font-size: 0.88rem;
+    }
+    .ledger-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--ink-soft);
+    }
+    .ledger-row .ledger-label { color: var(--muted); }
+
+    /* .calc-field styles live in css/styles.css so they apply to every calculator */
+  </style>
+</head>
+<body>
+
+  <div data-include="nav" data-active="search"></div>
+
+  <div id="listingRoot" class="container" style="padding: 2rem 1.5rem 4rem;">
+    <!-- Filled by JS -->
+  </div>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ---------- Get the listing ----------
+    const params = new URLSearchParams(window.location.search);
+    const listingId = params.get("id") || "L-001";
+    const listing = ABODE.findListing(listingId);
+    const seller = ABODE.findUser(listing.sellerId);
+    const root = document.getElementById("listingRoot");
+
+    // Today is 2026-05-14 in our prototype env. Calculate days active.
+    const TODAY = new Date("2026-05-14");
+    const listedDate = new Date(listing.listedDate);
+    const daysActive = Math.max(0, Math.round((TODAY - listedDate) / (1000 * 60 * 60 * 24)));
+
+    // Comparables (other listings in same city)
+    const comps = ABODE.LISTINGS.filter(l => l.id !== listing.id && l.city === listing.city).slice(0, 3);
+
+    // Build annual tax history from tax value (rough 0.85% NC-ish effective rate).
+    function buildTaxHistory(taxValue) {
+      const base = Math.round(taxValue * 0.0085);
+      return [
+        { year: 2025, amount: base },
+        { year: 2024, amount: Math.round(base * 0.96) },
+        { year: 2023, amount: Math.round(base * 0.91) },
+        { year: 2022, amount: Math.round(base * 0.87) }
+      ];
+    }
+    const taxHistory = buildTaxHistory(listing.taxValue);
+
+    // Sales history = priceHistory entries that aren't "Listed"
+    const sales = listing.priceHistory.filter(h => h.event && h.event.toLowerCase().includes("sold"));
+
+    // ---------- Render ----------
+    root.innerHTML = `
+      <!-- Breadcrumb -->
+      <div style="font-size:0.85rem; color:var(--muted); margin-bottom:1.5rem;">
+        <a href="search.html">Homes for sale</a>
+        <span style="margin: 0 0.4rem;">›</span>
+        ${listing.city}, ${listing.state}
+        <span style="margin: 0 0.4rem;">›</span>
+        ${listing.address}
+      </div>
+
+      <!-- ============== HEADER: specs left, photo right ============== -->
+      <div class="hero-row" style="display:grid; grid-template-columns: 1fr 1.2fr; gap:2.5rem; align-items:flex-start; margin-bottom: 3rem;">
+        <div>
+          <h1 style="font-size: clamp(1.75rem, 3.5vw, 2.5rem); margin-bottom: 1.25rem; line-height: 1.15;">
+            ${listing.address}<br>
+            ${listing.city} ${listing.state} ${listing.zip}
+          </h1>
+          <div style="margin-bottom: 1.25rem;">
+            <div class="price" style="font-size: 1.4rem;">${ABODE.formatPrice(listing.price)}</div>
+          </div>
+          <div style="margin-bottom: 1.75rem;">
+            <div class="spec-row">${listing.beds} bed ${listing.baths} bath</div>
+            <div class="spec-row">${listing.sqft.toLocaleString()} sqft</div>
+            <div class="spec-row">${listing.lot}</div>
+            <div class="spec-row" style="color: var(--muted);">${daysActive} ${daysActive === 1 ? "day" : "days"} active on Abode</div>
+          </div>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="document.getElementById('showingModal').style.display='flex'">Request a Showing</button>
+            <a href="make-offer.html?id=${listing.id}" class="btn btn-primary">Make an Offer</a>
+          </div>
+        </div>
+        <div>
+          <div id="heroPhoto" style="aspect-ratio: 4/3; background-image:url('${listing.photos[0]}'); background-size:cover; background-position:center; border-radius:16px;"></div>
+          ${listing.photos.length > 1 ? `<div style="margin-top:0.75rem; font-size:0.85rem;"><a href="#" onclick="document.getElementById('galleryModal').style.display='flex'; return false;">View all ${listing.photos.length} photos →</a></div>` : ""}
+        </div>
+      </div>
+
+      <!-- ============== ABOUT ============== -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 3rem;" class="about-row">
+        <div>
+          <h2 style="font-size: 1.25rem; margin-bottom: 0.85rem;">About</h2>
+          <p style="color: var(--ink-soft); line-height: 1.6;">${listing.description}</p>
+        </div>
+        <div>
+          <h2 style="font-size: 1.25rem; margin-bottom: 0.85rem;">Key Features</h2>
+          <div style="display:grid; gap: 0.45rem; font-size: 0.95rem;">
+            ${listing.features.map(f => `<div>${f}</div>`).join("")}
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== 3-CARD ROW: Taxes, Calculator, Sales History ============== -->
+      <div class="info-row" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 3rem;">
+
+        <!-- Property Taxes -->
+        <div class="info-card">
+          <h3>Property Taxes</h3>
+          <div>
+            <span class="big-num">$${taxHistory[0].amount.toLocaleString()}</span>
+            <span class="big-num-unit">p/year</span>
+          </div>
+          <div class="ledger">
+            ${taxHistory.map(t => `
+              <div class="ledger-row">
+                <span class="ledger-label">${t.year}</span>
+                <span>$${t.amount.toLocaleString()}</span>
+              </div>
+            `).join("")}
+          </div>
+          <a href="#" style="font-size:0.85rem; margin-top:1rem;">See more history</a>
+        </div>
+
+        <!-- Payment Calculator -->
+        <div class="info-card">
+          <h3>Calculate Your Payment</h3>
+          <div>
+            <span class="big-num" id="calcResult">$0.00</span>
+            <span class="big-num-unit">p/month</span>
+          </div>
+          <div class="ledger">
+            <div class="calc-field"><span>Purchase price</span><input type="number" id="calcPrice" value="${listing.price}" min="0" step="1000"></div>
+            <div class="calc-field"><span>Down payment %</span><input type="number" id="calcDown" value="20" min="0" max="100"></div>
+            <div class="calc-field"><span>Interest rate %</span><input type="number" id="calcRate" value="6.75" step="0.01" min="0"></div>
+            <div class="calc-field"><span>Loan term (years)</span><input type="number" id="calcTerm" value="30" min="1" max="40"></div>
+            <div class="calc-field"><span>Taxes /mo</span><input type="number" id="calcTax" value="${Math.round(taxHistory[0].amount / 12)}"></div>
+            <div class="calc-field"><span>Insurance /mo</span><input type="number" id="calcIns" value="150"></div>
+            <div class="calc-field"><span>HOA /mo</span><input type="number" id="calcHoa" value="0"></div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="margin-top:1rem; align-self:flex-start;" onclick="runCalc()">Calculate</button>
+        </div>
+
+        <!-- Sales History -->
+        <div class="info-card">
+          <h3>Sales History</h3>
+          <div>
+            <span class="big-num">${ABODE.formatPrice(listing.price)}</span>
+            <span class="big-num-unit">list price</span>
+          </div>
+          <div class="ledger">
+            ${sales.length
+              ? sales.map(s => `
+                  <div class="ledger-row">
+                    <span class="ledger-label">${ABODE.formatDate(s.date)}</span>
+                    <span>SOLD · ${ABODE.formatPrice(s.price)}</span>
+                  </div>
+                `).join("")
+              : `<div class="ledger-row"><span class="ledger-label" style="font-size:0.85rem;">No prior recorded sales on file.</span><span></span></div>`
+            }
+            <div class="ledger-row">
+              <span class="ledger-label">${ABODE.formatDate(listing.listedDate)}</span>
+              <span>Listed on Abode</span>
+            </div>
+          </div>
+          <a href="make-offer.html?id=${listing.id}" class="btn btn-primary btn-sm" style="margin-top:1rem; align-self:flex-start;">Make an Offer</a>
+        </div>
+
+      </div>
+
+      <!-- ============== CLOSING COST ESTIMATOR ============== -->
+      <div class="cc-card" style="background:white; border:1px solid var(--line); border-radius:18px; padding:2rem; margin-bottom:3rem;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+          <div>
+            <h3 style="margin:0 0 0.4rem; font-size:1.4rem; letter-spacing:-0.01em;">Closing Cost Estimator</h3>
+            <p style="color:var(--muted); font-size:0.95rem; margin:0;">An estimate of the cash you'll need at closing. Updates live as you adjust inputs.</p>
+          </div>
+        </div>
+
+        <!-- Big total banner -->
+        <div style="background:var(--ink); color:white; border-radius:12px; padding:1.25rem 1.5rem; margin-bottom:1.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:#a8a8a8; font-weight:600;">Cash needed at closing</div>
+            <div id="ccTotal" style="font-size:2.4rem; font-weight:800; letter-spacing:-0.025em; line-height:1; margin-top:0.3rem;">$0</div>
+          </div>
+          <div style="font-size:0.82rem; color:#a8a8a8; text-align:right; max-width:200px;">
+            Down payment + closing costs combined
+          </div>
+        </div>
+
+        <!-- Two-column: inputs + breakdown -->
+        <div class="cc-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:2.5rem;">
+
+          <!-- Inputs -->
+          <div>
+            <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:700; color:var(--muted); margin-bottom:0.85rem;">Inputs</div>
+            <div class="calc-field"><span>Purchase price</span><input type="number" id="ccPrice" value="${listing.price}" min="0" step="1000"></div>
+            <div class="calc-field"><span>Down payment %</span><input type="number" id="ccDown" value="20" min="0" max="100"></div>
+            <div class="calc-field"><span>Interest rate %</span><input type="number" id="ccRate" value="6.75" step="0.01" min="0"></div>
+            <div class="calc-field"><span>Lender fees %</span><input type="number" id="ccLender" value="0.75" step="0.01" min="0"></div>
+            <div class="calc-field"><span>Lender's title insurance %</span><input type="number" id="ccTitle" value="0.5" step="0.01" min="0"></div>
+            <div class="calc-field"><span>Settlement &amp; recording</span><input type="number" id="ccOther" value="1500" min="0" step="50"></div>
+            <div class="calc-field"><span>Annual home insurance</span><input type="number" id="ccAnnualIns" value="1800" min="0" step="50"></div>
+            <div class="calc-field"><span>Property tax escrow (months)</span><input type="number" id="ccEscrowMonths" value="2" min="0" max="12"></div>
+          </div>
+
+          <!-- Breakdown -->
+          <div>
+            <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; font-weight:700; color:var(--muted); margin-bottom:0.85rem;">Breakdown</div>
+            <div class="ledger">
+              <div class="ledger-row"><span class="ledger-label">Down payment</span><span class="ledger-value" id="ccDownAmt">$0</span></div>
+              <div class="ledger-row"><span class="ledger-label">Lender fees</span><span class="ledger-value" id="ccLenderAmt">$0</span></div>
+              <div class="ledger-row"><span class="ledger-label">Lender's title insurance</span><span class="ledger-value" id="ccTitleAmt">$0</span></div>
+              <div class="ledger-row"><span class="ledger-label">Settlement, recording &amp; transfer</span><span class="ledger-value" id="ccOtherAmt">$0</span></div>
+              <div class="ledger-row"><span class="ledger-label">Prepaid home insurance (1 yr)</span><span class="ledger-value" id="ccInsAmt">$0</span></div>
+              <div class="ledger-row"><span class="ledger-label">Prepaid property tax (<span id="ccEscrowMonthsLabel">2</span> mo escrow)</span><span class="ledger-value" id="ccEscrowAmt">$0</span></div>
+              <div class="ledger-row"><span class="ledger-label">Prepaid interest (~15 days)</span><span class="ledger-value" id="ccInterestAmt">$0</span></div>
+              <div class="ledger-row" style="border-top:1px solid var(--line); padding-top:0.65rem; margin-top:0.3rem; font-weight:700;"><span class="ledger-label">Closing cost estimate</span><span class="ledger-value" id="ccSubtotal">$0</span></div>
+            </div>
+            <div style="font-size:0.78rem; color:var(--muted); margin-top:0.85rem; line-height:1.55;">
+              <strong style="color:var(--ink);">Illustrative estimates only.</strong> This calculator is not a loan offer, financial advice, or a guarantee of any cost. <strong style="color:var(--ink);">Abode is not a lender, mortgage broker, or financial advisor</strong> and makes no representation or warranty as to the accuracy of these figures. Actual closing costs vary by lender, title company, jurisdiction, and the specific terms of your transaction. Verify all figures with your lender and closing attorney before relying on them. Seller-side fees (attorney, transfer tax, prorated taxes) and optional owner's title insurance are not included.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== SELLER + COMPARABLES ============== -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 2rem;" class="meta-row">
+        <div>
+          <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Listed by</h2>
+          <div style="display:flex; align-items:center; gap:0.85rem; margin-bottom:1rem;">
+            <div style="width:44px; height:44px; border-radius:50%; background:var(--brand); color:white; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:1.1rem;">🏡</div>
+            <div>
+              <div style="font-weight:500;">Verified owner</div>
+              <div style="font-size:0.85rem; color:var(--muted);">Listed ${ABODE.formatDate(listing.listedDate)} · Identity revealed once you submit an offer</div>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm">Message seller</button>
+        </div>
+
+        ${comps.length ? `
+          <div>
+            <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Comparable homes in ${listing.city}</h2>
+            <div style="display:grid; gap: 0.85rem;">
+              ${comps.map(c => `
+                <a href="listing.html?id=${c.id}" style="display:flex; gap:0.85rem; align-items:center; text-decoration:none; color:inherit;">
+                  <div style="width:64px; height:48px; background-image:url('${c.photos[0]}'); background-size:cover; background-position:center; border-radius:8px; flex-shrink:0;"></div>
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-weight:500; font-size:0.95rem;">${c.address}</div>
+                    <div style="font-size:0.8rem; color:var(--muted);">${c.beds}bd · ${c.baths}ba · ${c.sqft.toLocaleString()} sqft</div>
+                  </div>
+                  <div class="price" style="font-size:0.95rem;">${ABODE.formatPrice(c.price)}</div>
+                </a>
+              `).join("")}
+            </div>
+          </div>
+        ` : ""}
+      </div>
+
+      <!-- Showing request modal -->
+      <div id="showingModal" style="display:none; position:fixed; inset:0; background:rgba(10,10,10,0.5); z-index:100; align-items:center; justify-content:center; padding:1.5rem;" onclick="if(event.target===this) this.style.display='none'">
+        <div class="card" style="max-width:480px; width:100%; padding:2rem; background:white;">
+          <h2 style="margin:0 0 0.5rem; font-size:1.4rem;">Request a showing</h2>
+          <p style="color:var(--muted); font-size:0.95rem; margin:0 0 1.5rem;">Pick a time that works for you — the seller will confirm in their dashboard.</p>
+          <label class="label">Preferred date</label>
+          <input type="date" class="input" style="margin-bottom:1rem;">
+          <label class="label">Preferred time</label>
+          <select class="select" style="margin-bottom:1rem;">
+            <option>Morning (9–12)</option>
+            <option>Afternoon (12–4)</option>
+            <option>Evening (4–7)</option>
+          </select>
+          <label class="label">Message (optional)</label>
+          <textarea class="textarea" rows="3" placeholder="Anything the seller should know?"></textarea>
+          <div style="display:flex; gap:0.5rem; margin-top:1.25rem;">
+            <button class="btn btn-ghost" style="flex:1;" onclick="document.getElementById('showingModal').style.display='none'">Cancel</button>
+            <button class="btn btn-primary" style="flex:1;" onclick="alert('Showing requested! (Demo only.)'); document.getElementById('showingModal').style.display='none'">Send request</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gallery modal -->
+      <div id="galleryModal" style="display:none; position:fixed; inset:0; background:rgba(10,10,10,0.85); z-index:100; align-items:center; justify-content:center; padding:1.5rem; flex-direction:column; gap:1rem;" onclick="if(event.target===this) this.style.display='none'">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:0.75rem; max-width: 980px; width:100%; max-height: 80vh; overflow-y:auto;">
+          ${listing.photos.map(p => `<div style="aspect-ratio:4/3; background-image:url('${p}'); background-size:cover; background-position:center; border-radius:12px;"></div>`).join("")}
+        </div>
+        <button class="btn btn-white btn-sm" onclick="document.getElementById('galleryModal').style.display='none'">Close</button>
+      </div>
+    `;
+
+    document.title = `${listing.address} — Abode`;
+
+    // ---------- Payment calculator ----------
+    function runCalc() {
+      const price = parseFloat(document.getElementById("calcPrice").value) || listing.price;
+      const downPct = parseFloat(document.getElementById("calcDown").value) || 0;
+      const rate = parseFloat(document.getElementById("calcRate").value) || 0;
+      const term = parseInt(document.getElementById("calcTerm").value, 10) || 30;
+      const tax = parseFloat(document.getElementById("calcTax").value) || 0;
+      const ins = parseFloat(document.getElementById("calcIns").value) || 0;
+      const hoa = parseFloat(document.getElementById("calcHoa").value) || 0;
+
+      const loan = price * (1 - downPct / 100);
+      const monthlyRate = rate / 100 / 12;
+      const n = term * 12;
+
+      let principalInterest = 0;
+      if (monthlyRate > 0) {
+        principalInterest = loan * (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
+      } else {
+        principalInterest = loan / n;
+      }
+
+      const monthly = principalInterest + tax + ins + hoa;
+      document.getElementById("calcResult").textContent = "$" + Math.round(monthly).toLocaleString();
+    }
+    window.runCalc = runCalc;
+    runCalc(); // Auto-calculate on page load
+
+    // ---------- Closing cost calculator ----------
+    function runClosing() {
+      const price         = parseFloat(document.getElementById("ccPrice").value)          || listing.price;
+      const downPct       = parseFloat(document.getElementById("ccDown").value)           || 0;
+      const rate          = parseFloat(document.getElementById("ccRate").value)           || 0;
+      const lenderPct     = parseFloat(document.getElementById("ccLender").value)         || 0;
+      const titlePct      = parseFloat(document.getElementById("ccTitle").value)          || 0;  // lender's policy only
+      const otherFees     = parseFloat(document.getElementById("ccOther").value)          || 0;
+      const annualIns     = parseFloat(document.getElementById("ccAnnualIns").value)      || 0;
+      const escrowMonths  = parseFloat(document.getElementById("ccEscrowMonths").value)   || 0;
+
+      const downPayment   = price * (downPct / 100);
+      const loanAmount    = price - downPayment;
+      const lenderFees    = loanAmount * (lenderPct / 100);
+      const titleIns      = price * (titlePct / 100);   // lender's title insurance only
+
+      // Prepaid items:
+      //   - Home insurance: the FULL first year's premium is paid up front at closing (lender requirement).
+      //   - Property tax escrow: a 2-3 month cushion is deposited into the lender's escrow account.
+      const annualTax        = taxHistory[0].amount;
+      const prepaidInsurance = annualIns;
+      const prepaidTaxEscrow = (annualTax / 12) * escrowMonths;
+
+      // Prepaid interest — assume 15 days at the daily loan rate
+      const dailyInterest    = (loanAmount * (rate / 100)) / 365;
+      const prepaidInterest  = dailyInterest * 15;
+
+      const closingSubtotal  = lenderFees + titleIns + otherFees + prepaidInsurance + prepaidTaxEscrow + prepaidInterest;
+      const totalCash        = downPayment + closingSubtotal;
+
+      const fmt = n => "$" + Math.round(n).toLocaleString();
+      document.getElementById("ccDownAmt").textContent           = fmt(downPayment);
+      document.getElementById("ccLenderAmt").textContent         = fmt(lenderFees);
+      document.getElementById("ccTitleAmt").textContent          = fmt(titleIns);
+      document.getElementById("ccOtherAmt").textContent          = fmt(otherFees);
+      document.getElementById("ccInsAmt").textContent            = fmt(prepaidInsurance);
+      document.getElementById("ccEscrowAmt").textContent         = fmt(prepaidTaxEscrow);
+      document.getElementById("ccEscrowMonthsLabel").textContent = escrowMonths;
+      document.getElementById("ccInterestAmt").textContent       = fmt(prepaidInterest);
+      document.getElementById("ccSubtotal").textContent          = fmt(closingSubtotal);
+      document.getElementById("ccTotal").textContent             = fmt(totalCash);
+    }
+
+    // Live update on every input
+    document.querySelectorAll("#ccPrice, #ccDown, #ccRate, #ccLender, #ccTitle, #ccOther, #ccAnnualIns, #ccEscrowMonths")
+      .forEach(el => el.addEventListener("input", runClosing));
+    runClosing();
+  </script>
+
+  <!-- Responsive: stack header + 3-card row on small screens -->
+  <style>
+    @media (max-width: 900px) {
+      .hero-row, .about-row, .meta-row {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+      }
+      .info-row {
+        grid-template-columns: 1fr !important;
+      }
+      .cc-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+      }
+    }
+  </style>
+</body>
+</html>

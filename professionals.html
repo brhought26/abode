@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- abode-gate-check -->
+  <script>(function(){var p=location.pathname.split("/").pop();if(p==="gate.html")return;if(localStorage.getItem("abodeAccess")!=="granted"){sessionStorage.setItem("abodeReturn",location.pathname+location.search+location.hash);location.replace("gate.html");}})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Professionals — Abode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div data-include="nav" data-active="professionals"></div>
+
+  <section style="padding:3rem 0 2rem;">
+    <div class="container-narrow" style="text-align:center;">
+      <div class="eyebrow" style="margin-bottom:0.75rem;">Find Professionals</div>
+      <h1 style="font-size:2.5rem; margin: 0 0 1rem;">Experts for every step.</h1>
+      <p style="color:var(--muted); font-size:1.1rem; margin-bottom: 2rem;">Closing attorneys, inspectors, lenders, surveyors — all reviewed by other Abode users. Hire when you need them, skip when you don't.</p>
+
+      <!-- ZIP code search (mock — non-functional) -->
+      <form onsubmit="event.preventDefault();" style="max-width:440px; margin:0 auto; display:flex; align-items:center; gap:0.5rem; background:white; border:1px solid var(--line); border-radius:999px; padding:0.4rem 0.4rem 0.4rem 1.25rem; box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+        <span style="color:var(--muted); font-size:1.05rem;">⌕</span>
+        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" placeholder="Enter your ZIP code" style="flex:1; border:none; outline:none; padding:0.55rem 0; font-family:inherit; font-size:1rem; background:transparent;">
+        <button type="submit" class="btn btn-primary btn-sm" style="border-radius:999px; padding:0.5rem 1.1rem;">Search</button>
+      </form>
+      <div style="font-size:0.8rem; color:var(--muted); margin-top:0.6rem;">We'll show pros within 25 miles of your ZIP.</div>
+    </div>
+  </section>
+
+  <section style="padding:1rem 0 3rem;">
+    <div class="container">
+      <!-- Filter pills -->
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:2rem; justify-content:center;" id="catFilters">
+        <button class="btn btn-primary btn-sm catBtn" data-cat="all">All</button>
+        <button class="btn btn-outline btn-sm catBtn" data-cat="attorney">Closing Attorneys</button>
+        <button class="btn btn-outline btn-sm catBtn" data-cat="lender">Lenders</button>
+        <button class="btn btn-outline btn-sm catBtn" data-cat="inspector">Home Inspectors</button>
+        <button class="btn btn-outline btn-sm catBtn" data-cat="surveyor">Surveyors</button>
+        <button class="btn btn-outline btn-sm catBtn" data-cat="insurance">Insurance</button>
+        <button class="btn btn-outline btn-sm catBtn" data-cat="staging">Home Staging</button>
+        <button class="btn btn-outline btn-sm catBtn" data-cat="trades">Trades</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1.25rem;" id="proGrid"></div>
+
+      <!-- ============== Add Company CTA ============== -->
+      <div style="margin-top: 3.5rem; padding: 2.5rem 1.5rem; background: white; border: 1px solid var(--line); border-radius: 18px; text-align:center;">
+        <h2 style="margin: 0 0 0.6rem; font-size: 1.35rem;">Don't see your business listed?</h2>
+        <p style="color: var(--muted); margin: 0 auto 1.5rem; max-width: 520px; font-size: 0.95rem; line-height: 1.55;">
+          Abode's directory connects real estate buyers and sellers with vetted local professionals. If you're a closing attorney, lender, inspector, surveyor, insurance agent, home stager, or licensed tradesperson, submit your company for review.
+        </p>
+        <a href="vendor-relations.html" class="btn btn-primary">Add Company Profile</a>
+      </div>
+    </div>
+  </section>
+
+  <div data-include="footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    const PROS = [
+      { cat: "attorney", name: "Carmichael &amp; Lee, PLLC", role: "Closing Attorney", rating: 4.9, reviews: 142, location: "Asheville, NC", fee: "$895 flat" },
+      { cat: "attorney", name: "Hawthorne Closings", role: "Closing Attorney", rating: 4.8, reviews: 89, location: "Hendersonville, NC", fee: "$950 flat" },
+      { cat: "attorney", name: "Mountain Title &amp; Closing", role: "Closing Attorney", rating: 4.7, reviews: 67, location: "Black Mountain, NC", fee: "$925 flat" },
+      { cat: "lender", name: "Blue Ridge Mortgage", role: "Mortgage Lender", rating: 4.8, reviews: 213, location: "Asheville, NC", fee: "Competitive rates" },
+      { cat: "lender", name: "First Mountain Lending", role: "Mortgage Lender", rating: 4.6, reviews: 98, location: "Weaverville, NC", fee: "VA &amp; FHA experts" },
+      { cat: "inspector", name: "Mountain View Home Inspections", role: "Home Inspector", rating: 4.9, reviews: 312, location: "Asheville, NC", fee: "$425 average" },
+      { cat: "inspector", name: "Thoroughline Inspections", role: "Home Inspector", rating: 4.9, reviews: 178, location: "Hendersonville, NC", fee: "$475 average" },
+      { cat: "surveyor", name: "Catawba Land Surveying", role: "Land Surveyor", rating: 4.7, reviews: 54, location: "Asheville, NC", fee: "$600 average" },
+      { cat: "insurance", name: "Pisgah Insurance Group", role: "Home &amp; Title Insurance", rating: 4.8, reviews: 91, location: "Asheville, NC", fee: "Multiple carriers" },
+      { cat: "staging", name: "Magnolia Home Staging", role: "Home Stager", rating: 4.9, reviews: 87, location: "Asheville, NC", fee: "From $1,500 / vacant home" },
+      { cat: "staging", name: "Mountain Modern Staging Co.", role: "Home Stager", rating: 4.8, reviews: 64, location: "Asheville, NC", fee: "$600 / room or $2,800 full home" },
+      { cat: "staging", name: "Curated Carolina Interiors", role: "Home Stager &amp; Designer", rating: 4.7, reviews: 42, location: "Hendersonville, NC", fee: "Starter package from $1,200" },
+      { cat: "staging", name: "Blue Ridge Restage", role: "Occupied-Home Stager", rating: 4.8, reviews: 58, location: "Weaverville, NC", fee: "$450 consult + à-la-carte" },
+      { cat: "trades", name: "Foothills Electric", role: "Licensed Electrician", rating: 4.9, reviews: 67, location: "Asheville, NC", fee: "Hourly + flat options" },
+      { cat: "trades", name: "Asheville Roofing Co.", role: "Roofing &amp; Repairs", rating: 4.8, reviews: 122, location: "Asheville, NC", fee: "Free estimates" },
+      { cat: "trades", name: "Mountain HVAC", role: "HVAC Service", rating: 4.7, reviews: 145, location: "Asheville, NC", fee: "Hourly + flat options" }
+    ];
+
+    let filterCat = "all";
+    function render() {
+      const list = filterCat === "all" ? PROS : PROS.filter(p => p.cat === filterCat);
+      document.getElementById("proGrid").innerHTML = list.map(p => `
+        <div class="card card-hover" style="padding:1.5rem;">
+          <div style="display:flex; align-items:flex-start; gap:0.75rem; margin-bottom:0.85rem;">
+            <div style="width:48px; height:48px; border-radius:12px; background:var(--brand-light); color:var(--brand); display:flex; align-items:center; justify-content:center; font-weight:600; flex-shrink:0;">${p.name.split(/\s+/).map(s => s.replace(/[^A-Za-z]/g, "").charAt(0)).slice(0,2).join("")}</div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-weight:500;">${p.name}</div>
+              <div style="font-size:0.85rem; color:var(--muted);">${p.role}</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:1rem; flex-wrap:wrap; font-size:0.85rem; color:var(--muted); margin-bottom:0.85rem;">
+            <span>★ ${p.rating} (${p.reviews})</span>
+            <span>📍 ${p.location}</span>
+          </div>
+          <div style="font-size:0.85rem; margin-bottom:1rem;">${p.fee}</div>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-primary btn-sm" style="flex:1;">Request quote</button>
+            <button class="btn btn-outline btn-sm">View profile</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    document.querySelectorAll(".catBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        filterCat = btn.dataset.cat;
+        document.querySelectorAll(".catBtn").forEach(b => {
+          b.classList.toggle("btn-primary", b === btn);
+          b.classList.toggle("btn-outline", b !== btn);
+        });
+        render();
+      });
+    });
+    render();
+  </script>
+</body>
+</html>
