@@ -13,7 +13,7 @@ You don't need to install anything.
 
 The site opens in your default web browser. Click around — every page is linked.
 
-> **If you'd rather use a specific browser:** right-click `index.html` → *Open with* → choose Chrome, Safari, Firefox, etc.
+> **If you'd rather use a specific browser:** right-click `index.html` → *Open with* → choose Chrome, Firefox, Edge, etc.
 
 ---
 
