@@ -67,3 +67,9 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Cloud Functions compiled output
+functions/lib/
+
+# Claude Code session files
+.claude/
